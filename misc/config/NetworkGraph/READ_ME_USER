@@ -1,0 +1,26 @@
+What is it about ?
+This is a Neural Network Interface developped by Brian Delhaisse and Yvon Kerdoncuff.
+It can be used to load neural networks written as txt files in a format that is readable by NEAT, or to create neural networks from nothing, to modify them and to save them in the same format.
+
+How to launch it ?
+To launch the application, go into the directory of the jar file NNInterface.jar and launch :
+java -jar NNInterface.jar
+Now you can only load files from this directory and only save files in this directory.
+
+How to use it ?
+Add a node : right click then add
+Remove a node : right click on it then remove
+Export png : right click and export png
+Select a node : left click on it
+Choose a node as a bias node or unchoose it : right click on a selected node then click on bias neuron then yes or no
+
+Making a link between two nodes is a bit more complicated :
+A node surrounded by blue is a potential source node, a node surrounded by red is a potential destination node.
+There are two ways of making links between nodes.
+The basic way is to left click on one node, it becomes blue, then right click on another, it becomes red, and you can right click on one of the two nodes then click on link. Another click on link will remove it.
+This way of making links is very long if you want to link together several nodes.
+Thus, you can press shift and select as much source nodes you want by left clicking on it, and as much destination nodes you want by left clicking on it. Then, you just right click and click on link to fully connect the source nodes and the destination nodes.
+
+Set the weight of a link : select the two nodes then right click then set weight.
+
+Doc written by Yvon.

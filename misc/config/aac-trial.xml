@@ -1,0 +1,147 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+   <!-- ************* -->
+   <!-- * Framework * -->
+   <!-- ************* -->
+   <framework>
+      <system threads="0" />
+      <experiment length="120" ticks_per_second="10" random_seed="209181"/> <!--random_seed="312"/-->
+   </framework>
+
+   <!-- *************** -->
+   <!-- * Controllers * -->
+   <!-- *************** -->
+   <controllers>
+      <epuck_nn_controller id="epuck_nn_controller" library="/home/ken/depots/neat-argos3/build/src/controllers/epuck_nn/libepuck_nn.so">
+         <actuators>
+            <epuck_wheels implementation="default" noise_std_dev="0.05"/>
+            <epuck_range_and_bearing implementation="medium" medium="rab" data_size="2" range=".70" />
+         </actuators>
+
+         <!-- Todo: need to calibrate the sensors -->
+         <sensors>
+            <epuck_proximity implementation="default" show_rays="false" noise_level="0.05" />
+            <epuck_ground implementation="rot_z_only" noise_level="0.05"/>
+            <epuck_light implementation="default" show_rays="false" noise_level="0.05"/>
+            <epuck_range_and_bearing implementation="medium" medium="rab" show_rays="false" data_size="2"
+               check_occlusions="true" loss_probability="0.70"/>
+         </sensors>
+
+         <params genome_file="config/genomelast_1" rab_time="10"/>
+      </epuck_nn_controller>
+   </controllers>
+
+   <!-- ****************** -->
+   <!-- * Loop functions * -->
+   <!-- ****************** -->
+   <loop_functions library="/home/ken/depots/neat-argos3/build/loop-functions/example/libexample_aggregation_loopfunc.so" label="example_aggregation_loop_functions">
+      <parameters number_robots="20" trial="1" dist_radius="1"/>
+   </loop_functions>
+   <!-- The label is also defined in the function REGISTER_LOOP_FUNCTIONS(CEpuckAACLoopFunction, label) at the end of the CEpuckAACLoopFunction.cpp -->
+
+   <!-- ********* -->
+   <!-- * Arena * -->
+   <!-- ********* -->
+   <arena size="4, 4, 2" center="0,0,0"
+      rab_equipped_entity_space_hash_buckets="10000"
+      rab_equipped_entity_space_hash_cell_size="1000,1000,1000">
+
+      <floor id="floor" source="loop_functions" pixels_per_meter="100"/>
+
+      <!--box_strip id="wall" coordinates="0.160,36.650 0.160,63.350 13.522,86.493 36.350,99.840 63.350,99.840 86.488,86.488 99.840,63.350 99.840,36.650 86.493,13.522 63.350,0.160 36.650,0.160 13.517,13.517"
+      close="true" roundedge="true" scale="0.025"
+      translate="-1.25,-1.25" boxwidth="0.05" boxheight="0.5"/-->
+
+      <box id="wall_1" size="0.68,0.05,0.5" movable="false">
+         <body position="0,-1.26,0" orientation="0,0,0" />
+      </box>
+      <box id="wall_2" size="0.68,0.05,0.5" movable="false">
+         <body position="0,1.26,0" orientation="0,0,0" />
+      </box>
+
+      <box id="wall_3" size="0.68,0.05,0.5" movable="false">
+         <body position="0.63,-1.091,0" orientation="30,0,0" />
+      </box>
+      <box id="wall_4" size="0.68,0.05,0.5" movable="false">
+         <body position="0.63,1.091,0" orientation="-30,0,0" />
+      </box>
+      <box id="wall_5" size="0.68,0.05,0.5" movable="false">
+         <body position="-0.63,-1.091,0" orientation="-30,0,0" />
+      </box>
+      <box id="wall_6" size="0.68,0.05,0.5" movable="false">
+         <body position="-0.63,1.091,0" orientation="30,0,0" />
+      </box>
+
+      <box id="wall_7" size="0.68,0.05,0.5" movable="false">
+         <body position="1.091,-0.63,0" orientation="60,0,0" />
+      </box>
+      <box id="wall_8" size="0.68,0.05,0.5" movable="false">
+         <body position="1.091,0.63,0" orientation="-60,0,0" />
+      </box>
+      <box id="wall_9" size="0.68,0.05,0.5" movable="false">
+         <body position="-1.091,-0.63,0" orientation="-60,0,0" />
+      </box>
+      <box id="wall_10" size="0.68,0.05,0.5" movable="false">
+         <body position="-1.091,0.63,0" orientation="60,0,0" />
+      </box>
+
+      <box id="wall_11" size="0.68,0.05,0.5" movable="false">
+         <body position="1.26,0,0" orientation="90,0,0" />
+      </box>
+      <box id="wall_12" size="0.68,0.05,0.5" movable="false">
+         <body position="-1.26,0,0" orientation="90,0,0" />
+      </box>
+
+
+      <!--distribute>
+         <position method="uniform" min="-1,-1,0" max="1,1,0" />
+         <orientation method="uniform" min="-180,0,0" max="180,0,0" />
+         <entity quantity="20" max_trials="100">
+            <e-puck id="epuck" controller="enn" />
+         </entity>
+      </distribute-->
+
+      <light id="light0" position="0,1.25,0.75" orientation="0,0,0" color="red" intensity="2.0" medium="leds"/>
+
+   </arena>
+
+   <!-- ******************* -->
+   <!-- * Physics engines * -->
+   <!-- ******************* -->
+   <physics_engines>
+      <dynamics2d id="dyn2d" />
+   </physics_engines>
+
+   <!-- ************************************ -->
+   <!-- * Arena -> Physics Engines mapping * -->
+   <!-- ************************************ -->
+    <!--arena_physics>
+        <engine id="dyn2d">
+            <entity id="epuck_[[:digit:]]*" />
+            <entity id="wall_[0-9]*"/>
+        </engine>
+    </arena_physics>
+
+   <!-- ********* -->
+   <!-- * Media * -->
+   <!-- ********* -->
+   <media>
+      <led id="leds"/>
+      <range_and_bearing id="ircom"/>
+      <range_and_bearing id="rab"/>
+   </media>
+
+   <!-- ***************** -->
+   <!-- * Visualization * -->
+   <!-- ***************** -->
+   <!--visualization /-->
+   <visualization>
+      <!-- <qt-opengl>
+         <camera>
+            <placement idx="0" position="0,0,2.5" look_at="0,0,0" lens_focal_length="20" />
+         </camera>
+      </qt-opengl> -->
+   </visualization>
+
+</argos-configuration>

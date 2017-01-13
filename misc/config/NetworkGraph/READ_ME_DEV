@@ -1,0 +1,6 @@
+Instructions pour :
+compiler -> se placer dans le dossier du projet et lancer javac -d bin src/*.java
+executer -> se placer dans le dossier du projet et lancer java -cp bin Main
+
+A améliorer :
+fixer la taille des flèches

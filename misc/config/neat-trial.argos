@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+   <!-- ************* -->
+   <!-- * Framework * -->
+   <!-- ************* -->
+   <framework>
+      <system threads="0" />
+      <experiment length="120" ticks_per_second="10"/> <!--random_seed="312"/-->
+   </framework>
+
+   <!-- *************** -->
+   <!-- * Controllers * -->
+   <!-- *************** -->
+
+   <controllers>
+      <epuck_nn_controller id="enn" library="build/controllers/epuck_nn/libepuck_nn">
+	 <actuators>
+	    <epuck_wheels implementation="default"/>
+	    <epuck_range_and_bearing implementation="medium" medium="rab" data_size="2"/>
+	 </actuators>
+
+	 <!-- Todo: need to calibrate the sensors -->
+	 <sensors>
+	    <epuck_proximity implementation="default" show_rays="false" calibrated="false"/>
+	    <epuck_light implementation="default" show_rays="true" calibrated="false"/>
+	    <epuck_ground implementation="rot_z_only" show_rays="false" calibrated="false"/>
+	    <epuck_range_and_bearing implementation="medium" medium="rab" show_rays="true" data_size="2"/>
+	 </sensors>
+
+	 <params genome_file="config/genome"/>
+      </epuck_nn_controller>
+   </controllers>
+
+   <!-- ****************** -->
+   <!-- * Loop functions * -->
+   <!-- ****************** -->
+   <!--loop_functions library="build/loop_functions/libneat_loop_function" label="neat_loop_functions"-->
+   <!--loop_functions library="build/loop_functions/libaggregation_loop_function" label="aggregation_loop_functions"-->
+   <!--loop_functions library="build/loop_functions/libobstacleAvoidance_loop_function" label="obstacleAvoidance_loop_functions"-->
+   <loop_functions library="build/loop_functions/libgoToLight_loop_function" label="goToLight_loop_functions">
+      <parameters nbEpucks="20" trial="1" radius="0.5"/>
+   </loop_functions>
+   <!-- The label is also defined in the function REGISTER_LOOP_FUNCTIONS(CNeatLoopFunctions, label) at the end of the neat_loop_function.cpp -->
+
+   <!-- ********* -->
+   <!-- * Arena * -->
+   <!-- ********* -->
+   <arena size="6, 6, 2" center="0,0,1"> <!-- center="2.5,2.5,1"-->
+      
+      <floor id="floor" source="loop_functions" pixels_per_meter="50" />
+    
+      <box id="wall_west" size="5,0.1,0.5" movable="false">
+	 <body position="0,2.5,0" orientation="0,0,0" /> <!--position="2.5,5,0"-->
+      </box>
+      <box id="wall_east" size="5,0.1,0.5" movable="false">
+	 <body position="0,-2.5,0" orientation="0,0,0" /> <!--position="2.5,0,0"-->
+      </box>
+      <box id="wall_south" size="0.1,5,0.5" movable="false">
+	 <body position="-2.5,0,0" orientation="0,0,0" /> <!--position="0,2.5,0"-->
+      </box>
+      <box id="wall_north" size="0.1,5,0.5" movable="false">
+	 <body position="2.5,0,0" orientation="0,0,0" /> <!--position="5,2.5,0"-->
+      </box>
+
+      <!-- If we use the light sensors, we are obligated to add an entity light in the arena/space -->
+      <!--light id="light" position="0,0,1" orientation="0,0,0" color="yellow" intensity="0" medium="leds" /-->
+   </arena>
+
+   <!-- ******************* -->
+   <!-- * Physics engines * -->
+   <!-- ******************* -->
+   <physics_engines>
+      <dynamics2d id="dyn2d" />
+   </physics_engines>
+
+   <!-- ********* -->
+   <!-- * Media * -->
+   <!-- ********* -->
+   <media>
+      <led id="leds"/>
+      <range_and_bearing id="rab"/>
+   </media>
+
+   <!-- ***************** -->
+   <!-- * Visualization * -->
+   <!-- ***************** -->
+   <!--visualization /-->
+   <visualization>
+      <qt-opengl>
+	 <camera>
+	    <placement idx="0" position="0,0,5" look_at="0,0,0" lens_focal_length="20" /> <!-- position="2.5,2.5,5" -->
+	 </camera>
+      </qt-opengl>
+   </visualization>
+
+</argos-configuration>

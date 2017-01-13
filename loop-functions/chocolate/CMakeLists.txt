@@ -1,0 +1,5 @@
+add_subdirectory(AAC)
+add_subdirectory(CFA)
+add_subdirectory(LCN)
+add_subdirectory(SCA)
+add_subdirectory(SPC)

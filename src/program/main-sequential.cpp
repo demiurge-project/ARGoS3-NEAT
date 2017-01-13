@@ -1,0 +1,119 @@
+// Standard C++ Library
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <math.h>
+
+// NEAT
+#include "../NEAT/experiments.h"
+
+// ARGOS
+#include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/loop_functions.h>
+#include <argos3/core/simulator/visualization/visualization.h>
+
+// Loop function
+#include "../loop-functions/neat_loop_function.h"
+
+/**
+ * Function that launches the experiment and evaluates this last one.
+ * @note: To launch your own program: you can use, for example, system("") which is a combination of fork(), exec() and waitpid().
+ */
+void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen) {
+
+   // The CSimulator class of ARGoS is a singleton.
+   static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
+
+   // Get a reference to the loop functions (the evaluation is done by the loop fct)
+   static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+
+   // Produce the different random seeds for the experiment
+   argos::CRandom::CreateCategory("neat", 1);
+   argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
+   std::vector<UInt32> vecRandomSeed;
+   for(size_t i=0; i<num_runs_per_gen; i++) {
+      vecRandomSeed.push_back( pRNG->Uniform(argos::CRange<UInt32>(0, UINT32_MAX)) );
+   }
+
+   int i=0;
+
+   for(std::vector<Organism*>::iterator itOrg = (pop.organisms).begin(); itOrg != (pop.organisms).end(); ++itOrg, ++i) {
+
+      std::cout << "\nOrganism[" << i << "]: " << std::endl;
+
+      // Set the neural network
+      cLoopFunctions.ConfigureFromNetwork(*((*itOrg)->net));
+
+      // Launch the experiment with the specified random seed, and get the score
+      double dPerformance = 0.0;
+      for(size_t j = 0; j < num_runs_per_gen; j++) {
+         std::cout << "Random seed: " << vecRandomSeed[j] << std::endl;
+         cSimulator.SetRandomSeed(vecRandomSeed[j]);
+         cSimulator.Reset();
+         cSimulator.Execute();
+         dPerformance += cLoopFunctions.GetObjectiveFunction();
+      }
+
+      // Compute the average performance
+      if(num_runs_per_gen > 0) {
+         dPerformance /= num_runs_per_gen;
+      }
+
+      // The evaluation of this network is stored in the fitness
+      (*itOrg)->fitness = dPerformance;
+
+      std::cout << "--> Average fitness = " << (*itOrg)->fitness << std::endl;
+   }
+}
+
+/**
+ * Function that launches the experiment and evaluates this last one.
+ * @note: To launch your own program: you can use, for example, system("") which is a combination of fork(), exec() and waitpid().
+ * TODO: set the random seed
+ */
+/*double launchARGoSAndEvaluate(NEAT::Network& net) {
+
+   // The CSimulator class of ARGoS is a singleton.
+   static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
+
+   // Get a reference to the loop functions (the evaluation is done by the loop fct)
+   static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+
+   // Launch the experiment with the correct network
+   cSimulator.Reset();
+   cLoopFunctions.ConfigureFromNetwork(net);
+   cSimulator.Execute();
+
+   // Return the evaluation of this network
+   return cLoopFunctions.getPerformance();
+}*/
+
+
+/**
+ * Main program.
+ */
+int main(int argc, char *argv[]) {
+
+   // Check the arguments
+   if (argc < 4) {
+      std::cerr << "Arg1: A configuration file (.argos or .xml) is required for ARGoS." << std::endl;
+      std::cerr << "Arg2: A NEAT parameters file (.ne file) is required to run the experiments." << std::endl;
+      std::cerr << "Arg3: A starter genome file is required for the creation of the initial population." << std::endl;
+      return -1;
+   }
+
+   // Initialization of ARGoS
+   argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
+   cSimulator.SetExperimentFileName(argv[1]);
+   cSimulator.LoadExperiment();
+
+   // Launch NEAT with the specified experiment
+   launchNEAT(argv[2], argv[3], launchARGoSAndEvaluate);
+   std::cout << "/*   End of evolution...   */" << std::endl;
+   std::cout << "/*   Output files writen in gen/ folder   */" << std::endl;
+   // Dispose of ARGoS stuff
+   cSimulator.Destroy();
+
+   return 0;
+}

@@ -1,0 +1,6 @@
+genomestart 1
+trait 1 0.1 0 0 0 0 0 0 0
+node 1 0 1 1
+node 3 0 0 2
+gene 1 1 3 0.0 0 1 0.0 1
+genomeend 1
