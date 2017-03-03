@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="build/loop-functions/example/libexample_aggregation_loopfunc.so"
+  <loop_functions library="../build/loop-functions/example/libexample_aggregation_loopfunc.so"
    label="example_aggregation_loop_functions">
    <params dist_radius="1.2" number_robots="5"/>
   </loop_functions>
@@ -22,7 +22,7 @@
   <controllers>
 	<!-- TRANSMITTER -->
     <epuck_nn_controller id="epuck_nn_controller"
-                        library="build/src/controllers/epuck_nn/libepuck_nn.so">
+                        library="../build/src/controllers/epuck_nn/libepuck_nn.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>

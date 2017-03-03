@@ -20,7 +20,7 @@
 #include "../loop-functions/neat_loop_function.h"
 
 #include <stdint.h>
-//#define UINT32_MAX (0xffffffff)
+#define UINT32_MAX (0xffffffff)
 
 // GLOBAL VARIABLE
 MPI::Intercomm g_com;
