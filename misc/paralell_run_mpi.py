@@ -1,5 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/python2
 
+from __future__ import print_function
 import argparse
 import subprocess
 import os
@@ -14,16 +15,15 @@ import shlex
 
 NEAT_DIR = "/home/khasselm/argos3-neat"
 
-QUEUE=short
-#MACHINE=opteron2216 #rack 1
-MACHINE=xeon5410 #rack 2
-#MACHINE=opteron6128 #rack 3
-#MACHINE=opteron6272 #rack 4
-#MACHINE=xeon2680 #rack 5
+QUEUE='short' #or 'long'
+#MACHINE='opteron2216' #rack 1
+MACHINE='xeon5410' #rack 2
+#MACHINE='opteron6128' #rack 3
+#MACHINE='opteron6272' #rack 4
+#MACHINE='xeon2680' #rack 5
 
 
-
-################# Do not change unless you know what you do ###################
+###############################################################################
 
 p = argparse.ArgumentParser(description='runs a run multiple times in paralell using mpi, python paralell_run_mpi.py')
 p.add_argument('-d', '--dir', help='the execdir', required=True)
@@ -36,15 +36,15 @@ p.add_argument('-q', '--queue', help='the queue to run to', default=QUEUE)
 
 
 def run_neat(args):
-    data = {"jobname": "neatevo-%s" % (args.dir).replace(' ',''),
+    data = {"jobname": "neatevo-%i" % os.getpid(),
             "machine": args.machine,
             "queue": args.queue,
-            "execdir": args.dir,
+            "execdir": os.path.abspath(args.dir),
             "nbjob": args.nbjobs,
             "neatdir": NEAT_DIR,
-            "experiment": args.exp,
-            "params": args.params,
-            "startgenes": args.startgenes,
+            "experiment": os.path.abspath(args.exp),
+            "params": os.path.abspath(args.params),
+            "startgenes": os.path.abspath(args.startgenes),
     }
     script = """#!/bin/bash
 #$ -N %(jobname)s
@@ -73,6 +73,7 @@ $RET=$?
 echo $RET
 exit $RET"""
     pro = subprocess.run("qsub "+(script % data), stdout=subprocess.PIPE)
+    #print("qsub "+(script % data))
 
 
 if __name__ == "__main__":
