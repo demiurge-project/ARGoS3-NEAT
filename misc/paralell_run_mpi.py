@@ -69,9 +69,15 @@ mkdir -p %(execdir)s/gen
 cd %(execdir)s
 echo "$COMMAND"
 eval $COMMAND
-RET=$?
-echo $RET
-exit $RET"""
+if [ $? -eq 0 ]
+then
+  echo "Success!"
+  exit 0
+else
+  echo "Fail!"
+  exit 1
+fi
+"""
      #pro = subprocess.call("qsub "+(script % data), shell=True)
     p = Popen("qsub -v PATH", shell=True, stdin=PIPE, stdout=PIPE, close_fds=True)
     (child_stdout, child_stdin) = (p.stdout, p.stdin)
