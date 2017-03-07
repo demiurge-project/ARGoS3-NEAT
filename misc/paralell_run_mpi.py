@@ -72,7 +72,7 @@ eval $COMMAND
 $RET=$?
 echo $RET
 exit $RET"""
-    pro = subprocess.call("qsub "+(script % data), stdout=subprocess.PIPE, shell=True)
+    pro = subprocess.call("qsub "+(script % data), shell=True)
     #print("qsub "+(script % data))
 
 
