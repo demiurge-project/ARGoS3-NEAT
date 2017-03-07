@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 import argparse
-from subprocess import Popen
+from subprocess import *
 import os
 import re
 import time
