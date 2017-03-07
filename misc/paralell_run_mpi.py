@@ -76,6 +76,7 @@ exit $RET"""
     p = Popen("qsub -v PATH", shell=True, stdin=PIPE, stdout=PIPE, close_fds=True)
     (child_stdout, child_stdin) = (p.stdout, p.stdin)
     child_stdin.write(script % data)
+    print(script % data)
     child_stdin.close()
     print('Job sended')
     print(child_stdout.read())
