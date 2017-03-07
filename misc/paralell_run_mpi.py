@@ -77,20 +77,17 @@ else
   exit 1
 fi
 """
-     #pro = subprocess.call("qsub "+(script % data), shell=True)
     p = Popen("qsub -v PATH", shell=True, stdin=PIPE, stdout=PIPE, close_fds=True)
     (child_stdout, child_stdin) = (p.stdout, p.stdin)
     child_stdin.write(script % data)
-    print(script % data)
+    #print(script % data)
     child_stdin.close()
     print('Job sended')
     print(child_stdout.read())
-    time.sleep(0.1)
-    #print("qsub "+(script % data))
-
 
 if __name__ == "__main__":
     args = p.parse_args()
     os.makedirs("%s/gen" % os.path.abspath(args.dir))
 
     run_neat(args)
+    time.sleep(0.1)
