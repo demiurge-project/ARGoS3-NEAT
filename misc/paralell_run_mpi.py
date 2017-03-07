@@ -13,7 +13,7 @@ import shlex
 
 ########################### CONFIGURATION POINTS ##############################
 
-NEAT_DIR = "/home/khasselm/argos3-neat"
+NEAT_DIR = "/home/khasselmann/neat-argos3"
 
 QUEUE='short' #or 'long'
 #MACHINE='opteron2216' #rack 1
