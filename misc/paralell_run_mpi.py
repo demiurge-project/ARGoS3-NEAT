@@ -69,7 +69,7 @@ mkdir -p %(execdir)s/gen
 cd %(execdir)s
 echo "$COMMAND"
 eval $COMMAND
-$RET=$?
+RET=$?
 echo $RET
 exit $RET"""
      #pro = subprocess.call("qsub "+(script % data), shell=True)
