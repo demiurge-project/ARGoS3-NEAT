@@ -73,7 +73,7 @@ $RET=$?
 echo $RET
 exit $RET"""
      #pro = subprocess.call("qsub "+(script % data), shell=True)
-    p = Popen("qsub -V PATH", shell=True, bufsize=bufsize, stdin=PIPE, stdout=PIPE, close_fds=True)
+    p = Popen("qsub -V PATH", shell=True, stdin=PIPE, stdout=PIPE, close_fds=True)
     (child_stdout, child_stdin) = (p.stdout, p.stdin)
     child_stdin.write(script % data)
     child_stdin.close()
