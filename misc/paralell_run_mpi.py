@@ -2,10 +2,10 @@
 
 from __future__ import print_function
 import argparse
-import subprocess
+from subprocess import Popen
 import os
 import re
-import shlex
+import time
 ###############################################################################
 # This script launches several runs in parallel in a SGE Cluster, and
 # each run is parallelized using MPI.  Execute without parameters to see usage.
@@ -72,7 +72,14 @@ eval $COMMAND
 $RET=$?
 echo $RET
 exit $RET"""
-    pro = subprocess.call("qsub "+(script % data), shell=True)
+     #pro = subprocess.call("qsub "+(script % data), shell=True)
+    p = Popen("qsub -V PATH", shell=True, bufsize=bufsize, stdin=PIPE, stdout=PIPE, close_fds=True)
+    (child_stdout, child_stdin) = (p.stdout, p.stdin)
+    child_stdin.write(script % data)
+    child_stdin.close()
+    print('Job sended')
+    print(output.read())
+    time.sleep(0.1)
     #print("qsub "+(script % data))
 
 
