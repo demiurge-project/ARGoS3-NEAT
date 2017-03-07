@@ -65,7 +65,6 @@ USERNAME=`whoami`
 NEATDIR=%(neatdir)s
 COMMAND="$NEATDIR/bin/train %(experiment)s %(params)s %(startgenes)s %(nbjob)s $NEATDIR/bin/scheduler"
 
-mkdir -p %(execdir)s/gen
 cd %(execdir)s
 echo "$COMMAND"
 eval $COMMAND
@@ -92,4 +91,6 @@ fi
 
 if __name__ == "__main__":
     args = p.parse_args()
+    os.makedirs("%s/gen" % os.path.abspath(args.dir))
+
     run_neat(args)
