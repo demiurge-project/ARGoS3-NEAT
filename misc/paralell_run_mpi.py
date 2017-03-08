@@ -27,19 +27,20 @@ MACHINE='xeon5410' #rack 2
 
 p = argparse.ArgumentParser(description='runs a run multiple times in paralell using mpi, python paralell_run_mpi.py')
 p.add_argument('-d', '--dir', help='the execdir', required=True)
-p.add_argument('-n', '--nbjobs', help='number of parallel jobs', type=int, required=True)
+p.add_argument('-n', '--nbjobs', help='number of parallel processes', type=int, required=True)
 p.add_argument('-e', '--exp', help='the experiment xml', required=True)
 p.add_argument('-p', '--params', help='the file for the parameters of the evolution', required=True)
 p.add_argument('-s', '--startgenes', help='the file for the starting genome', required=True)
-p.add_argument('-m', '--machine', help='the machine to run to', default=MACHINE)
-p.add_argument('-q', '--queue', help='the queue to run to', default=QUEUE)
+p.add_argument('-r', '--runs', help='number of runs to do (number of sequential jobs) (default=1)', type=int, default=1)
+p.add_argument('-m', '--machine', help='the machine to run to (default TBD in script)', default=MACHINE)
+p.add_argument('-q', '--queue', help='the queue to run to (default TBD in script)', default=QUEUE)
 
 
-def run_neat(args):
-    data = {"jobname": "neatevo-%i" % os.getpid(),
+def run_neat(args,run):
+    data = {"jobname": "neatevo-%i-%i" % (os.getpid(),run),
             "machine": args.machine,
             "queue": args.queue,
-            "execdir": os.path.abspath(args.dir),
+            "execdir": (os.path.abspath(args.dir)+"-%i" % run),
             "nbjob": args.nbjobs,
             "neatdir": NEAT_DIR,
             "experiment": os.path.abspath(args.exp),
@@ -87,7 +88,8 @@ fi
 
 if __name__ == "__main__":
     args = p.parse_args()
-    os.makedirs("%s/gen" % os.path.abspath(args.dir))
 
-    run_neat(args)
-    time.sleep(0.1)
+    for run in range(args.runs):
+        os.makedirs("%s/gen" % (os.path.abspath(args.dir)+"-%i" % run))
+        run_neat(args,run)
+        time.sleep(0.1)
