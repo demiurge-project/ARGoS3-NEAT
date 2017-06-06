@@ -27,7 +27,7 @@ public:
 
    /* Configures the robot controller from the network */
    void ConfigureFromNetwork(NEAT::Network& c_net);
-   
+
    /*
     * This method should return the fitness of the controller.
     */

@@ -47,7 +47,6 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Produces the different random seeds for the experiment
-   argos::CRandom::CreateCategory("neat", g_unRandomSeed);
    argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
    std::vector<UInt32> vecRandomSeed;
    for(size_t i=0; i<num_runs_per_gen; i++) {
@@ -95,7 +94,6 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
    if(num_runs_per_gen == 0) return;
 
    // Produces the different random seeds for the experiment, initialized with the clock
-   argos::CRandom::CreateCategory("neat", g_unRandomSeed);
    argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
    std::vector<UInt32> vecRandomSeed;
    for(size_t i=0; i<num_runs_per_gen; i++) {
@@ -171,12 +169,14 @@ int main(int argc, char *argv[]) {
          std::cerr << "Invalid argument: " << err.what() << std::endl;
          std::cerr << "There will be only one process!" << std::endl;
       }
-   }
+  }
 
    // Intializes the random number generator
    time_t t;
    srand((unsigned) time(&t));
    g_unRandomSeed = rand();
+
+   argos::CRandom::CreateCategory("neat", g_unRandomSeed);
 
    // Launches the program
    if(g_nbProcess > 1) { // in parallel
@@ -216,6 +216,10 @@ int main(int argc, char *argv[]) {
 
       // Disposes of ARGoS stuff
       cSimulator.Destroy();
+   }
+
+   if(CRandom::ExistsCategory("neat")) {
+      CRandom::RemoveCategory("neat");
    }
 
    return 0;

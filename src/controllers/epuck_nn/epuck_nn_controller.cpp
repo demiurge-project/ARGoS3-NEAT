@@ -36,9 +36,9 @@ CEPuckNNController::CEPuckNNController() :
 /****************************************/
 
 CEPuckNNController::~CEPuckNNController() { //TODO : check for mem leak??
-   //if(m_bTrial) {
-    //  delete m_net;
-   //} //else, it's done by neat
+   if(m_bTrial) {
+     delete m_net;
+   } //else, it's done by neat
 }
 
 /****************************************/
@@ -337,6 +337,9 @@ void CEPuckNNController::Reset() {
 /****************************************/
 
 void CEPuckNNController::Destroy() {
+  if(CRandom::ExistsCategory("epuckNNController")) {
+     CRandom::RemoveCategory("epuckNNController");
+  }
 }
 
 /****************************************/

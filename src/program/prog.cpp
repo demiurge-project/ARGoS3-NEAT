@@ -113,12 +113,19 @@ int main(int argc, char* argv[]) {
       // and evaluate the average fitness
       cLoopFunctions.ConfigureFromNetwork(*net);
       double dFitness = 0.0;
-      for(size_t j = 0; j < nNum_runs_per_gen; j++) {
-         std::cout << "ID" << id << ": Random Seed received: " << vecRandomSeed[j] << std::endl;
-         cSimulator.SetRandomSeed(vecRandomSeed[j]);
-         cSimulator.Reset();
-         cSimulator.Execute();
-         dFitness += cLoopFunctions.GetObjectiveFunction();
+      try {
+        for(size_t j = 0; j < nNum_runs_per_gen; j++) {
+          std::cout << "ID" << id << ": Random Seed received: " << vecRandomSeed[j] << std::endl;
+          cSimulator.SetRandomSeed(vecRandomSeed[j]);
+          cSimulator.Reset();
+          cSimulator.Execute();
+          dFitness += cLoopFunctions.GetObjectiveFunction();
+        }
+      } catch(...) {
+        std::cout << "ERROR: ARGoS" << std::endl;
+        std::cout << "j=" << j << std::endl;
+        std::cout << "length=" << vecRandomSeed.size() << std::endl;
+        std::cout << "seed=" << vecRandomSeed[j] << std::endl;
       }
 
       // Compute the average fitness

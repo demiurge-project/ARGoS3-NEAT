@@ -20,18 +20,18 @@
 #include <cstring>
 
 double NEAT::trait_param_mut_prob = 0;
-double NEAT::trait_mutation_power = 0; // Power of mutation on a signle trait param 
+double NEAT::trait_mutation_power = 0; // Power of mutation on a signle trait param
 double NEAT::linktrait_mut_sig = 0; // Amount that mutation_num changes for a trait change inside a link
-double NEAT::nodetrait_mut_sig = 0; // Amount a mutation_num changes on a link connecting a node that changed its trait 
-double NEAT::weight_mut_power = 0; // The power of a linkweight mutation 
-double NEAT::recur_prob = 0; // Prob. that a link mutation which doesn't have to be recurrent will be made recurrent 
+double NEAT::nodetrait_mut_sig = 0; // Amount a mutation_num changes on a link connecting a node that changed its trait
+double NEAT::weight_mut_power = 0; // The power of a linkweight mutation
+double NEAT::recur_prob = 0; // Prob. that a link mutation which doesn't have to be recurrent will be made recurrent
 double NEAT::disjoint_coeff = 0;
 double NEAT::excess_coeff = 0;
 double NEAT::mutdiff_coeff = 0;
 double NEAT::compat_threshold = 0;
-double NEAT::age_significance = 0; // How much does age matter? 
-double NEAT::survival_thresh = 0; // Percent of ave fitness for survival 
-double NEAT::mutate_only_prob = 0; // Prob. of a non-mating reproduction 
+double NEAT::age_significance = 0; // How much does age matter?
+double NEAT::survival_thresh = 0; // Percent of ave fitness for survival
+double NEAT::mutate_only_prob = 0; // Prob. of a non-mating reproduction
 double NEAT::mutate_random_trait_prob = 0;
 double NEAT::mutate_link_trait_prob = 0;
 double NEAT::mutate_node_trait_prob = 0;
@@ -41,17 +41,17 @@ double NEAT::mutate_gene_reenable_prob = 0;
 double NEAT::mutate_add_node_prob = 0;
 double NEAT::mutate_add_sensor_prob = 0.0; // NEW
 double NEAT::mutate_add_link_prob = 0;
-double NEAT::interspecies_mate_rate = 0; // Prob. of a mate being outside species 
-double NEAT::mate_multipoint_prob = 0;     
+double NEAT::interspecies_mate_rate = 0; // Prob. of a mate being outside species
+double NEAT::mate_multipoint_prob = 0;
 double NEAT::mate_multipoint_avg_prob = 0;
 double NEAT::mate_singlepoint_prob = 0;
-double NEAT::mate_only_prob = 0; // Prob. of mating without mutation 
-double NEAT::recur_only_prob = 0;  // Probability of forcing selection of ONLY links that are naturally recurrent 
-int NEAT::pop_size = 0;  // Size of population 
-int NEAT::dropoff_age = 0;  // Age where Species starts to be penalized 
-int NEAT::newlink_tries = 0;  // Number of tries mutate_add_link will attempt to find an open link 
-int NEAT::print_every = 0; // Tells to print population to file every n generations 
-int NEAT::babies_stolen = 0; // The number of babies to siphen off to the champions 
+double NEAT::mate_only_prob = 0; // Prob. of mating without mutation
+double NEAT::recur_only_prob = 0;  // Probability of forcing selection of ONLY links that are naturally recurrent
+int NEAT::pop_size = 0;  // Size of population
+int NEAT::dropoff_age = 0;  // Age where Species starts to be penalized
+int NEAT::newlink_tries = 0;  // Number of tries mutate_add_link will attempt to find an open link
+int NEAT::print_every = 0; // Tells to print population to file every n generations
+int NEAT::babies_stolen = 0; // The number of babies to siphen off to the champions
 int NEAT::num_runs = 0;
 
 /* New Parameters */
@@ -80,13 +80,13 @@ int NEAT::getUnitCount(const char *string, const char *set)
 				count++;
 				last = 0;
 				break;
-			}   
+			}
 		}
 	}
 	if(last)
 		count++;
 	return count;
-}   
+}
 
 bool NEAT::load_neat_params(const char *filename, bool output) {
 
@@ -112,94 +112,94 @@ bool NEAT::load_neat_params(const char *filename, bool output) {
 
       paramFile>>curword;
       paramFile>>NEAT::nodetrait_mut_sig;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::weight_mut_power;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::recur_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::disjoint_coeff;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::excess_coeff;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutdiff_coeff;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::compat_threshold;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::age_significance;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::survival_thresh;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_only_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_random_trait_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_link_trait_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_node_trait_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_link_weights_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_toggle_enable_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_gene_reenable_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_add_node_prob;
 
       /*paramFile >> curword;
       paramFile >> NEAT::mutate_add_sensor_prob;*/
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mutate_add_link_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::interspecies_mate_rate;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mate_multipoint_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mate_multipoint_avg_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mate_singlepoint_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::mate_only_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::recur_only_prob;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::pop_size;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::dropoff_age;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::newlink_tries;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::print_every;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::babies_stolen;
-	
+
       paramFile>>curword;
       paramFile>>NEAT::num_runs;
 
@@ -220,7 +220,7 @@ bool NEAT::load_neat_params(const char *filename, bool output) {
 
       paramFile >> curword;
       paramFile >> NEAT::elitism_percentage;
-	
+
 
     if(output) {
 	    printf("trait_param_mut_prob=%f\n",trait_param_mut_prob);

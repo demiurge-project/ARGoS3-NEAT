@@ -9,6 +9,7 @@
  */
 
 #include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/entity.h>
@@ -16,6 +17,7 @@
 //#include <argos3/core/simulator/query_plugins.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
 #include "../controllers/epuck_nn/epuck_nn_controller.h"
+#include "../loop-functions/neat_loop_function.h"
 
 using namespace argos;
 
@@ -33,18 +35,23 @@ using namespace argos;
 int main(int n_argc, char** ppch_argv) {
 
     std::string unGenome;
+    UInt32 unSeed = 0;
+
     try {
         /* Create a new instance of the simulator */
-        CSimulator& cSimulator = CSimulator::GetInstance();
+        static CSimulator& cSimulator = CSimulator::GetInstance();
+
         /* Configure the command line options */
         CARGoSCommandLineArgParser cACLAP;
         cACLAP.AddArgument<std::string>('g', "genome", "genome file for your robots", unGenome);
+        cACLAP.AddArgument<UInt32>('s', "seed", "", unSeed);
         /* Parse command line */
         cACLAP.Parse(n_argc, ppch_argv);
         switch(cACLAP.GetAction()) {
             case CARGoSCommandLineArgParser::ACTION_RUN_EXPERIMENT: {
                 CDynamicLoading::LoadAllLibraries();
                 cSimulator.SetExperimentFileName(cACLAP.GetExperimentConfigFile());
+                cSimulator.SetRandomSeed(unSeed);
                 cSimulator.LoadExperiment();
 
                 //TConfigurationNode& cConfigRoot = cSimulator.GetConfigurationRoot();
@@ -62,6 +69,11 @@ int main(int n_argc, char** ppch_argv) {
                 }
 
                 cSimulator.Execute();
+
+                static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+        				Real fObjectiveFunction = cLoopFunctions.GetObjectiveFunction();
+        				std::cout << "Score " << fObjectiveFunction << std::endl;
+
                 break;
             }
             case CARGoSCommandLineArgParser::ACTION_QUERY:

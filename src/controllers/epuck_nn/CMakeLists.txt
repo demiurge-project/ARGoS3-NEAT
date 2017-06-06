@@ -1,3 +1,5 @@
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+
 if(ARGOS_BUILD_FOR_SIMULATOR)
     # Add shared library epuck_nn
     # shared libraries are linked dynamically and loaded at runtime
