@@ -15,6 +15,8 @@
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_sensor.h>
 
+#include <argos3/demiurge/epuck-dao/EpuckDAO.h>
+
 #include "NEAT/network.h"
 #include "NEAT/genome.h"
 
@@ -44,11 +46,12 @@ public:
 
 protected:
 
+   EpuckDAO* m_pcRobotState;
+
    // Actuators
    CCI_EPuckWheelsActuator* m_pcWheels;
    CCI_EPuckRangeAndBearingActuator* m_pcRABAct;
 
-   Real m_fMaxVelocity;
    CRange<Real> m_cWheelActuationRange;
 
    // Sensors

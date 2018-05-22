@@ -16,7 +16,6 @@ NeuralNetworkRM1Dot1::NeuralNetworkRM1Dot1() {
     m_nId = -1;
     m_unTimeStep = 0;
     m_unRABTime = 10;
-    m_fMaxVelocity = 12.0;
     m_bTrial = false;
     m_mapMessages.clear();
     m_pcRNG = argos::CRandom::CreateRNG("argos");
@@ -37,56 +36,57 @@ NeuralNetworkRM1Dot1::~NeuralNetworkRM1Dot1() {
 /****************************************/
 
 void NeuralNetworkRM1Dot1::Init(TConfigurationNode& t_node) {
+  /* Reference model */
+  m_pcRobotState = new ReferenceModel1Dot1();
 
-   /* Get sensor/actuator handles */
-   try {
-      m_pcWheels = GetActuator<CCI_EPuckWheelsActuator>("epuck_wheels");
-   } catch(CARGoSException& ex) {}
+  /* Get sensor/actuator handles */
+  try {
+    m_pcWheels = GetActuator<CCI_EPuckWheelsActuator>("epuck_wheels");
+  } catch(CARGoSException& ex) {}
 
-   try {
-      m_pcRABAct = GetActuator<CCI_EPuckRangeAndBearingActuator>("epuck_range_and_bearing");
-   } catch(CARGoSException& ex) {}
+  try {
+    m_pcRABAct = GetActuator<CCI_EPuckRangeAndBearingActuator>("epuck_range_and_bearing");
+  } catch(CARGoSException& ex) {}
 
-   try {
-      m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
-   } catch(CARGoSException& ex) {}
+  try {
+    m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
+  } catch(CARGoSException& ex) {}
 
-   try {
-      m_pcLight = GetSensor<CCI_EPuckLightSensor>("epuck_light");
-   } catch(CARGoSException& ex) {}
+  try {
+    m_pcLight = GetSensor<CCI_EPuckLightSensor>("epuck_light");
+  } catch(CARGoSException& ex) {}
 
-   try {
-      m_pcGround = GetSensor<CCI_EPuckGroundSensor>("epuck_ground");
-   } catch(CARGoSException& ex) {}
+  try {
+    m_pcGround = GetSensor<CCI_EPuckGroundSensor>("epuck_ground");
+  } catch(CARGoSException& ex) {}
 
-   try {
-      m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
-   } catch(CARGoSException& ex) {}
+  try {
+    m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
+  } catch(CARGoSException& ex) {}
 
-   // Load the parameters for the neural network.
-   GetNodeAttributeOrDefault(t_node, "genome_file", m_strFile, m_strFile);
-   if(m_strFile != "") {
-      try{
-         LoadNetwork(m_strFile);
-      } catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("cannot load parameters from the genome file.", ex);
-      }
-   }
+  // Load the parameters for the neural network.
+  GetNodeAttributeOrDefault(t_node, "genome_file", m_strFile, m_strFile);
+  if(m_strFile != "") {
+    try{
+       LoadNetwork(m_strFile);
+    } catch(CARGoSException& ex) {
+       THROW_ARGOSEXCEPTION_NESTED("cannot load parameters from the genome file.", ex);
+    }
+  }
 
-   GetNodeAttributeOrDefault(t_node, "rab_time", m_unRABTime, m_unRABTime);
-   GetNodeAttributeOrDefault(t_node, "max_velocity", m_fMaxVelocity, m_fMaxVelocity);
+  GetNodeAttributeOrDefault(t_node, "rab_time", m_unRABTime, m_unRABTime);
 
-   m_cWheelActuationRange.Set(-m_fMaxVelocity, m_fMaxVelocity);
+  m_cWheelActuationRange.Set(-m_pcRobotState->GetMaxVelocity(), m_pcRobotState->GetMaxVelocity());
 
-   m_cNeuralNetworkOutputRange.Set(0.0f, 1.0f);
+  m_cNeuralNetworkOutputRange.Set(0.0f, 1.0f);
 
-   // Activate the RAB actuator (send the robot's id)
-   if(m_pcRABAct != NULL) {
-      UInt8 data[2];
-      data[0] = getRobotId();
-      data[1] = 0;
-      m_pcRABAct->SetData(data);
-   }
+  // Activate the RAB actuator (send the robot's id)
+  if(m_pcRABAct != NULL) {
+    UInt8 data[2];
+    data[0] = getRobotId();
+    data[1] = 0;
+    m_pcRABAct->SetData(data);
+  }
 }
 
 /****************************************/
@@ -96,9 +96,14 @@ void NeuralNetworkRM1Dot1::Init(TConfigurationNode& t_node) {
 void NeuralNetworkRM1Dot1::ControlStep() {
    // Get Proximity sensory data.
    if(m_pcProximity != NULL) {
-      const CCI_EPuckProximitySensor::TReadings& tProx = m_pcProximity->GetReadings();
+      const CCI_EPuckProximitySensor::TReadings& cProxiReadings = m_pcProximity->GetReadings();
+      // Feed readings to EpuckDAO which will process them as needed
+      m_pcRobotState->SetProximityInput(cProxiReadings);
+      // Collecting processed readings
+      CCI_EPuckProximitySensor::TReadings cProcessedProxiReadings = m_pcRobotState->GetProximityInput();
+      // Injecting processed readings as input of the NN
       for(size_t i=0; i<8; i++) {
-         m_inputs[i] = tProx[i].Value;
+         m_inputs[i] = cProcessedProxiReadings[i].Value;
       }
    } else {
       for(size_t i=0; i<8; i++) {

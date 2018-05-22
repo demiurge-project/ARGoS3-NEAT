@@ -13,6 +13,8 @@
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_sensor.h>
 
+// Reference Model RM1.1
+#include <argos3/demiurge/epuck-dao/ReferenceModel1Dot1.h>
 
 #include "../NEATController.h"
 
