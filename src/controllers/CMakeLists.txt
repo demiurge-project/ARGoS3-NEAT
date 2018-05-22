@@ -1,11 +1,84 @@
-# Add the header files to the search path
-include_directories(${CMAKE_SOURCE_DIR})
+if(ARGOS_BUILD_FOR_SIMULATOR)
 
-# Set libraries search path (needed for the target_link_libraries)
-link_directories(
-	${CMAKE_BINARY_DIR}/src/NEAT
-	${ARGOS_LIBRARY_DIRS}
-)
+    ############
+    # Evostick #
+    ############
 
-# Descend into the epuck_nn directory
-add_subdirectory(epuck_nn)
+    # Add shared library epuck_nn
+    # shared libraries are linked dynamically and loaded at runtime
+    add_library(nn_rm_1dot1 SHARED
+      NeuralNetworkRM1Dot1.cpp
+      NeuralNetworkRM1Dot1.h
+    )
+
+    # Link the library epuck_nn with the necessary libraries
+    target_link_libraries(nn_rm_1dot1
+      neat_controller
+      argos3core_${ARGOS_BUILD_FOR}
+      argos3plugin_${ARGOS_BUILD_FOR}_epuck
+      argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+
+
+    #########
+    # TMaze #
+    #########
+
+    #add_library(tmaze_controller SHARED
+    #  TMaze.cpp
+    #  TMaze.h
+    #)
+
+    #target_link_libraries(tmaze_controller
+    #  neat_controller
+    #  argos3core_${ARGOS_BUILD_FOR}
+    #  argos3plugin_${ARGOS_BUILD_FOR}_epuck
+    #  argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+
+
+    ######################
+    # Vectorial Evostick #
+    ######################
+
+    # Add shared library epuck_nn
+    # shared libraries are linked dynamically and loaded at runtime
+    #add_library(vectorial_evostick_controller SHARED
+    #  VectorialEvostick.cpp
+    #  VectorialEvostick.h
+    #)
+
+    # Link the library epuck_nn with the necessary libraries
+    #target_link_libraries(vectorial_evostick_controller
+    #  neat_controller
+    #  argos3core_${ARGOS_BUILD_FOR}
+    #  argos3plugin_${ARGOS_BUILD_FOR}_epuck
+    #  argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+
+
+    ###################
+    # Test Controller #
+    ###################
+
+    #add_library(test_controller SHARED
+    #  TestController.cpp
+    #  TestController.h
+    #)
+
+    #target_link_libraries(test_controller
+    #  argos3core_${ARGOS_BUILD_FOR}
+    #  argos3plugin_${ARGOS_BUILD_FOR}_epuck
+    #  argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+
+
+else()
+    # Add exec for running on epuck
+    add_executable(evostick_controller
+      Evostick.cpp
+      Evostick.h
+    )
+
+    # Link with the necessary libraries
+    target_link_libraries(evostick_controller
+      neat_controller
+      argos3plugin_${ARGOS_BUILD_FOR}_epuck)
+
+endif()

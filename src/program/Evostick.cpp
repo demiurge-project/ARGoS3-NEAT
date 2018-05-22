@@ -16,8 +16,7 @@
 #include <argos3/core/simulator/entity/controllable_entity.h>
 //#include <argos3/core/simulator/query_plugins.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
-#include "../controllers/epuck_nn/epuck_nn_controller.h"
-
+#include "../NEATController.h"
 #include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
 
 using namespace argos;
@@ -62,7 +61,7 @@ int main(int n_argc, char** ppch_argv) {
                 for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
                     CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
                     try {
-                        CEPuckNNController& cController = dynamic_cast<CEPuckNNController&> (pcEntity->GetController());
+                        CEPuckNEATController& cController = dynamic_cast<CEPuckNEATController&> (pcEntity->GetController());
                         cController.LoadNetwork(unGenome);
                     } catch (std::exception& ex) {
                         LOGERR << "Error while casting: " << ex.what() << std::endl;

@@ -15,7 +15,7 @@
 #include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
 
 // Controller
-#include "../controllers/epuck_nn/epuck_nn_controller.h"
+#include "../NEATController.h"
 
 // Loop function
 #include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
       for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
           CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
           try {
-              CEPuckNNController& cController = dynamic_cast<CEPuckNNController&>(pcEntity->GetController());
+              CEPuckNEATController& cController = dynamic_cast<CEPuckNEATController&>(pcEntity->GetController());
               cController.SetNetwork(*net);
           } catch (std::exception& ex) {
               LOGERR << "Error while setting network: " << ex.what() << std::endl;

@@ -15,24 +15,21 @@
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_sensor.h>
 
-#include "../../NEAT/network.h"
-#include "../../NEAT/genome.h"
+#include "NEAT/network.h"
+#include "NEAT/genome.h"
 
 #include <map>
 
 using namespace argos;
 
-class CEPuckNNController : public CCI_Controller {
+class CEPuckNEATController : public CCI_Controller {
 
 public:
 
-   CEPuckNNController();
-   virtual ~CEPuckNNController();
-
-   void Init(TConfigurationNode& t_node);
-   void ControlStep();
-   void Reset();
-   void Destroy();
+   virtual void Init(TConfigurationNode& t_node) = 0;
+   virtual void ControlStep() = 0;
+   virtual void Reset() = 0;
+   virtual void Destroy() = 0;
 
    void LoadNetwork(const std::string& filename);
 
@@ -45,11 +42,14 @@ public:
 
    UInt32 getRobotId();
 
-private:
+protected:
 
    // Actuators
    CCI_EPuckWheelsActuator* m_pcWheels;
    CCI_EPuckRangeAndBearingActuator* m_pcRABAct;
+
+   Real m_fMaxVelocity;
+   CRange<Real> m_cWheelActuationRange;
 
    // Sensors
    CCI_EPuckProximitySensor* m_pcProximity;
@@ -59,6 +59,7 @@ private:
 
    // Network
    NEAT::Network* m_net;
+   CRange<Real> m_cNeuralNetworkOutputRange;
 
    // Path to the genome
    std::string m_strFile;
@@ -84,7 +85,6 @@ private:
    UInt32 m_unTimeStep;
    UInt32 m_unRABTime;
 
-   double m_inputs[25];
    Real m_fLeftSpeed, m_fRightSpeed;
    bool m_bTrial;
 
@@ -97,7 +97,7 @@ private:
 };
 
 // Ground sensor samples obtained without using a light spot
-const float CEPuckNNController::m_GraySamplesLeft[4205] = {
+const float CEPuckNEATController::m_GraySamplesLeft[4205] = {
 0.339228,
 0.339228,
 0.339228,
@@ -4304,7 +4304,7 @@ const float CEPuckNNController::m_GraySamplesLeft[4205] = {
 0.535508,
 0.500488};
 
-const float CEPuckNNController::m_GraySamplesCenter[4205] = {
+const float CEPuckNEATController::m_GraySamplesCenter[4205] = {
 0.23196,
 0.23196,
 0.23196,
@@ -8511,7 +8511,7 @@ const float CEPuckNNController::m_GraySamplesCenter[4205] = {
 0.307963,
 0.284651};
 
-const float CEPuckNNController::m_GraySamplesRight[4205] = {
+const float CEPuckNEATController::m_GraySamplesRight[4205] = {
 0.872714,
 0.899225,
 0.872714,
