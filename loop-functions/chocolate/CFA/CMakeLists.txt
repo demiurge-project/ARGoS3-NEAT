@@ -1,3 +1,0 @@
-
-add_library(chocolate_cfa_loopfunc SHARED ChocolateCFALoopFunc.h ChocolateCFALoopFunc.cpp)
-target_link_libraries(chocolate_cfa_loopfunc neat_loop_function argos3plugin_${ARGOS_BUILD_FOR}_epuck)

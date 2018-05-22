@@ -17,7 +17,8 @@
 //#include <argos3/core/simulator/query_plugins.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
 #include "../controllers/epuck_nn/epuck_nn_controller.h"
-#include "../loop-functions/neat_loop_function.h"
+
+#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
 
 using namespace argos;
 
@@ -70,7 +71,7 @@ int main(int n_argc, char** ppch_argv) {
 
                 cSimulator.Execute();
 
-                static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+                CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
         				Real fObjectiveFunction = cLoopFunctions.GetObjectiveFunction();
         				std::cout << "Score " << fObjectiveFunction << std::endl;
 

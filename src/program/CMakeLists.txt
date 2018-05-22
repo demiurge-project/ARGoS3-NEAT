@@ -1,13 +1,11 @@
 # Add the header files to the search path
 include_directories(${CMAKE_SOURCE_DIR})
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-
 # Set libraries search path (needed for the target_link_libraries)
 link_directories(
 	${CMAKE_BINARY_DIR}/src/NEAT
 	${CMAKE_BINARY_DIR}/src/controllers/epuck_nn
-	${CMAKE_BINARY_DIR}/src/loop-functions
+	#${CMAKE_BINARY_DIR}/src/loop-functions
 )
 
 # Find the package MPI
@@ -33,15 +31,15 @@ if(MPI_FOUND)
 	add_executable(train main.cpp)
 
 	# Link the executable main with the necessary libraries
-	target_link_libraries(train neat epuck_nn neat_loop_function argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck ${MPI_LIBRARIES})
+	target_link_libraries(train neat epuck_nn argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck ${MPI_LIBRARIES} argos3_demiurge_loop_functions)
 
 	# Add the executable prog
 	add_executable(scheduler prog.cpp)
 	# Link the executable prog with the necessary libraries
-	target_link_libraries(scheduler neat neat_loop_function argos3core_${ARGOS_BUILD_FOR} ${MPI_LIBRARIES})
+	target_link_libraries(scheduler neat epuck_nn argos3core_${ARGOS_BUILD_FOR} ${MPI_LIBRARIES} argos3_demiurge_loop_functions)
 
 	add_executable(evostick_launch Evostick.cpp)
-	target_link_libraries(evostick_launch epuck_nn neat_loop_function argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck)
+	target_link_libraries(evostick_launch epuck_nn argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3_demiurge_loop_functions argos3_demiurge_epuck_dao)
 
 else(MPI_FOUND)
 
@@ -52,9 +50,9 @@ else(MPI_FOUND)
 	add_executable(train main-sequential.cpp)
 
 	# Link the executable main with the necessary libraries
-	target_link_libraries(train neat epuck_nn neat_loop_function argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck)
+	target_link_libraries(train neat epuck_nn argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3_demiurge_loop_functions)
 
 	add_executable(evostick_launch Evostick.cpp)
-	target_link_libraries(evostick_launch epuck_nn neat_loop_function argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck)
+	target_link_libraries(evostick_launch epuck_nn argos3core_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3_demiurge_loop_functions)
 
 endif(MPI_FOUND)

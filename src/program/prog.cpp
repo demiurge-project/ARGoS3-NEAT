@@ -12,9 +12,13 @@
 // ARGOS
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/loop_functions.h>
+#include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
+
+// Controller
+#include "../controllers/epuck_nn/epuck_nn_controller.h"
 
 // Loop function
-#include "../loop-functions/neat_loop_function.h"
+#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
 
 
 /**
@@ -39,7 +43,7 @@ int main(int argc, char* argv[]) {
    argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
    cSimulator.SetExperimentFileName(argv[2]);
    cSimulator.LoadExperiment();
-   static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Waiting for the parent to give us some work to do.
    while(true) {
@@ -111,10 +115,20 @@ int main(int argc, char* argv[]) {
 
       // Launch the experiment with the correct random seed and network,
       // and evaluate the average fitness
-      cLoopFunctions.ConfigureFromNetwork(*net);
+      CSpace::TMapPerType cEntities = cSimulator.GetSpace().GetEntitiesByType("controller");
+      for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
+          CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
+          try {
+              CEPuckNNController& cController = dynamic_cast<CEPuckNNController&>(pcEntity->GetController());
+              cController.SetNetwork(*net);
+          } catch (std::exception& ex) {
+              LOGERR << "Error while setting network: " << ex.what() << std::endl;
+          }
+      }
+
       double dFitness = 0.0;
       try {
-        for(size_t j = 0; j < nNum_runs_per_gen; j++) {
+        for(int j = 0; j < nNum_runs_per_gen; j++) {
           std::cout << "ID" << id << ": Random Seed received: " << vecRandomSeed[j] << std::endl;
           cSimulator.SetRandomSeed(vecRandomSeed[j]);
           cSimulator.Reset();

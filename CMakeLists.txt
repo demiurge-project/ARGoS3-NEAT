@@ -37,8 +37,3 @@ include(${CMAKE_SOURCE_DIR}/src/cmake/ARGoSPackaging.cmake)
 
 # Descend into the src directory
 add_subdirectory(src)
-
-if(ARGOS_BUILD_FOR_SIMULATOR)
-# Descend into the loop_functions directory
-add_subdirectory(loop-functions)
-endif()

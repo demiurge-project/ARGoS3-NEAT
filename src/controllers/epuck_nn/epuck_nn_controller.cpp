@@ -5,7 +5,7 @@
 /****************************************/
 
 static CRange<Real> NN_OUTPUT_RANGE(0.0f, 1.0f);
-static CRange<Real> WHEEL_ACTUATION_RANGE(-5.0f, 5.0f);
+static CRange<Real> WHEEL_ACTUATION_RANGE(-12.0f, 12.0f);
 
 /****************************************/
 /************* CONSTRUCTOR **************/
@@ -23,22 +23,18 @@ CEPuckNNController::CEPuckNNController() :
    m_unTimeStep(0),
    m_unRABTime(10),
    m_bTrial(false) {
-      m_mapMessages.clear();
-      time_t t;
-      /* Intializes random number generator */
-      srand((unsigned) time(&t));
-      argos::CRandom::CreateCategory("epuckNNController", rand());
-      m_pcRNG = argos::CRandom::CreateRNG("epuckNNController");
+   m_mapMessages.clear();
+    m_pcRNG = argos::CRandom::CreateRNG("argos");
 }
 
 /****************************************/
 /************** DESTRUCTOR **************/
 /****************************************/
 
-CEPuckNNController::~CEPuckNNController() { //TODO : check for mem leak??
+CEPuckNNController::~CEPuckNNController() {
    if(m_bTrial) {
      delete m_net;
-   } //else, it's done by neat
+   }
 }
 
 /****************************************/
@@ -46,7 +42,6 @@ CEPuckNNController::~CEPuckNNController() { //TODO : check for mem leak??
 /****************************************/
 
 void CEPuckNNController::Init(TConfigurationNode& t_node) {
-
    /* Get sensor/actuator handles */
    try {
       m_pcWheels = GetActuator<CCI_EPuckWheelsActuator>("epuck_wheels");
@@ -133,12 +128,13 @@ void CEPuckNNController::ControlStep() {
             m_inputs[i] = 1;
          } else { //gray
             UInt32 index = m_pcRNG->Uniform(CRange<UInt32>(0, 4204));
-            if(i == 16)
+            if(i == 16) {
                m_inputs[i] = m_GraySamplesLeft[index];
-            else if(i == 17)
+            } else if(i == 17) {
                m_inputs[i] = m_GraySamplesCenter[index];
-            else
-            m_inputs[i] = m_GraySamplesRight[index];
+            } else {
+              m_inputs[i] = m_GraySamplesRight[index];
+            }
          }
       }
    } else {

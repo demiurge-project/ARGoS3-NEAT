@@ -13,8 +13,11 @@
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/simulator/visualization/visualization.h>
 
+// Controller
+#include "../controllers/epuck_nn/epuck_nn_controller.h"
+
 // Loop function
-#include "../loop-functions/neat_loop_function.h"
+#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
 
 /**
  * Function that launches the experiment and evaluates this last one.
@@ -26,7 +29,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Get a reference to the loop functions (the evaluation is done by the loop fct)
-   static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Produce the different random seeds for the experiment
    argos::CRandom::CreateCategory("neat", 1);
@@ -43,7 +46,16 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
       std::cout << "\nOrganism[" << i << "]: " << std::endl;
 
       // Set the neural network
-      cLoopFunctions.ConfigureFromNetwork(*((*itOrg)->net));
+      CSpace::TMapPerType cEntities = cSimulator.GetSpace().GetEntitiesByType("controller");
+      for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
+          CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
+          try {
+              CEPuckNNController& cController = dynamic_cast<CEPuckNNController&>(pcEntity->GetController());
+              cController.SetNetwork(*((*itOrg)->net));
+          } catch (std::exception& ex) {
+              LOGERR << "Error while setting network: " << ex.what() << std::endl;
+          }
+      }
 
       // Launch the experiment with the specified random seed, and get the score
       double dPerformance = 0.0;
@@ -78,7 +90,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Get a reference to the loop functions (the evaluation is done by the loop fct)
-   static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Launch the experiment with the correct network
    cSimulator.Reset();

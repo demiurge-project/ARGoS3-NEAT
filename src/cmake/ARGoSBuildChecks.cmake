@@ -16,13 +16,13 @@ elseif(ARGOS_BUILD_FOR_LOCALEPUCK)
 endif()
 
 #
-# Check for Lua 5.1
+# Check for Lua 5.2
 #
 IF(NOT ARGOS_BUILD_FOR_EPUCK)
-  find_package(Lua51)
-  if(LUA51_FOUND)
+  find_package(Lua52)
+  if(LUA52_FOUND)
     include_directories(${LUA_INCLUDE_DIR})
-  endif(LUA51_FOUND)
+  endif(LUA52_FOUND)
 endif (NOT ARGOS_BUILD_FOR_EPUCK)
 
 #

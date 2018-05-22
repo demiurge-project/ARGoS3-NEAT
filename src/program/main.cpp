@@ -15,9 +15,13 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/simulator/visualization/visualization.h>
+#include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
+
+// Controller
+#include "../controllers/epuck_nn/epuck_nn_controller.h"
 
 // Loop function
-#include "../loop-functions/neat_loop_function.h"
+#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
 
 #include <stdint.h>
 #define UINT32_MAX (0xffffffff)
@@ -44,8 +48,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Gets a reference to the loop functions (the evaluation is done by the loop fct)
-   static CNeatLoopFunctions& cLoopFunctions = dynamic_cast<CNeatLoopFunctions&>(cSimulator.GetLoopFunctions());
-
+   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
    // Produces the different random seeds for the experiment
    argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
    std::vector<UInt32> vecRandomSeed;
@@ -60,7 +63,16 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
       std::cout << "\nOrganism[" << i << "]: " << std::endl;
 
       // Sets the neural network
-      cLoopFunctions.ConfigureFromNetwork(*((*itOrg)->net));
+      CSpace::TMapPerType cEntities = cSimulator.GetSpace().GetEntitiesByType("controller");
+      for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
+          CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
+          try {
+              CEPuckNNController& cController = dynamic_cast<CEPuckNNController&>(pcEntity->GetController());
+              cController.SetNetwork(*((*itOrg)->net));
+          } catch (std::exception& ex) {
+              LOGERR << "Error while setting network: " << ex.what() << std::endl;
+          }
+      }
 
       // Launches the experiment with the specified random seed, and get the score
       double dPerformance = 0.0;
