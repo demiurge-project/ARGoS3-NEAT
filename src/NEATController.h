@@ -86,7 +86,6 @@ protected:
    SInt32 m_nId;
    std::map<UInt32, RBPacket> m_mapMessages;
    UInt32 m_unTimeStep;
-   UInt32 m_unRABTime;
 
    Real m_fLeftSpeed, m_fRightSpeed;
    bool m_bTrial;
