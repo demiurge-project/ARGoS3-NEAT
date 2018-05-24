@@ -37,11 +37,22 @@ void CEPuckNEATController::Init(TConfigurationNode& t_node) {
     } catch(CARGoSException& ex) {
        THROW_ARGOSEXCEPTION_NESTED("cannot load parameters from the genome file.", ex);
     }
+  } else {
+    LOGERR << "Warning: no genome file specified in .argos" << std::endl;
+  }
+
+}
+
+/****************************************/
+/****************************************/
+
+CEPuckNEATController::~CEPuckNEATController() {
+  for (UInt8 i = 0; i < m_cNetworkVector.size(); i++) {
+    delete m_cNetworkVector.at(i);
   }
 }
 
 /****************************************/
-/************ LOAD NETWORK **************/
 /****************************************/
 
 void CEPuckNEATController::LoadNetwork(const std::string& filename) {
@@ -64,8 +75,8 @@ void CEPuckNEATController::LoadNetwork(const std::string& filename) {
       iFile >> id;
       NEAT::Genome* g = new NEAT::Genome(id,iFile);
       m_net = g->genesis(g->genome_id);
+      m_cNetworkVector.push_back(m_net);
       delete g;
-      m_bTrial = true;
    } else {
       THROW_ARGOSEXCEPTION("Cannot open genome file '" << filename << "' for reading");
    }
@@ -76,7 +87,6 @@ void CEPuckNEATController::LoadNetwork(const std::string& filename) {
 }
 
 /****************************************/
-/************** DISPLAY *****************/
 /****************************************/
 
 void CEPuckNEATController::Display(int i) {
@@ -105,6 +115,9 @@ void CEPuckNEATController::Display(int i) {
 
    LOG << "wheels: (" << m_fLeftSpeed << ", " << m_fRightSpeed << ")." << std::endl;
 }
+
+/****************************************/
+/****************************************/
 
 void CEPuckNEATController::DisplayNetwork() {
    // Some variables

@@ -28,6 +28,8 @@ class CEPuckNEATController : public CCI_Controller {
 
 public:
 
+   virtual ~CEPuckNEATController();
+
    virtual void Init(TConfigurationNode& t_node) = 0;
    virtual void ControlStep() = 0;
    virtual void Reset() = 0;
@@ -63,6 +65,7 @@ protected:
    // Network
    NEAT::Network* m_net;
    CRange<Real> m_cNeuralNetworkOutputRange;
+   std::vector<NEAT::Network*> m_cNetworkVector;
 
    // Path to the genome
    std::string m_strFile;
@@ -88,7 +91,6 @@ protected:
    UInt32 m_unTimeStep;
 
    Real m_fLeftSpeed, m_fRightSpeed;
-   bool m_bTrial;
 
    argos::CRandom::CRNG* m_pcRNG;
 

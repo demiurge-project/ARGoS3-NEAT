@@ -15,7 +15,6 @@ NeuralNetworkRM1Dot1::NeuralNetworkRM1Dot1() {
     m_net = NULL;
     m_nId = -1;
     m_unTimeStep = 0;
-    m_bTrial = false;
     m_mapMessages.clear();
     m_pcRNG = argos::CRandom::CreateRNG("argos");
 }
@@ -25,9 +24,7 @@ NeuralNetworkRM1Dot1::NeuralNetworkRM1Dot1() {
 /****************************************/
 
 NeuralNetworkRM1Dot1::~NeuralNetworkRM1Dot1() {
-   if(m_bTrial) {
-     delete m_net;
-   }
+   delete m_pcRobotState;
 }
 
 /****************************************/
@@ -39,7 +36,7 @@ void NeuralNetworkRM1Dot1::Init(TConfigurationNode& t_node) {
 
   /* Reference model */
   m_pcRobotState = new ReferenceModel1Dot1();
-
+  m_pcRobotState->SetRobotIdentifier(getRobotId());
   m_cWheelActuationRange.Set(-m_pcRobotState->GetMaxVelocity(), m_pcRobotState->GetMaxVelocity());
 
   m_cNeuralNetworkOutputRange.Set(0.0f, 1.0f);
@@ -180,7 +177,6 @@ void NeuralNetworkRM1Dot1::Reset() {
 /****************************************/
 /****************************************/
 
-void NeuralNetworkRM1Dot1::Destroy() {
-}
+void NeuralNetworkRM1Dot1::Destroy() {}
 
 REGISTER_CONTROLLER(NeuralNetworkRM1Dot1, "nn_rm_1dot1_controller")
