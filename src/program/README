@@ -5,7 +5,7 @@
 In this directory, you will find at least:
 
 * CMakeLists: file containing the cmake instructions.
-* main-sequential: Main program that does the link between NEAT (the evolutionary process) and ARGoS (the robot simulator in which the experiment is launched). It can only launch the experiment sequentially.
+* evolution-sequential: Main program that does the link between NEAT (the evolutionary process) and ARGoS (the robot simulator in which the experiment is launched). It can only launch the experiment sequentially.
 * main: Main program that does the link between NEAT (the evolutionary process) and ARGoS (the robot simulator in which the experiment is launched). It can launch the experiment in parallel or sequentially.
 * prog: If the program is launched in parallel, each child process will execute this program.
 * Evostick : is the argos wrapper that can handle genome file arguments
@@ -22,4 +22,3 @@ launchNEAT(…) is a method that expects at least 3 arguments: the neat paramete
 Your method should accept only one parameter NEAT::Network& or NEAT::Population&.
 -> If your method has NEAT::Network& as a parameter: you should, after launching the experiment and evaluating this network on it, return the fitness value.
 -> If your method has NEAT::Population& as a parameter: you should launch the experiment for each organism and evaluate each one of them. Your method doesn’t need to return anything.
-

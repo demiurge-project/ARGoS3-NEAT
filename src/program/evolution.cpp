@@ -14,6 +14,7 @@
 // ARGOS
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/loop_functions.h>
+#include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
 
@@ -220,6 +221,7 @@ int main(int argc, char *argv[]) {
 
       // Initialization of ARGoS
       argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
+      argos::CDynamicLoading::LoadAllLibraries();
       cSimulator.SetExperimentFileName(argv[1]);
       cSimulator.LoadExperiment();
 

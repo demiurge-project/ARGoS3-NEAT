@@ -158,20 +158,19 @@ void NeuralNetworkRM1Dot1::ControlStep() {
 /****************************************/
 
 void NeuralNetworkRM1Dot1::Reset() {
-   // Reinit the network: Puts the network back into an inactive state
-   // LOG << "RESET" << std::endl;
-   /*if(m_net != NULL) {
-      m_net->flush();
-   }*/
-   m_unTimeStep = 0;
-   m_mapMessages.clear();
-   // Activate the RAB actuator (send the robot's id)
-   if(m_pcRABAct != NULL) {
-      UInt8 data[2];
-      data[0] = getRobotId();
-      data[1] = 0;
-      m_pcRABAct->SetData(data);
-   }
+  // Reinit the network: Puts the network back into an inactive state
+  if (m_net != NULL) {
+    m_net->flush();
+  }
+  m_unTimeStep = 0;
+  m_pcRobotState->Reset();
+  // Activate the RAB actuator (send the robot's id)
+  if(m_pcRABAct != NULL) {
+    UInt8 data[2];
+    data[0] = getRobotId();
+    data[1] = 0;
+    m_pcRABAct->SetData(data);
+  }
 }
 
 /****************************************/

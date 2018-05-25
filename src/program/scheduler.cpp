@@ -12,6 +12,7 @@
 // ARGOS
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/loop_functions.h>
+#include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
 
 // Controller
@@ -41,6 +42,7 @@ int main(int argc, char* argv[]) {
 
    // Initialization of ARGoS
    argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
+   argos::CDynamicLoading::LoadAllLibraries();
    cSimulator.SetExperimentFileName(argv[2]);
    cSimulator.LoadExperiment();
    static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
@@ -72,7 +74,7 @@ int main(int argc, char* argv[]) {
       char *buf = new char[l];
       parent_comm.Recv(buf, l, MPI::CHAR, 0, 1, status);
       std::string strGenome(buf, l);
-      delete [] buf;
+      delete[] buf;
 
       // Deserialize: String -> Genome
       std::vector<NEAT::Trait*> vecTraits;
