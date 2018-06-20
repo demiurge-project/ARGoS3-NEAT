@@ -118,14 +118,29 @@ void NeuralNetworkRM1Dot1::ControlStep() {
       const CCI_EPuckRangeAndBearingSensor::TPackets& cRABReadings = m_pcRAB->GetPackets();
       m_pcRobotState->SetRangeAndBearingMessages(cRABReadings);
 
-      CVector2 cCenterOfMassDirection = m_pcRobotState->GetNeighborsCenterOfMass();
+      CCI_EPuckRangeAndBearingSensor::TPackets sLastPackets = m_pcRobotState->GetRangeAndBearingMessages();
+      CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
+      CVector2 cVectorCenterOfMass(0,CRadians::ZERO);
+
+      // Center of mass
+      UInt32 unNbrSamples = 0;
+      for (it = sLastPackets.begin(); it != sLastPackets.end(); it++) {
+        if ((*it)->Data[0] != (UInt8) m_pcRobotState->GetRobotIdentifier()) {
+          cVectorCenterOfMass += CVector2((*it)->Range,(*it)->Bearing.SignedNormalize());
+          unNbrSamples += 1;
+        }
+      }
+      if (unNbrSamples > 0) {
+        cVectorCenterOfMass = cVectorCenterOfMass / unNbrSamples;
+      }
+
       UInt8 unNumberNeighbors = m_pcRobotState->GetNumberNeighbors();
 
       // Set the RAB input of the NN
       m_inputs[19] = 1 - (2 / (1 + exp(unNumberNeighbors))); // Saturate at 5, and is in [0,1]
       for(int i = 20; i < 24; i++) {
          CRadians cDirection = CRadians::PI*(2*(i-20) + 1)/4;
-         Real value = cCenterOfMassDirection.DotProduct(CVector2(1.0, cDirection));
+         Real value = cVectorCenterOfMass.DotProduct(CVector2(1.0, cDirection));
          m_inputs[i] = (value > 0 ? value : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
    } else {
