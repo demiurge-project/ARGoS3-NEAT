@@ -1,10 +1,11 @@
 # Add the header files to the search path
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS})
 
 # Set libraries search path (needed for the target_link_libraries)
 link_directories(
 	${CMAKE_BINARY_DIR}/src/NEAT
 	${CMAKE_BINARY_DIR}/src/controllers/epuck_nn
+    ${ARGOS_LIBRARY_DIRS}
 )
 
 # Add the shared library neat_loop_function
@@ -19,6 +20,7 @@ target_link_libraries(neat_loop_function
   argos3plugin_simulator_dynamics2d
   argos3plugin_simulator_entities
   argos3plugin_simulator_epuck
+  argos3plugin_simulator_arena
   argos3plugin_simulator_genericrobot
   argos3plugin_simulator_media)
 

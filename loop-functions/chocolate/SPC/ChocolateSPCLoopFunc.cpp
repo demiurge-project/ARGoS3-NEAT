@@ -47,7 +47,7 @@ void ChocolateSPCLoopFunction::Destroy() {}
 /****************************************/
 
 void ChocolateSPCLoopFunction::Reset() {
-  CNeatLoopFunctions::Reset();
+  AutoMoDeLoopFunctions::Reset();
 }
 
 /****************************************/

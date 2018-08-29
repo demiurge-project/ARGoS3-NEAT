@@ -40,7 +40,7 @@ void ChocolateAACLoopFunction::Destroy() {}
 
 void ChocolateAACLoopFunction::Reset() {
   m_fObjectiveFunction = 0;
-  CNeatLoopFunctions::Reset();
+  AutoMoDeLoopFunctions::Reset();
 }
 
 /****************************************/

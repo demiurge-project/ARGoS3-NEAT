@@ -38,6 +38,16 @@ void ExampleAggregationLoopFunction::Destroy() {}
 /****************************************/
 /****************************************/
 
+void ExampleAggregationLoopFunction::Reset() {
+  m_fObjectiveFunction = 0;
+  m_unScoreSpot = 0;
+  AutoMoDeLoopFunctions::Reset();
+}
+
+
+/****************************************/
+/****************************************/
+
 argos::CColor ExampleAggregationLoopFunction::GetFloorColor(const argos::CVector2& c_position_on_plane) {
   CVector2 vCurrentPoint(c_position_on_plane.GetX(), c_position_on_plane.GetY());
   Real d = (m_cCoordBlackSpot - vCurrentPoint).Length();
@@ -51,10 +61,14 @@ argos::CColor ExampleAggregationLoopFunction::GetFloorColor(const argos::CVector
 /****************************************/
 /****************************************/
 
-void ExampleAggregationLoopFunction::Reset() {
-    m_fObjectiveFunction = 0;
-    m_unScoreSpot = 0;
-    CNeatLoopFunctions::Reset();
+void ExampleAggregationLoopFunction::PostStep() {
+    CBoxEntity* pcBox;
+    CSpace::TMapPerType& tBoxMap = GetSpace().GetEntitiesByType("box");
+    for (CSpace::TMapPerType::iterator it = tBoxMap.begin(); it != tBoxMap.end(); ++it) {
+      pcBox = any_cast<CBoxEntity*>(it->second);
+      CLEDEquippedEntity& pcLED = pcBox->GetLEDEquippedEntity();
+      pcLED.SetAllLEDsColors(CColor::RED);
+    }
 }
 
 /****************************************/
@@ -73,9 +87,12 @@ void ExampleAggregationLoopFunction::PostExperiment() {
       m_unScoreSpot += 1;
     }
   }
+
   m_fObjectiveFunction = m_unScoreSpot / (Real) m_unNumberRobots;
-  LOG << "FITNESS = " << m_fObjectiveFunction << std::endl;
+
+  LOG << m_fObjectiveFunction << std::endl;
 }
+
 
 /****************************************/
 /****************************************/
@@ -104,6 +121,5 @@ CVector3 ExampleAggregationLoopFunction::GetRandomPosition() {
   Real fPosY = b * m_fDistributionRadius * sin(2 * CRadians::PI.GetValue() * (a/b));
   return CVector3(fPosX, fPosY, 0);
 }
-
 
 REGISTER_LOOP_FUNCTIONS(ExampleAggregationLoopFunction, "example_aggregation_loop_functions");

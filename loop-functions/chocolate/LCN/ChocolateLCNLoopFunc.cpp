@@ -40,7 +40,7 @@ void ChocolateLCNLoopFunction::Destroy() {}
 /****************************************/
 
 void ChocolateLCNLoopFunction::Reset() {
-  CNeatLoopFunctions::Reset();
+  AutoMoDeLoopFunctions::Reset();
 }
 
 /****************************************/

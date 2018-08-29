@@ -2,9 +2,12 @@
 #include "../controllers/epuck_nn/epuck_nn_controller.h"
 
 /* ARGoS-related headers */
+#include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
+#include <argos3/plugins/simulator/entities/box_entity.h>
+#include <argos3/plugins/robots/arena/simulator/arena_entity.h>
 
 /* NEAT */
 #include "../NEAT/neat.h"
@@ -38,9 +41,44 @@ public:
     */
    virtual CVector3 GetRandomPosition() = 0;
 
+   /*
+    * Return the radious of the arena.
+    */
+   Real GetArenaRadious();
+
 protected:
-    /* Move/Place randomly the epucks in the arena */
-    void MoveRobots();
+
+   /*
+    * Method used to remove the robots from the arena.
+    */
+   void RemoveRobots();
+
+   /*
+    * Method used to reallocate the robots.
+    * The position is given by the method GetRandomPosition().
+    */
+   void MoveRobots();
+
+   /*
+    * Method used to create and distribute the robots.
+    * The position is given by the method GetRandomPosition().
+    */
+   void PositionRobots();
+
+   /*
+    * Method used to create and distribute the Arena.
+    */
+   void PositionArena();
+
+   /*
+    * Method used to remove the arena from the arena.
+    */
+   void RemoveArena();
+
+   /*
+    * Method used to deternmine wheter a number is even.
+    */
+   bool IsEven(UInt32 unNumber);
 
     // Range of the arena.
     CRange<Real> m_cArenaSideX, m_cArenaSideY;
@@ -60,12 +98,51 @@ protected:
     */
     Real m_fDistributionRadius;
 
+    /*
+     * Build the arena with the arena_entity plugin.
+     */
+    bool m_bBuildArena;
+
+    /*
+     * The number of edges in the arena used in the experiment.
+     */
+    UInt32 m_unNumberEdges;
+
+    /*
+     * The number of boxes in each edge of the arena used in the experiment.
+     */
+    UInt32 m_unNumberBoxes;
+
+    /*
+     * The lenght of the boxes used in the experiment.
+     */
+    Real m_fLenghtBoxes;
+
+    /*
+     * The arena used in the experiment.
+     */
+    CArenaEntity* m_pcArena;
+
     CRandom::CRNG* m_pcRng;
+
+    /*
+     * Selector of the piecewise function configuration
+     */
+    UInt32 m_unPwConfig;
+
+    /*
+     * Selector of the piecewise experiment
+     */
+    UInt32 m_unPwExp;
+
+    /*
+     * Transition time in piecewise experiments
+     */
+    UInt32 m_unPwTime;
+
 
     int m_nTrial;
 
-    void PositionRobots();
-    void RemoveRobots();
     // Vector of Epuck controllers.
     std::vector<CEPuckNNController*> m_pvecControllers;
 

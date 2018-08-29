@@ -13,14 +13,14 @@
 #ifndef CHOCOLATE_LCN_LOOP_FUNC_H
 #define CHOCOLATE_LCN_LOOP_FUNC_H
 
-#include "../../../src/loop-functions/neat_loop_function.h"
+#include "../../../src/core/AutoMoDeLoopFunctions.h"
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
 #include <limits>
 
 using namespace argos;
 
-class ChocolateLCNLoopFunction : public CNeatLoopFunctions {
+class ChocolateLCNLoopFunction : public AutoMoDeLoopFunctions {
 
    public:
       ChocolateLCNLoopFunction();

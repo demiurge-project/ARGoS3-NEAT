@@ -20,6 +20,7 @@ CNeatLoopFunctions::CNeatLoopFunctions() :
 /****************************************/
 
 CNeatLoopFunctions::~CNeatLoopFunctions() {
+    RemoveArena();
 }
 
 /****************************************/
@@ -32,9 +33,21 @@ void CNeatLoopFunctions::Init(TConfigurationNode& t_tree) {
     try {
       cParametersNode = GetNode(t_tree, "params");
       GetNodeAttributeOrDefault(cParametersNode, "number_robots", m_unNumberRobots, (UInt32) 1);
-      GetNodeAttributeOrDefault(cParametersNode, "dist_radius", m_fDistributionRadius, (Real) 0);
+      GetNodeAttributeOrDefault(cParametersNode, "build_arena", m_bBuildArena, (bool) false);
+      GetNodeAttributeOrDefault(cParametersNode, "number_edges", m_unNumberEdges, (UInt32) 3);
+      GetNodeAttributeOrDefault(cParametersNode, "number_boxes_per_edge", m_unNumberBoxes, (UInt32) 1);
+      GetNodeAttributeOrDefault(cParametersNode, "lenght_boxes", m_fLenghtBoxes, (Real) 0.20);
+      GetNodeAttributeOrDefault(cParametersNode, "piecewise_config", m_unPwConfig, (UInt32) 0);
+      GetNodeAttributeOrDefault(cParametersNode, "piecewise_exp", m_unPwExp, (UInt32) 0);
+      GetNodeAttributeOrDefault(cParametersNode, "piecewise_time", m_unPwTime, (UInt32) 1200);
     } catch(std::exception e) {
       LOGERR << e.what() << std::endl;
+    }
+
+    if (m_bBuildArena == true)
+    {
+        m_fDistributionRadius = GetArenaRadious();
+        PositionArena();
     }
    // Add the robots in the space.
    PositionRobots();
@@ -132,6 +145,59 @@ void CNeatLoopFunctions::RemoveRobots() {
     id << "epuck" << i;
     RemoveEntity(id.str().c_str());
   }
+}
+
+/****************************************/
+/****************************************/
+
+void CNeatLoopFunctions::PositionArena() {
+  CArenaEntity* pcArena;
+    pcArena = new CArenaEntity("arena",
+                               CVector3(0,0,0),
+                               CQuaternion().FromEulerAngles(CRadians::ZERO,CRadians::ZERO,CRadians::ZERO), // TODO
+                               CVector3(0.01,m_fLenghtBoxes,0.1),
+                               "leds",
+                               m_unNumberBoxes,
+                               m_unNumberEdges,
+                               0.017f,
+                               1.0f);
+    AddEntity(*pcArena);
+    m_pcArena = pcArena;
+}
+
+/****************************************/
+/****************************************/
+
+void CNeatLoopFunctions::RemoveArena() {
+    std::ostringstream id;
+    id << "arena";
+    RemoveEntity(id.str().c_str());
+}
+
+/****************************************/
+/****************************************/
+
+Real CNeatLoopFunctions::GetArenaRadious() {
+
+    Real fRadious;
+    fRadious =  (m_fLenghtBoxes*m_unNumberBoxes) / (2 * Tan(CRadians::PI / m_unNumberEdges));
+    //fRadious = fRadious - 0.10; // Avoids to place robots close the walls.
+    fRadious = fRadious - 0.65; // Reduced cluster at the begining
+
+    return fRadious;
+}
+
+/****************************************/
+/****************************************/
+
+bool CNeatLoopFunctions::IsEven(UInt32 unNumber) {
+    bool even;
+    if((unNumber%2)==0)
+       even = true;
+    else
+       even = false;
+
+    return even;
 }
 
 /****************************************/

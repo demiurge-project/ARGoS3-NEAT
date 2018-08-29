@@ -34,7 +34,6 @@ ChocolateSCALoopFunction::ChocolateSCALoopFunction(const ChocolateSCALoopFunctio
 ChocolateSCALoopFunction::~ChocolateSCALoopFunction() {}
 
 /****************************************/
-/****************************************/
 
 /****************************************/
 void ChocolateSCALoopFunction::Destroy() {}
@@ -44,14 +43,14 @@ void ChocolateSCALoopFunction::Destroy() {}
 
 void ChocolateSCALoopFunction::Reset() {
   m_fObjectiveFunction = 0;
-  CNeatLoopFunctions::Reset();
+  AutoMoDeLoopFunctions::Reset();
 }
 
 /****************************************/
 /****************************************/
 
 void ChocolateSCALoopFunction::Init(TConfigurationNode& t_tree) {
-  CNeatLoopFunctions::Init(t_tree);
+  AutoMoDeLoopFunctions::Init(t_tree);
 
   CQuaternion angleWall;
 

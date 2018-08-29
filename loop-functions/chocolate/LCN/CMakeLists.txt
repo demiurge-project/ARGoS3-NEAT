@@ -1,2 +1,2 @@
 add_library(chocolate_lcn_loopfunc SHARED ChocolateLCNLoopFunc.h ChocolateLCNLoopFunc.cpp)
-target_link_libraries(chocolate_lcn_loopfunc neat_loop_function argos3plugin_${ARGOS_BUILD_FOR}_epuck)
+target_link_libraries(chocolate_lcn_loopfunc argos3plugin_${ARGOS_BUILD_FOR}_epuck)

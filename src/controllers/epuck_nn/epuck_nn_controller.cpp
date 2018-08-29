@@ -18,6 +18,7 @@ CEPuckNNController::CEPuckNNController() :
    m_pcLight(NULL),
    m_pcGround(NULL),
    m_pcRAB(NULL),
+   m_pcOmniCam(NULL),
    m_net(NULL),
    m_nId(-1),
    m_unTimeStep(0),
@@ -26,9 +27,7 @@ CEPuckNNController::CEPuckNNController() :
       m_mapMessages.clear();
       time_t t;
       /* Intializes random number generator */
-      srand((unsigned) time(&t));
-      argos::CRandom::CreateCategory("epuckNNController", rand());
-      m_pcRNG = argos::CRandom::CreateRNG("epuckNNController");
+      m_pcRNG = argos::CRandom::CreateRNG("argos");
 }
 
 /****************************************/
@@ -57,6 +56,10 @@ void CEPuckNNController::Init(TConfigurationNode& t_node) {
    } catch(CARGoSException& ex) {}
 
    try {
+       m_pcLEDsActuator = GetActuator<CCI_EPuckRGBLEDsActuator>("epuck_rgb_leds");
+    } catch(CARGoSException& ex) {}
+
+   try {
       m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
    } catch(CARGoSException& ex) {}
 
@@ -70,6 +73,10 @@ void CEPuckNNController::Init(TConfigurationNode& t_node) {
 
    try {
       m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
+   } catch(CARGoSException& ex) {}
+
+   try {
+      m_pcOmniCam = GetSensor<CCI_EPuckOmnidirectionalCameraSensor>("epuck_omni_cam");
    } catch(CARGoSException& ex) {}
 
    // Load the parameters for the neural network.
@@ -201,8 +208,114 @@ void CEPuckNNController::ControlStep() {
       }
    }
 
+   // Get Ground sensory data.
+   if(m_pcOmniCam != NULL) {
+
+      const CCI_EPuckOmnidirectionalCameraSensor::SReadings& sOmniCam = m_pcOmniCam->GetReadings();
+
+      CCI_EPuckOmnidirectionalCameraSensor::TBlobList::const_iterator it;
+
+      SInt32 sR15BlobCounter = 0;
+      SInt32 sG15BlobCounter = 0;
+      SInt32 sB15BlobCounter = 0;
+      SInt32 sY15BlobCounter = 0;
+      SInt32 sM15BlobCounter = 0;
+      SInt32 sC15BlobCounter = 0;
+
+      SInt32 sR30BlobCounter = 0;
+      SInt32 sG30BlobCounter = 0;
+      SInt32 sB30BlobCounter = 0;
+      SInt32 sY30BlobCounter = 0;
+      SInt32 sM30BlobCounter = 0;
+      SInt32 sC30BlobCounter = 0;
+
+      for (it = sOmniCam.BlobList.begin(); it != sOmniCam.BlobList.end(); it++) {
+
+          if ((*it)->Color == CColor::RED) {
+              if ((*it)->Distance <= 30){
+                  sR30BlobCounter++;
+                  if ((*it)->Distance <= 15){
+                      sR15BlobCounter++;
+                  }
+              }
+          }
+
+          if ((*it)->Color == CColor::GREEN) {
+              if ((*it)->Distance <= 30){
+                  sG30BlobCounter++;
+                  if ((*it)->Distance <= 15){
+                      sG15BlobCounter++;
+                  }
+              }
+          }
+
+          if ((*it)->Color == CColor::BLUE) {
+              if ((*it)->Distance <= 30){
+                  sB30BlobCounter++;
+                  if ((*it)->Distance <= 15){
+                      sB15BlobCounter++;
+                  }
+              }
+          }
+
+          if ((*it)->Color == CColor::YELLOW) {
+              if ((*it)->Distance <= 30){
+                  sY30BlobCounter++;
+                  if ((*it)->Distance <= 15){
+                      sY15BlobCounter++;
+                  }
+              }
+          }
+
+          if ((*it)->Color == CColor::MAGENTA) {
+              if ((*it)->Distance <= 30){
+                  sM30BlobCounter++;
+                  if ((*it)->Distance <= 15){
+                      sM15BlobCounter++;
+                  }
+              }
+          }
+
+          if ((*it)->Color == CColor::CYAN) {
+              if ((*it)->Distance <= 30){
+                  sC30BlobCounter++;
+                  if ((*it)->Distance <= 15){
+                      sC15BlobCounter++;
+                  }
+              }
+          }
+      }
+
+      m_inputs[24] = (1/(1 + exp(5 * (3 - sR15BlobCounter))));
+      m_inputs[25] = (1/(1 + exp(5 * (3 - sR30BlobCounter))));
+
+      m_inputs[26] = (1/(1 + exp(5 * (3 - sG15BlobCounter))));
+      m_inputs[27] = (1/(1 + exp(5 * (3 - sG30BlobCounter))));
+
+      m_inputs[28] = (1/(1 + exp(5 * (3 - sB15BlobCounter))));
+      m_inputs[29] = (1/(1 + exp(5 * (3 - sB30BlobCounter))));
+
+      m_inputs[30] = (1/(1 + exp(5 * (3 - sY15BlobCounter))));
+      m_inputs[31] = (1/(1 + exp(5 * (3 - sY30BlobCounter))));
+
+      m_inputs[32] = (1/(1 + exp(5 * (3 - sM15BlobCounter))));
+      m_inputs[33] = (1/(1 + exp(5 * (3 - sM30BlobCounter))));
+
+      m_inputs[34] = (1/(1 + exp(5 * (3 - sC15BlobCounter))));
+      m_inputs[35] = (1/(1 + exp(5 * (3 - sC30BlobCounter))));
+
+      //
+
+   } else {
+      for(size_t i=24; i<36; i++) {
+         m_inputs[i] = 0;
+      }
+   }
+
+   //TODOOOO DAGR the number of inputs
+
    // Bias Unit
-   m_inputs[24] = 1;
+   m_inputs[36] = 1;
 
    // Feed the network with those inputs
    m_net->load_sensors((double*)m_inputs);
@@ -217,12 +330,18 @@ void CEPuckNNController::ControlStep() {
       m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
    }
 
+    // Apply NN outputs to actuation. The NN outputs are in the range [0,1], we remap this range into [-5:5] linearly.
+   if (m_pcLEDsActuator != NULL) {
+
+       m_pcLEDsActuator->SetColors();
+   }
+
    m_unTimeStep++;
    //Display(1);
 }
 
 /****************************************/
-/************ LOAD NETWORK **************/
+/************ LOAD NETWORK **************/
 /****************************************/
 
 void CEPuckNNController::LoadNetwork(const std::string& filename) {

@@ -11,13 +11,14 @@
 #ifndef EXAMPLE_AGGREGATION_LOOP_FUNC
 #define EXAMPLE_AGGREGATION_LOOP_FUNC
 
-#include "../../src/loop-functions/neat_loop_function.h"
+#include "../../src/core/AutoMoDeLoopFunctions.h"
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
 
+
 using namespace argos;
 
-class ExampleAggregationLoopFunction: public CNeatLoopFunctions {
+class ExampleAggregationLoopFunction: public AutoMoDeLoopFunctions {
   public:
     ExampleAggregationLoopFunction();
     ExampleAggregationLoopFunction(const ExampleAggregationLoopFunction& orig);
@@ -28,6 +29,7 @@ class ExampleAggregationLoopFunction: public CNeatLoopFunctions {
 
     virtual argos::CColor GetFloorColor(const argos::CVector2& c_position_on_plane);
     virtual void PostExperiment();
+    virtual void PostStep();
 
     Real GetObjectiveFunction();
 

@@ -1,11 +1,11 @@
 # Set up ARGoS compilation information
-# Add the header files to the search path
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS})
+link_directories(${ARGOS_LIBRARY_DIRS})
 
-# Set libraries search path (needed for the target_link_libraries)
-link_directories(
-	${CMAKE_BINARY_DIR}/src/loop-functions
-)
-
-add_subdirectory(example)
-add_subdirectory(chocolate)
+# add_subdirectory(example)
+# add_subdirectory(chocolate)
+# add_subdirectory(foraging)
+# add_subdirectory(colors)
+# add_subdirectory(piecewise)
+#add_subdirectory(icra)
+add_subdirectory(adaptation)

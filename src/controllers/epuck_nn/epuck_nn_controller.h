@@ -9,11 +9,13 @@
 
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_wheels_actuator.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_actuator.h>
+#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_rgb_leds_actuator.h>
 
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_proximity_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_light_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_sensor.h>
+#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_omnidirectional_camera_sensor.h>
 
 #include "../../NEAT/network.h"
 #include "../../NEAT/genome.h"
@@ -50,12 +52,14 @@ private:
    // Actuators
    CCI_EPuckWheelsActuator* m_pcWheels;
    CCI_EPuckRangeAndBearingActuator* m_pcRABAct;
+   CCI_EPuckRGBLEDsActuator* m_pcLEDsActuator;
 
    // Sensors
    CCI_EPuckProximitySensor* m_pcProximity;
    CCI_EPuckLightSensor* m_pcLight;
    CCI_EPuckGroundSensor* m_pcGround;
    CCI_EPuckRangeAndBearingSensor* m_pcRAB;
+   CCI_EPuckOmnidirectionalCameraSensor* m_pcOmniCam;
 
    // Network
    NEAT::Network* m_net;

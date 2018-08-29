@@ -1,0 +1,2 @@
+add_library(foraging_twospots_loopfunc SHARED ForagingTwoSpotsLoopFunc.h ForagingTwoSpotsLoopFunc.cpp)
+target_link_libraries(foraging_twospots_loopfunc argos3plugin_${ARGOS_BUILD_FOR}_epuck)
