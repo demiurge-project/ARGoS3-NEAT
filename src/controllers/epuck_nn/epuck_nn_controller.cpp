@@ -5,7 +5,7 @@
 /****************************************/
 
 static CRange<Real> NN_OUTPUT_RANGE(0.0f, 1.0f);
-static CRange<Real> WHEEL_ACTUATION_RANGE(-5.0f, 5.0f);
+static CRange<Real> WHEEL_ACTUATION_RANGE(-12.0f, 12.0f);
 
 /****************************************/
 /************* CONSTRUCTOR **************/
@@ -330,10 +330,19 @@ void CEPuckNNController::ControlStep() {
       m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
    }
 
-    // Apply NN outputs to actuation. The NN outputs are in the range [0,1], we remap this range into [-5:5] linearly.
+    // Apply NN outputs to LEDs actuation.
+
+   m_fMaxColorOutput = Max((m_net->outputs[2])->activation,(m_net->outputs[3])->activation);
+   m_fMaxColorOutput = Max(m_fMaxColorOutput,(m_net->outputs[4])->activation);
+
    if (m_pcLEDsActuator != NULL) {
 
-       m_pcLEDsActuator->SetColors();
+       if (m_fMaxColorOutput == (m_net->outputs[2])->activation)
+           m_pcLEDsActuator->SetColors(CColor::MAGENTA);
+       else if (m_fMaxColorOutput == (m_net->outputs[3])->activation)
+           m_pcLEDsActuator->SetColors(CColor::YELLOW);
+       else if (m_fMaxColorOutput == (m_net->outputs[4])->activation)
+           m_pcLEDsActuator->SetColors(CColor::CYAN);
    }
 
    m_unTimeStep++;

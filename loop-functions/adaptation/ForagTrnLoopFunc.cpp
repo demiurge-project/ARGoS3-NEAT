@@ -21,6 +21,7 @@ ForagTrnLoopFunction::ForagTrnLoopFunction() {
     m_fRadiusSpot = 0.125;
     m_fTotalObjects = 0;
     m_fTotalRobots = 0;
+    m_bEvaluate = false;
 }
 
 /****************************************/
@@ -71,7 +72,13 @@ argos::CColor ForagTrnLoopFunction::GetFloorColor(const argos::CVector2& c_posit
 
 void ForagTrnLoopFunction::Init(TConfigurationNode& t_tree) {
     CNeatLoopFunctions::Init(t_tree);
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.5) - (0.5/2) ;
+    }
+    if (m_unPwExp != 0)
+        m_bEvaluate = true;
 }
 
 /****************************************/
@@ -82,7 +89,11 @@ void ForagTrnLoopFunction::Reset() {
     m_fObjectiveFunction = 0;
     m_fTotalObjects = 0;
     m_fTotalRobots = 0;
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.5) - (0.5/2) ;
+    }
 
     CSpace::TMapPerType& tEpuckMap = GetSpace().GetEntitiesByType("epuck");
     for (CSpace::TMapPerType::iterator it = tEpuckMap.begin(); it != tEpuckMap.end(); ++it) {
@@ -124,7 +135,14 @@ void ForagTrnLoopFunction::PostExperiment() {
     else {
          m_fObjectiveFunction = 0;
     }
-    LOG << m_fObjectiveFunction << std::endl;
+
+    if (m_bEvaluate){
+        Real fNewMetric = AdditionalMetrics();
+        LOG << fNewMetric << std::endl;
+        m_fObjectiveFunction = fNewMetric;
+    }
+    else
+        LOG << m_fObjectiveFunction << std::endl;
 }
 
 /****************************************/
@@ -200,6 +218,19 @@ void ForagTrnLoopFunction::GetStepScore(bool bAggregate) {
     }
 
     return;
+}
+
+/****************************************/
+/****************************************/
+
+Real ForagTrnLoopFunction::AdditionalMetrics(){
+    Real fNewMetric = 999999;
+    if (m_unPwExp == 1)
+        fNewMetric = m_fTotalObjects;
+    else if (m_unPwExp == 2)
+        fNewMetric = m_fTotalRobots;
+
+    return fNewMetric;
 }
 
 /****************************************/

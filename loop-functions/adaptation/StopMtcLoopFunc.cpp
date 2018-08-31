@@ -21,7 +21,10 @@ StopMtcLoopFunction::StopMtcLoopFunction() {
     m_fSafeDist = 0.16;
     m_fRadiusSpot = 0.125;
     m_bStopSignal = false;
+    m_cStopColor = CColor::BLACK;
+    m_cTriggerColor = CColor::BLACK;
     m_bInit = false;
+    m_bEvaluate = false;
 }
 
 /****************************************/
@@ -72,7 +75,13 @@ argos::CColor StopMtcLoopFunction::GetFloorColor(const argos::CVector2& c_positi
 
 void StopMtcLoopFunction::Init(TConfigurationNode& t_tree) {
     CNeatLoopFunctions::Init(t_tree);
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.167) - (0.167/2) ;
+    }
+    if (m_unPwExp != 0)
+        m_bEvaluate = true;
 }
 
 /****************************************/
@@ -83,7 +92,13 @@ void StopMtcLoopFunction::Reset() {
     m_fObjectiveFunction = 0;
     m_bInit = false;
     m_bStopSignal = false;
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    m_cStopColor = CColor::BLACK;
+    m_cTriggerColor = CColor::BLACK;
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.167) - (0.167/2) ;
+    }
 }
 
 /****************************************/
@@ -99,14 +114,19 @@ void StopMtcLoopFunction::PostStep() {
 /****************************************/
 
 void StopMtcLoopFunction::PostExperiment() {
-
     if (!m_bStopSignal)
         m_unStopTime = 1200;
 
     Real fTimeScore = (Real)m_unStopTime * (Real)m_unNumberRobots;
     m_fObjectiveFunction += fTimeScore;
 
-    LOG << m_fObjectiveFunction << std::endl;
+    if (m_bEvaluate){
+        Real fNewMetric = AdditionalMetrics();
+        LOG << fNewMetric << std::endl;
+        m_fObjectiveFunction = fNewMetric;
+    }
+    else
+        LOG << m_fObjectiveFunction << std::endl;
 }
 
 /****************************************/
@@ -272,6 +292,7 @@ Real StopMtcLoopFunction::GetStepScore(UInt32 unClock) {
 
                 if (dt <= m_fSafeDist)
                     if (cEpuckColor == m_cStopColor) {
+                        m_cTriggerColor = m_cStopColor;
                         m_bStopSignal = true;
                         m_unStopTime = unClock;
                     }
@@ -287,6 +308,28 @@ Real StopMtcLoopFunction::GetStepScore(UInt32 unClock) {
     }
 
     return fScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real StopMtcLoopFunction::AdditionalMetrics(){
+    Real fNewMetric = 999999;
+    if (m_unPwExp == 1){
+        fNewMetric = (Real)m_unStopTime;
+    }
+    else if (m_unPwExp == 2){
+        if (m_cTriggerColor == CColor::BLACK)
+            fNewMetric = 0;
+        else if (m_cTriggerColor == CColor::MAGENTA)
+            fNewMetric = 1;
+        else if (m_cTriggerColor == CColor::YELLOW)
+            fNewMetric = 2;
+        else if (m_cTriggerColor == CColor::CYAN)
+            fNewMetric = 3;
+    }
+
+    return fNewMetric;
 }
 
 /****************************************/

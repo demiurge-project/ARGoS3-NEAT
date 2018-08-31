@@ -13,6 +13,12 @@
 
 ForagMtcLoopFunction::ForagMtcLoopFunction() {
     m_fObjectiveFunction = 0;
+    m_fObjectiveFunctionT1 = 0;
+    m_fObjectiveFunctionT2 = 0;
+    m_fObjectiveFunctionT3 = 0;
+    m_fObjectiveFunctionR = 0;
+    m_fObjectiveFunctionG = 0;
+    m_fObjectiveFunctionB = 0;
     m_fRandomIndex = 0;
     m_cCoordSpot1 = CVector2(0.54, 0.54);
     m_cCoordSpot2 = CVector2(0.765, 0.00);
@@ -20,6 +26,7 @@ ForagMtcLoopFunction::ForagMtcLoopFunction() {
     m_fSafeDist = 0.16;
     m_fRadiusSpot = 0.125;
     m_cForagColor = CColor::BLACK;
+    m_bEvaluate = false;
 }
 
 /****************************************/
@@ -70,7 +77,13 @@ argos::CColor ForagMtcLoopFunction::GetFloorColor(const argos::CVector2& c_posit
 
 void ForagMtcLoopFunction::Init(TConfigurationNode& t_tree) {
     CNeatLoopFunctions::Init(t_tree);
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.167) - (0.167/2) ;
+    }
+    if (m_unPwExp != 0)
+        m_bEvaluate = true;
 }
 
 /****************************************/
@@ -79,13 +92,24 @@ void ForagMtcLoopFunction::Init(TConfigurationNode& t_tree) {
 void ForagMtcLoopFunction::Reset() {
     CNeatLoopFunctions::Reset();
     m_fObjectiveFunction = 0;
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    m_fObjectiveFunctionT1 = 0;
+    m_fObjectiveFunctionT2 = 0;
+    m_fObjectiveFunctionT3 = 0;
+    m_fObjectiveFunctionR = 0;
+    m_fObjectiveFunctionG = 0;
+    m_fObjectiveFunctionB = 0;
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.167) - (0.167/2) ;
+    }
     m_cForagColor = CColor::BLACK;
 
     CSpace::TMapPerType& tEpuckMap = GetSpace().GetEntitiesByType("epuck");
     for (CSpace::TMapPerType::iterator it = tEpuckMap.begin(); it != tEpuckMap.end(); ++it) {
         CEPuckEntity* pcEpuck = any_cast<CEPuckEntity*>(it->second);
         m_tMemObjects[pcEpuck] = false;
+        m_tMemColors[pcEpuck] = CColor::BLACK;
     }
 }
 
@@ -96,13 +120,28 @@ void ForagMtcLoopFunction::PostStep() {
     UInt32 unClock = GetSpace().GetSimulationClock();
     m_fObjectiveFunction += GetStepScore(unClock);
     ArenaControl(unClock);
+
+    if (m_bEvaluate){
+        if (unClock == 400)
+            m_fObjectiveFunctionT1 = m_fObjectiveFunction;
+        if (unClock == 800)
+            m_fObjectiveFunctionT2 = m_fObjectiveFunction - m_fObjectiveFunctionT1;
+        if (unClock == 1200)
+            m_fObjectiveFunctionT3 = m_fObjectiveFunction - m_fObjectiveFunctionT2 - m_fObjectiveFunctionT1;
+    }
 }
 
 /****************************************/
 /****************************************/
 
 void ForagMtcLoopFunction::PostExperiment() {
-    LOG << m_fObjectiveFunction << std::endl;
+    if (m_bEvaluate){
+        Real fNewMetric = AdditionalMetrics();
+        LOG << fNewMetric << std::endl;
+        m_fObjectiveFunction = fNewMetric;
+    }
+    else
+        LOG << m_fObjectiveFunction << std::endl;
 }
 
 /****************************************/
@@ -267,16 +306,47 @@ Real ForagMtcLoopFunction::GetStepScore(UInt32 unClock) {
 
             if (fDa <= m_fSafeDist || fDb <= m_fSafeDist || fDc <= m_fSafeDist){
                 m_tMemObjects[pcEpuck] = true;
+                m_tMemColors[pcEpuck] = cEpuckColor;
             }
         }
 
         if (m_tMemObjects[pcEpuck] == true && cEpuckPosition.GetX() <= -0.34) {
+            if (m_bEvaluate){
+                if (m_tMemColors[pcEpuck] == CColor::MAGENTA)
+                     m_fObjectiveFunctionR-=1;
+                else if (m_tMemColors[pcEpuck] == CColor::YELLOW)
+                     m_fObjectiveFunctionG-=1;
+                else if (m_tMemColors[pcEpuck] == CColor::CYAN)
+                     m_fObjectiveFunctionB-=1;
+                 m_tMemColors[pcEpuck] = CColor::BLACK;
+            }
             m_tMemObjects[pcEpuck] = false;
             fScore-=1;
         }
     }
 
     return fScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real ForagMtcLoopFunction::AdditionalMetrics(){
+    Real fNewMetric = 999999;
+    if (m_unPwExp == 1)
+        fNewMetric = m_fObjectiveFunctionT1;
+    else if (m_unPwExp == 2)
+        fNewMetric = m_fObjectiveFunctionT2;
+    else if (m_unPwExp == 3)
+        fNewMetric = m_fObjectiveFunctionT3;
+    else if (m_unPwExp == 4)
+        fNewMetric = m_fObjectiveFunctionR;
+    else if (m_unPwExp == 5)
+        fNewMetric = m_fObjectiveFunctionG;
+    else if (m_unPwExp == 6)
+        fNewMetric = m_fObjectiveFunctionB;
+
+    return fNewMetric;
 }
 
 /****************************************/

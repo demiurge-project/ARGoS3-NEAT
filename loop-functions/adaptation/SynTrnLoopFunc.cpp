@@ -13,11 +13,14 @@
 
 SynTrnLoopFunction::SynTrnLoopFunction() {
     m_fObjectiveFunction = 0;
+    m_fObjectiveFunctionT1 = 0;
+    m_fObjectiveFunctionT2 = 0;
     m_fRandomIndex = 0;
     m_cCoordSpot1 = CVector2(0.54, 0.54);
     m_cCoordSpot2 = CVector2(0.765, 0.00);
     m_cCoordSpot3 = CVector2(0.54,-0.54);
     m_fRadiusSpot = 0.125;
+    m_bEvaluate = false;
 }
 
 /****************************************/
@@ -68,7 +71,13 @@ argos::CColor SynTrnLoopFunction::GetFloorColor(const argos::CVector2& c_positio
 
 void SynTrnLoopFunction::Init(TConfigurationNode& t_tree) {
     CNeatLoopFunctions::Init(t_tree);
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.5) - (0.5/2) ;
+    }
+    if (m_unPwExp != 0)
+        m_bEvaluate = true;
 }
 
 /****************************************/
@@ -77,7 +86,13 @@ void SynTrnLoopFunction::Init(TConfigurationNode& t_tree) {
 void SynTrnLoopFunction::Reset() {
     CNeatLoopFunctions::Reset();
     m_fObjectiveFunction = 0;
-    m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    m_fObjectiveFunctionT1 = 0;
+    m_fObjectiveFunctionT2 = 0;
+    if (m_unPwConfig  == 0)
+        m_fRandomIndex = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
+    else{
+        m_fRandomIndex = (m_unPwConfig * 0.5) - (0.5/2) ;
+    }
 }
 
 /****************************************/
@@ -100,13 +115,26 @@ void SynTrnLoopFunction::PostStep() {
 
     ArenaControl(unClock);
 
+    if (m_bEvaluate){
+        if (unClock == 600)
+            m_fObjectiveFunctionT1 = m_fObjectiveFunction;
+        if (unClock == 1200)
+            m_fObjectiveFunctionT2 = m_fObjectiveFunction - m_fObjectiveFunctionT1;
+    }
+
 }
 
 /****************************************/
 /****************************************/
 
 void SynTrnLoopFunction::PostExperiment() {
-    LOG << m_fObjectiveFunction << std::endl;
+    if (m_bEvaluate){
+        Real fNewMetric = AdditionalMetrics();
+        LOG << fNewMetric << std::endl;
+        m_fObjectiveFunction = fNewMetric;
+    }
+    else
+        LOG << m_fObjectiveFunction << std::endl;
 }
 
 /****************************************/
@@ -185,6 +213,19 @@ Real SynTrnLoopFunction::GetStepScore(bool bConsensus) {
         fScore = fVariance;
 
     return fScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real SynTrnLoopFunction::AdditionalMetrics(){
+    Real fNewMetric = 999999;
+    if (m_unPwExp == 1)
+        fNewMetric = m_fObjectiveFunctionT1;
+    else if (m_unPwExp == 2)
+        fNewMetric = m_fObjectiveFunctionT2;
+
+    return fNewMetric;
 }
 
 /****************************************/
