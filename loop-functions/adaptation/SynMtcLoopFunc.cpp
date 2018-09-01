@@ -133,7 +133,8 @@ void SynMtcLoopFunction::PostExperiment() {
 /****************************************/
 
 Real SynMtcLoopFunction::GetObjectiveFunction() {
-  return m_fObjectiveFunction;
+    m_fObjectiveFunction = -m_fObjectiveFunction;
+    return m_fObjectiveFunction;
 }
 
 /****************************************/
