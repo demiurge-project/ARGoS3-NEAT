@@ -16,6 +16,7 @@ NeuralNetworkRM1Dot2Binary::NeuralNetworkRM1Dot2Binary() {
     m_nId = -1;
     m_unTimeStep = 0;
     m_mapMessages.clear();
+    m_bRecordFlag = false;
     m_pcRNG = argos::CRandom::CreateRNG("argos");
 }
 
@@ -33,6 +34,12 @@ NeuralNetworkRM1Dot2Binary::~NeuralNetworkRM1Dot2Binary() {
 
 void NeuralNetworkRM1Dot2Binary::Init(TConfigurationNode& t_node) {
   CEPuckNEATController::Init(t_node);
+
+  /* Trace recording */
+  GetNodeAttributeOrDefault(t_node, "record", m_bRecordFlag, m_bRecordFlag);
+  if (m_bRecordFlag) {
+    OpenTraceFile();
+  }
 
   /* Reference model */
   m_pcRobotState = new ReferenceModel1Dot2();
@@ -150,6 +157,8 @@ void NeuralNetworkRM1Dot2Binary::ControlStep() {
    } else {
      m_fRightSpeed =  m_pcRobotState->GetMaxVelocity();
    }
+ 
+   RecordState();
 
    if(m_pcWheels != NULL) {
       m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
@@ -181,6 +190,34 @@ void NeuralNetworkRM1Dot2Binary::Reset() {
 /****************************************/
 /****************************************/
 
-void NeuralNetworkRM1Dot2Binary::Destroy() {}
+void NeuralNetworkRM1Dot2Binary::OpenTraceFile() {
+  std::stringstream stringStream;
+  stringStream << "trace_epuck_" << getRobotId() << ".txt";
+  m_strOutput = stringStream.str();
+  LOGERR << m_strOutput << std::endl;
+  m_cOutput.open(m_strOutput.c_str(), std::ios_base::trunc | std::ios_base::out);
+}
+
+/****************************************/
+/****************************************/
+
+void NeuralNetworkRM1Dot2Binary::RecordState() {
+  if ((m_fLeftSpeed > 0) && (m_fRightSpeed > 0)) {              // Forward
+    m_cOutput << "F" << std::endl;
+  } else if ((m_fLeftSpeed == 0) && (m_fRightSpeed > 0)) {      // Left
+    m_cOutput << "L" << std::endl;
+  } else if ((m_fLeftSpeed > 0) && (m_fRightSpeed == 0)) {      // Right
+    m_cOutput << "R" << std::endl;
+  } else if ((m_fLeftSpeed == 0) && (m_fRightSpeed == 0)) {     // Stop
+    m_cOutput << "S" << std::endl;
+  }
+}
+
+/****************************************/
+/****************************************/
+
+void NeuralNetworkRM1Dot2Binary::Destroy() {
+  m_cOutput.close();
+}
 
 REGISTER_CONTROLLER(NeuralNetworkRM1Dot2Binary, "nn_rm_1dot2_bin_controller")

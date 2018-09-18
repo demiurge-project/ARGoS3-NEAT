@@ -34,10 +34,18 @@ public:
    virtual void Reset();
    virtual void Destroy();
 
+   Real GetLeftWheelSpeed();
+
 private:
 
-   Real m_inputs[15]; // 4x Proximity, 4x Light, 1x Ground, 5x Rab, 1x Bias
+   bool m_bRecordFlag;
+   std::string m_strOutput;
+   std::ofstream m_cOutput;
 
+   void OpenTraceFile();
+   void RecordState();
+
+   Real m_inputs[15]; // 4x Proximity, 4x Light, 1x Ground, 5x Rab, 1x Bias
 };
 
 #endif
