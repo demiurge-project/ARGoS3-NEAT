@@ -183,4 +183,4 @@ void NeuralNetworkRM1Dot2Binary::Reset() {
 
 void NeuralNetworkRM1Dot2Binary::Destroy() {}
 
-REGISTER_CONTROLLER(NeuralNetworkRM1Dot2Binary, "nn_rm_1dot2_controller")
+REGISTER_CONTROLLER(NeuralNetworkRM1Dot2Binary, "nn_rm_1dot2_bin_controller")
