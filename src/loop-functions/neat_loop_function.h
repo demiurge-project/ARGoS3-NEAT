@@ -123,25 +123,38 @@ protected:
      */
     CArenaEntity* m_pcArena;
 
+    /*
+     * The position of the boxes in the arena used in the experiment.
+     */
+
     CRandom::CRNG* m_pcRng;
 
     /*
-     * Selector of the piecewise function configuration
+     * Selector of the order of the color in the arena
+     * (0:Random, 1:First Blue, 2: FirstRed)
      */
-    UInt32 m_unPwConfig;
+    UInt32 m_unColorOrder;
 
     /*
-     * Selector of the piecewise experiment
+     * Selector of the task executed in blue arena
      */
-    UInt32 m_unPwExp;
+    UInt32 m_unBlueTask;
 
     /*
-     * Transition time in piecewise experiments
+     * Selector of the task executed in red arena
      */
-    UInt32 m_unPwTime;
+    UInt32 m_unRedTask;
 
+    /*
+     * Task to be evaluated in sequence experiments
+     * (0:Overall (TODO), 1: Blue, 2: Red)
+     */
+    UInt32 m_unEvalTask;
 
-    int m_nTrial;
+    /*
+     * Transition time in sequence experiments
+     */
+    UInt32 m_unTrnTime;
 
     // Vector of Epuck controllers.
     std::vector<CEPuckNNController*> m_pvecControllers;
