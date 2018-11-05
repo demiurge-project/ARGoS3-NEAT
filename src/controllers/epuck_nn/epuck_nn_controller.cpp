@@ -76,7 +76,8 @@ void CEPuckNNController::Init(TConfigurationNode& t_node) {
    } catch(CARGoSException& ex) {}
 
    try {
-      m_pcOmniCam = GetSensor<CCI_EPuckOmnidirectionalCameraSensor>("epuck_omni_cam");
+      m_pcOmniCam = GetSensor<CCI_EPuckOmnidirectionalCameraSensor>("epuck_omnidirectional_camera");
+      m_pcOmniCam->Enable();
    } catch(CARGoSException& ex) {}
 
    // Load the parameters for the neural network.
