@@ -38,6 +38,7 @@ class SeqLoopFunction: public CNeatLoopFunctions {
 
     void ArenaControl();
     bool SelectColorOrder(UInt32 un_ColorOrderParam);
+    void AsignArenaColors(UInt32 un_NumberColorsParam);
 
     void InitRobotStates();
     void InitSourceItems();
@@ -66,6 +67,8 @@ class SeqLoopFunction: public CNeatLoopFunctions {
     Real m_fObjectiveFunctionRed;
     Real m_bBlueFirst;
     CColor m_cArenaColor;
+    CColor m_cTaskAsignedColor;
+    CColor m_cTaskEvalColor;
 
     struct RobotStateStruct {
         CVector2 cLastPosition;

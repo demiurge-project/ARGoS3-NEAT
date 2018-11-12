@@ -18,6 +18,8 @@ SeqLoopFunction::SeqLoopFunction() {
     m_fObjectiveFunctionRed = 0;
     m_bBlueFirst = true;
     m_cArenaColor = CColor::BLACK;
+    m_cTaskAsignedColor = CColor::BLACK;
+    m_cTaskEvalColor = CColor::BLACK;
 }
 
 /****************************************/
@@ -75,6 +77,8 @@ void SeqLoopFunction::Init(TConfigurationNode& t_tree) {
     CNeatLoopFunctions::Init(t_tree);
 
     m_bBlueFirst = SelectColorOrder(m_unColorOrder);
+
+    AsignArenaColors(m_unNumerColors);
 
     InitRobotStates();
     InitSourceItems();
@@ -154,7 +158,7 @@ void SeqLoopFunction::ArenaControl() {
 
     if (m_unClock == 1) {
         if (m_bBlueFirst)
-            m_cArenaColor = CColor::BLUE;
+            m_cArenaColor = m_cTaskAsignedColor;
         else
             m_cArenaColor = CColor::RED;
     }
@@ -163,7 +167,7 @@ void SeqLoopFunction::ArenaControl() {
         if (m_bBlueFirst)
             m_cArenaColor = CColor::RED;
         else
-            m_cArenaColor = CColor::BLUE;
+            m_cArenaColor = m_cTaskAsignedColor;
     }
 
     if (m_unClock == 1 || m_unClock == m_unTrnTime) {
@@ -388,8 +392,8 @@ Real SeqLoopFunction::GetMimicryScore() {
 
     for (it = m_tRobotStates.begin(); it != m_tRobotStates.end(); ++it) {
 
-        if (m_cArenaColor == CColor::BLUE &&
-            it->second.cColor != CColor::CYAN)
+        if (m_cArenaColor == m_cTaskAsignedColor &&
+            it->second.cColor != m_cTaskEvalColor)
             unScore+=1;
 
         else if (m_cArenaColor == CColor::RED &&
@@ -613,6 +617,21 @@ bool SeqLoopFunction::SelectColorOrder(UInt32 un_ColorOrderParam) {
 
     return bBlueFirst;
 
+}
+
+/****************************************/
+/****************************************/
+
+void SeqLoopFunction::AsignArenaColors(UInt32 un_NumberColorsParam) {
+
+    if (un_NumberColorsParam == 1) {
+        m_cTaskAsignedColor = CColor::BLACK;
+        m_cTaskEvalColor = CColor::BLACK;
+    }
+    else{
+        m_cTaskAsignedColor = CColor::BLUE;
+        m_cTaskEvalColor = CColor::CYAN;
+    }
 }
 
 /****************************************/

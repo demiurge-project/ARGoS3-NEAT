@@ -130,6 +130,11 @@ protected:
     CRandom::CRNG* m_pcRng;
 
     /*
+     * Transition time in sequence experiments
+     */
+    UInt32 m_unNumerColors;
+
+    /*
      * Selector of the order of the color in the arena
      * (0:Random, 1:First Blue, 2: FirstRed)
      */

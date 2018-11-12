@@ -37,6 +37,7 @@ void CNeatLoopFunctions::Init(TConfigurationNode& t_tree) {
       GetNodeAttributeOrDefault(cParametersNode, "number_boxes_per_edge", m_unNumberBoxes, (UInt32) 1);
       GetNodeAttributeOrDefault(cParametersNode, "lenght_boxes", m_fLenghtBoxes, (Real) 0.25);
       GetNodeAttributeOrDefault(cParametersNode, "color_order", m_unColorOrder, (UInt32) 0);
+      GetNodeAttributeOrDefault(cParametersNode, "number_colors", m_unNumerColors, (UInt32) 1);
       GetNodeAttributeOrDefault(cParametersNode, "blue_task", m_unBlueTask, (UInt32) 0);
       GetNodeAttributeOrDefault(cParametersNode, "red_task", m_unRedTask, (UInt32) 0);
       GetNodeAttributeOrDefault(cParametersNode, "eval_task", m_unEvalTask, (UInt32) 0);
@@ -152,8 +153,8 @@ void CNeatLoopFunctions::RemoveRobots() {
 /****************************************/
 
 void CNeatLoopFunctions::PositionArena() {
-  CArenaEntity* pcArena;
-    pcArena = new CArenaEntity("arena",
+    CArenaEntity* pcArena;
+    /*pcArena = new CArenaEntity("arena",
                                CVector3(0,0,0),
                                CQuaternion().FromEulerAngles(CRadians::ZERO,CRadians::ZERO,CRadians::ZERO), // TODO
                                CVector3(0.01,m_fLenghtBoxes,0.1),
@@ -161,7 +162,18 @@ void CNeatLoopFunctions::PositionArena() {
                                m_unNumberBoxes,
                                m_unNumberEdges,
                                0.017f,
+                               1.0f);*/
+
+    pcArena = new CArenaEntity("arena",
+                               CVector3(0,0,0),
+                               CQuaternion().FromEulerAngles(CRadians::ZERO,CRadians::ZERO,CRadians::ZERO), // TODO
+                               CVector3(0.01,m_fLenghtBoxes,0.1),
+                               "leds",
+                               m_unNumberBoxes,
+                               m_unNumberEdges,
+                               0.125f,
                                1.0f);
+
     AddEntity(*pcArena);
     m_pcArena = pcArena;
 }

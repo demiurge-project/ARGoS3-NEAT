@@ -352,21 +352,26 @@ void CEPuckNNController::ControlStep() {
    if (m_pcLEDsActuator != NULL) {
 
        if (m_fMaxColorOutput == (m_net->outputs[2])->activation){
-           m_pcLEDsActuator->SetColors(CColor::BLACK);
+           //m_pcLEDsActuator->SetColors(CColor::BLACK);
+           m_pcLEDsActuator->SetColor(2,CColor::BLACK);
+           //m_pcLEDsActuator->SetColors(CColor::BLACK); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[3])->activation){
-           m_pcLEDsActuator->SetColors(CColor::YELLOW);
+           //m_pcLEDsActuator->SetColors(CColor::YELLOW);
+           m_pcLEDsActuator->SetColor(2,CColor::YELLOW);
            //m_pcLEDsActuator->SetColors(CColor(255,255,0)); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[4])->activation){
-           m_pcLEDsActuator->SetColors(CColor::MAGENTA);
+           //m_pcLEDsActuator->SetColors(CColor::MAGENTA);
+           m_pcLEDsActuator->SetColor(2,CColor::MAGENTA);
            //m_pcLEDsActuator->SetColors(CColor(255,0,255)); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[5])->activation){
-           m_pcLEDsActuator->SetColors(CColor::CYAN);
+           //m_pcLEDsActuator->SetColors(CColor::CYAN);
+           m_pcLEDsActuator->SetColor(2,CColor::CYAN);
            //m_pcLEDsActuator->SetColors(CColor(0,255,255)); // For Real Robots
        }
    }
