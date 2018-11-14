@@ -67,8 +67,10 @@ class SeqLoopFunction: public CNeatLoopFunctions {
     Real m_fObjectiveFunctionRed;
     Real m_bBlueFirst;
     CColor m_cArenaColor;
-    CColor m_cTaskAsignedColor;
-    CColor m_cTaskEvalColor;
+    CColor m_cTaskAsignedColorBlue;
+    CColor m_cTaskEvalColorBlue;
+    CColor m_cTaskAsignedColorRed;
+    CColor m_cTaskEvalColorRed;
 
     struct RobotStateStruct {
         CVector2 cLastPosition;

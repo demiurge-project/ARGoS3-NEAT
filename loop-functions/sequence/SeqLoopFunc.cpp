@@ -18,8 +18,10 @@ SeqLoopFunction::SeqLoopFunction() {
     m_fObjectiveFunctionRed = 0;
     m_bBlueFirst = true;
     m_cArenaColor = CColor::BLACK;
-    m_cTaskAsignedColor = CColor::BLACK;
-    m_cTaskEvalColor = CColor::BLACK;
+    m_cTaskAsignedColorBlue = CColor::BLACK;
+    m_cTaskEvalColorBlue = CColor::BLACK;
+    m_cTaskAsignedColorRed = CColor::BLACK;
+    m_cTaskEvalColorRed = CColor::BLACK;
 }
 
 /****************************************/
@@ -158,16 +160,16 @@ void SeqLoopFunction::ArenaControl() {
 
     if (m_unClock == 1) {
         if (m_bBlueFirst)
-            m_cArenaColor = m_cTaskAsignedColor;
+            m_cArenaColor = m_cTaskAsignedColorBlue;
         else
-            m_cArenaColor = CColor::RED;
+            m_cArenaColor = m_cTaskAsignedColorRed;
     }
 
     if (m_unClock == m_unTrnTime) {
         if (m_bBlueFirst)
-            m_cArenaColor = CColor::RED;
+            m_cArenaColor = m_cTaskAsignedColorRed;
         else
-            m_cArenaColor = m_cTaskAsignedColor;
+            m_cArenaColor = m_cTaskAsignedColorBlue;
     }
 
     if (m_unClock == 1 || m_unClock == m_unTrnTime) {
@@ -392,12 +394,12 @@ Real SeqLoopFunction::GetMimicryScore() {
 
     for (it = m_tRobotStates.begin(); it != m_tRobotStates.end(); ++it) {
 
-        if (m_cArenaColor == m_cTaskAsignedColor &&
-            it->second.cColor != m_cTaskEvalColor)
+        if (m_cArenaColor == m_cTaskAsignedColorBlue &&
+            it->second.cColor != m_cTaskEvalColorBlue)
             unScore+=1;
 
-        else if (m_cArenaColor == CColor::RED &&
-                 it->second.cColor != CColor::MAGENTA)
+        else if (m_cArenaColor == m_cTaskAsignedColorRed &&
+                 it->second.cColor != m_cTaskEvalColorRed)
             unScore+=1;
     }
 
@@ -624,13 +626,23 @@ bool SeqLoopFunction::SelectColorOrder(UInt32 un_ColorOrderParam) {
 
 void SeqLoopFunction::AsignArenaColors(UInt32 un_NumberColorsParam) {
 
-    if (un_NumberColorsParam == 1) {
-        m_cTaskAsignedColor = CColor::BLACK;
-        m_cTaskEvalColor = CColor::BLACK;
+    if (un_NumberColorsParam == 0) {
+        m_cTaskAsignedColorBlue = CColor::BLACK;
+        m_cTaskEvalColorBlue = CColor::BLACK;
+        m_cTaskAsignedColorRed = CColor::BLACK;
+        m_cTaskEvalColorRed = CColor::BLACK;
+    }
+    else if (un_NumberColorsParam == 1) {
+        m_cTaskAsignedColorBlue = CColor::BLACK;
+        m_cTaskEvalColorBlue = CColor::BLACK;
+        m_cTaskAsignedColorRed = CColor::RED;
+        m_cTaskEvalColorRed = CColor::MAGENTA;
     }
     else{
-        m_cTaskAsignedColor = CColor::BLUE;
-        m_cTaskEvalColor = CColor::CYAN;
+        m_cTaskAsignedColorBlue = CColor::BLUE;
+        m_cTaskEvalColorBlue = CColor::CYAN;
+        m_cTaskAsignedColorRed = CColor::RED;
+        m_cTaskEvalColorRed = CColor::MAGENTA;
     }
 }
 
