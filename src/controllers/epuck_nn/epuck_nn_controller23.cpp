@@ -191,11 +191,11 @@ void CEPuckNNController::ControlStep() {
    m_net->activate();
 
    // Apply NN outputs to actuation. The NN outputs are in the range [0,1], we remap this range into [-5:5] linearly.
-   NN_OUTPUT_RANGE.MapValueIntoRange(m_fLeftSpeed, (m_net->outputs[0])->activation, WHEEL_ACTUATION_RANGE);
-   NN_OUTPUT_RANGE.MapValueIntoRange(m_fRightSpeed, (m_net->outputs[1])->activation, WHEEL_ACTUATION_RANGE);
+   NN_OUTPUT_RANGE.MapValueIntoRange(m_fLeftSpeedO1, (m_net->outputs[0])->activation, WHEEL_ACTUATION_RANGE);
+   NN_OUTPUT_RANGE.MapValueIntoRange(m_fRightSpeedO1, (m_net->outputs[1])->activation, WHEEL_ACTUATION_RANGE);
 
    if(m_pcWheels != NULL) {
-      m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
+      m_pcWheels->SetLinearVelocity(m_fLeftSpeedO1, m_fRightSpeedO1);
    }
 
    m_unTimeStep++;
@@ -203,7 +203,7 @@ void CEPuckNNController::ControlStep() {
 }
 
 /****************************************/
-/************ LOAD NETWORK **************/
+/************ LOAD NETWORK **************/
 /****************************************/
 
 void CEPuckNNController::LoadNetwork(const std::string& filename) {
@@ -265,7 +265,7 @@ void CEPuckNNController::Display(int i) {
 
    DisplayNetwork();
 
-   LOG << "wheels: (" << m_fLeftSpeed << ", " << m_fRightSpeed << ")." << std::endl;
+   LOG << "wheels: (" << m_fLeftSpeedO1 << ", " << m_fRightSpeedO1 << ")." << std::endl;
 }
 
 void CEPuckNNController::DisplayNetwork() {

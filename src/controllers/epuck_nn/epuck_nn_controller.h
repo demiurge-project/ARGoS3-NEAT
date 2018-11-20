@@ -88,8 +88,8 @@ private:
    UInt32 m_unTimeStep;
    UInt32 m_unRABTime;
 
-   Real m_inputs[49];
-   Real m_fLeftSpeed, m_fRightSpeed;
+   Real m_inputs[41];
+   Real m_fLeftSpeedO1, m_fLeftSpeedO2, m_fRightSpeedO1, m_fRightSpeedO2;
    Real m_fMaxColorOutput;
    bool m_bTrial;
 

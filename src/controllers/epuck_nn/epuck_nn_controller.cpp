@@ -5,7 +5,7 @@
 /****************************************/
 
 static CRange<Real> NN_OUTPUT_RANGE(0.0f, 1.0f);
-static CRange<Real> WHEEL_ACTUATION_RANGE(-12.0f, 12.0f);
+static CRange<Real> WHEEL_ACTUATION_RANGE(0, 12.0f);
 
 /****************************************/
 /************* CONSTRUCTOR **************/
@@ -57,6 +57,7 @@ void CEPuckNNController::Init(TConfigurationNode& t_node) {
 
    try {
        m_pcLEDsActuator = GetActuator<CCI_EPuckRGBLEDsActuator>("epuck_rgb_leds");
+       m_pcLEDsActuator->SetColors(CColor::BLACK);
     } catch(CARGoSException& ex) {}
 
    try {
@@ -119,6 +120,7 @@ void CEPuckNNController::ControlStep() {
    }
 
    // Get Light sensory data.
+   /*
    if(m_pcLight != NULL) {
       const CCI_EPuckLightSensor::TReadings& tLight = m_pcLight->GetReadings();
       for(size_t i=8; i<16; i++) {
@@ -129,28 +131,29 @@ void CEPuckNNController::ControlStep() {
          m_inputs[i] = 0;
       }
    }
+   */
 
    // Get Ground sensory data.
    if(m_pcGround != NULL) {
       const CCI_EPuckGroundSensor::SReadings& tGround = m_pcGround->GetReadings();
-      for(size_t i=16; i<19; i++) {
-         m_inputs[i] = tGround[i-16];
-         if(tGround[i-16] <= 0.1) { //black
+      for(size_t i=8; i<11; i++) {
+         m_inputs[i] = tGround[i-8];
+         if(tGround[i-8] <= 0.1) { //black
             m_inputs[i] = 0;
-         } else if(tGround[i-16] >= 0.95){ //white
+         } else if(tGround[i-8] >= 0.95){ //white
             m_inputs[i] = 1;
          } else { //gray
             UInt32 index = m_pcRNG->Uniform(CRange<UInt32>(0, 4204));
-            if(i == 16)
+            if(i == 8)
                m_inputs[i] = m_GraySamplesLeft[index];
-            else if(i == 17)
+            else if(i == 9)
                m_inputs[i] = m_GraySamplesCenter[index];
             else
             m_inputs[i] = m_GraySamplesRight[index];
          }
       }
    } else {
-      for(size_t i=16; i<19; i++) {
+      for(size_t i=8; i<11; i++) {
          m_inputs[i] = 0;
       }
    }
@@ -196,15 +199,15 @@ void CEPuckNNController::ControlStep() {
       }
 
       // Set the RAB input of the NN
-      m_inputs[19] = 1 - (2 / (1 + exp(unNumMsg))); // Saturate at 5, and is in [0,1]
-      for(int i = 20; i < 24; i++) {
-         CRadians cDirection = CRadians::PI*(2*(i-20) + 1)/4;
+      m_inputs[11] = 1 - (2 / (1 + exp(unNumMsg))); // Saturate at 5, and is in [0,1]
+      for(int i = 12; i < 16; i++) {
+         CRadians cDirection = CRadians::PI*(2*(i-12) + 1)/4;
          Real value = sum.DotProduct(CVector2(1.0, cDirection));
          m_inputs[i] = (value > 0 ? value : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
    } else {
-      for(size_t i = 19; i<24; i++) {
+      for(size_t i = 11; i<16; i++) {
          m_inputs[i] = 0;
       }
    }
@@ -285,91 +288,93 @@ void CEPuckNNController::ControlStep() {
 
       // Set the OmniCam input of the NN
 
-      for(int i = 24; i < 28; i++) {
+      for(int i = 16; i < 20; i++) {
          CRadians cDirectionR = CRadians::PI*(2*(i-24) + 1)/4;
          Real valueR = sSumVectorR.DotProduct(CVector2(1.0, cDirectionR));
          m_inputs[i] = (valueR > 0 ? valueR : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
-      for(int i = 28; i < 32; i++) {
+      for(int i = 20; i < 24; i++) {
          CRadians cDirectionG = CRadians::PI*(2*(i-28) + 1)/4;
          Real valueG = sSumVectorG.DotProduct(CVector2(1.0, cDirectionG));
          m_inputs[i] = (valueG > 0 ? valueG : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
-      for(int i = 32; i < 36; i++) {
+      for(int i = 24; i < 28; i++) {
          CRadians cDirectionB = CRadians::PI*(2*(i-32) + 1)/4;
          Real valueB = sSumVectorB.DotProduct(CVector2(1.0, cDirectionB));
          m_inputs[i] = (valueB > 0 ? valueB : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
-      for(int i = 36; i < 40; i++) {
+      for(int i = 28; i < 32; i++) {
          CRadians cDirectionY = CRadians::PI*(2*(i-36) + 1)/4;
          Real valueY = sSumVectorY.DotProduct(CVector2(1.0, cDirectionY));
          m_inputs[i] = (valueY > 0 ? valueY : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
-      for(int i = 40; i < 44; i++) {
+      for(int i = 32; i < 36; i++) {
          CRadians cDirectionM = CRadians::PI*(2*(i-40) + 1)/4;
          Real valueM = sSumVectorM.DotProduct(CVector2(1.0, cDirectionM));
          m_inputs[i] = (valueM > 0 ? valueM : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
-      for(int i = 44; i < 48; i++) {
+      for(int i = 36; i < 40; i++) {
          CRadians cDirectionC = CRadians::PI*(2*(i-44) + 1)/4;
          Real valueC = sSumVectorC.DotProduct(CVector2(1.0, cDirectionC));
          m_inputs[i] = (valueC > 0 ? valueC : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
    } else {
-      for(size_t i=24; i<48; i++) {
+      for(size_t i=16; i<40; i++) {
          m_inputs[i] = 0;
       }
    }
 
    // Bias Unit
-   m_inputs[48] = 1;
+   m_inputs[40] = 1;
 
    // Feed the network with those inputs
    m_net->load_sensors((double*)m_inputs);
    // Transmit the signals to the next layer.
    m_net->activate();
 
-   // Apply NN outputs to actuation. The NN outputs are in the range [0,1], we remap this range into [-5:5] linearly.
-   NN_OUTPUT_RANGE.MapValueIntoRange(m_fLeftSpeed, (m_net->outputs[0])->activation, WHEEL_ACTUATION_RANGE);
-   NN_OUTPUT_RANGE.MapValueIntoRange(m_fRightSpeed, (m_net->outputs[1])->activation, WHEEL_ACTUATION_RANGE);
+   // Apply NN outputs to actuation. The NN outputs are in the range [0,1], we remap this range into [0:12] linearly.
+   NN_OUTPUT_RANGE.MapValueIntoRange(m_fLeftSpeedO1, (m_net->outputs[0])->activation, WHEEL_ACTUATION_RANGE);
+   NN_OUTPUT_RANGE.MapValueIntoRange(m_fLeftSpeedO2, (m_net->outputs[1])->activation, WHEEL_ACTUATION_RANGE);
+   NN_OUTPUT_RANGE.MapValueIntoRange(m_fRightSpeedO1,(m_net->outputs[2])->activation, WHEEL_ACTUATION_RANGE);
+   NN_OUTPUT_RANGE.MapValueIntoRange(m_fRightSpeedO2,(m_net->outputs[3])->activation, WHEEL_ACTUATION_RANGE);
 
    if(m_pcWheels != NULL) {
-      m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
+      m_pcWheels->SetLinearVelocity((m_fLeftSpeedO1-m_fLeftSpeedO2), (m_fRightSpeedO1-m_fRightSpeedO2));
    }
 
     // Apply NN outputs to LEDs actuation.
 
-   m_fMaxColorOutput = Max((m_net->outputs[2])->activation,(m_net->outputs[3])->activation);
-   m_fMaxColorOutput = Max(m_fMaxColorOutput,(m_net->outputs[4])->activation);
-   m_fMaxColorOutput = Max(m_fMaxColorOutput,(m_net->outputs[5])->activation);
+   m_fMaxColorOutput = Max((m_net->outputs[4])->activation,(m_net->outputs[5])->activation);
+   m_fMaxColorOutput = Max(m_fMaxColorOutput,(m_net->outputs[6])->activation);
+   m_fMaxColorOutput = Max(m_fMaxColorOutput,(m_net->outputs[7])->activation);
 
    if (m_pcLEDsActuator != NULL) {
 
-       if (m_fMaxColorOutput == (m_net->outputs[2])->activation){
+       if (m_fMaxColorOutput == (m_net->outputs[4])->activation){
            //m_pcLEDsActuator->SetColors(CColor::BLACK);
            m_pcLEDsActuator->SetColor(2,CColor::BLACK);
            //m_pcLEDsActuator->SetColors(CColor::BLACK); // For Real Robots
        }
 
-       else if (m_fMaxColorOutput == (m_net->outputs[3])->activation){
+       else if (m_fMaxColorOutput == (m_net->outputs[5])->activation){
            //m_pcLEDsActuator->SetColors(CColor::YELLOW);
            m_pcLEDsActuator->SetColor(2,CColor::YELLOW);
            //m_pcLEDsActuator->SetColors(CColor(255,255,0)); // For Real Robots
        }
 
-       else if (m_fMaxColorOutput == (m_net->outputs[4])->activation){
+       else if (m_fMaxColorOutput == (m_net->outputs[6])->activation){
            //m_pcLEDsActuator->SetColors(CColor::MAGENTA);
            m_pcLEDsActuator->SetColor(2,CColor::MAGENTA);
            //m_pcLEDsActuator->SetColors(CColor(255,0,255)); // For Real Robots
        }
 
-       else if (m_fMaxColorOutput == (m_net->outputs[5])->activation){
+       else if (m_fMaxColorOutput == (m_net->outputs[7])->activation){
            //m_pcLEDsActuator->SetColors(CColor::CYAN);
            m_pcLEDsActuator->SetColor(2,CColor::CYAN);
            //m_pcLEDsActuator->SetColors(CColor(0,255,255)); // For Real Robots
@@ -443,7 +448,7 @@ void CEPuckNNController::Display(int i) {
 
    DisplayNetwork();
 
-   LOG << "wheels: (" << m_fLeftSpeed << ", " << m_fRightSpeed << ")." << std::endl;
+   LOG << "wheels: (" << m_fLeftSpeedO1 - m_fLeftSpeedO2 << ", " << m_fRightSpeedO1 - m_fRightSpeedO2 << ")." << std::endl;
 }
 
 void CEPuckNNController::DisplayNetwork() {
@@ -490,6 +495,8 @@ void CEPuckNNController::Reset() {
       data[1] = 0;
       m_pcRABAct->SetData(data);
    }
+
+   m_pcLEDsActuator->SetColors(CColor::BLACK);
 }
 
 /****************************************/
