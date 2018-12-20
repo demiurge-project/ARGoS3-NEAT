@@ -271,6 +271,18 @@ Real SeqLoopFunction::GetScore(UInt32 unTask) {
     case 5:
         unScore = GetAggregationScore();
         break;
+    case 6:
+        unScore = GetColorStopScore();
+        break;
+    case 7:
+        unScore = GetColorAllBlackScore();
+        break;
+    case 8:
+        unScore = -GetColorForageScore();
+        break;
+    case 9:
+        unScore = GetColorAggregationScore();
+        break;
     default:
         unScore = 999999;
         break;
@@ -304,6 +316,18 @@ Real SeqLoopFunction::GetNormalizedScore(Real fScore, UInt32 unTask) {
         break;
     case 5:
         fNormalizedScore = (fScore-104)/(610); // 104 = Min score obtained with aggregation, 714 = Max score obtained with aggregation, 610 = Max-Min
+        break;
+    case 6:
+        fNormalizedScore = fScore/12000; // 12000 =  (Mission time / 2) * Number of robots
+        break;
+    case 7:
+        fNormalizedScore = fScore/12000;
+        break;
+    case 8:
+        fNormalizedScore = (180+fScore)/180; // 180 = (MaxItemsPerRobot * 20)
+        break;
+    case 9:
+        fNormalizedScore = (fScore-104)/(115900); // 104 = Min score obtained with aggregation, 714 = Max score obtained with aggregation, 610 = Max-Min
         break;
     default:
         fNormalizedScore = 999999;
@@ -468,6 +492,143 @@ Real SeqLoopFunction::GetAggregationScore() {
     }
 
     unScore = unScore / fCounter;
+
+    return unScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real SeqLoopFunction::GetColorStopScore() {
+
+    UpdateRobotPositions();
+    UpdateRobotColors();
+
+    CColor cMimicryColor = CColor::BLACK;
+    if (m_cArenaColor == m_cTaskAsignedColorBlue)
+        cMimicryColor = m_cTaskEvalColorBlue;
+    else if (m_cArenaColor == m_cTaskAsignedColorRed)
+        cMimicryColor = m_cTaskEvalColorRed;
+
+    Real unScore = 0;
+    TRobotStateMap::iterator it;
+    for (it = m_tRobotStates.begin(); it != m_tRobotStates.end(); ++it) {
+
+        if (it->second.cColor == cMimicryColor) {
+            Real d = (it->second.cPosition - it->second.cLastPosition).Length();
+            if (d > 0.0005)
+                unScore+=1;
+        }
+        else
+            unScore+=1;
+    }
+
+    return unScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real SeqLoopFunction::GetColorAllBlackScore() {
+
+    UpdateRobotPositions();
+    UpdateRobotColors();
+
+    CColor cMimicryColor = CColor::BLACK;
+    if (m_cArenaColor == m_cTaskAsignedColorBlue)
+        cMimicryColor = m_cTaskEvalColorBlue;
+    else if (m_cArenaColor == m_cTaskAsignedColorRed)
+        cMimicryColor = m_cTaskEvalColorRed;
+
+    bool bInSource;
+    Real unScore = 0;
+    TRobotStateMap::iterator it;
+    for (it = m_tRobotStates.begin(); it != m_tRobotStates.end(); ++it) {
+
+        if (it->second.cColor == cMimicryColor) {
+            bInSource = IsRobotInSource(it->second.cPosition);
+            if (!bInSource)
+                unScore+=1;
+        }
+        else
+            unScore+=1;
+    }
+
+    return unScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real SeqLoopFunction::GetColorForageScore() {
+
+    UpdateRobotPositions();
+    UpdateRobotColors();
+
+    CColor cMimicryColor = CColor::BLACK;
+    if (m_cArenaColor == m_cTaskAsignedColorBlue)
+        cMimicryColor = m_cTaskEvalColorBlue;
+    else if (m_cArenaColor == m_cTaskAsignedColorRed)
+        cMimicryColor = m_cTaskEvalColorRed;
+
+    bool bInNest;
+    bool bInSource;
+    Real unScore = 0;
+    TRobotStateMap::iterator it;
+
+    for (it = m_tRobotStates.begin(); it != m_tRobotStates.end(); ++it) {
+
+        if (it->second.cColor == cMimicryColor) {
+
+            if (it->second.bItem == true){
+                bInNest = IsRobotInNest(it->second.cPosition);
+                if (bInNest) {
+                    unScore+=1;
+                    it->second.bItem = false;
+                }
+            }
+            else {
+                bInSource = IsRobotInSource(it->second.cPosition);
+                if (bInSource) {
+                    it->second.bItem = true;
+                }
+            }
+        }
+    }
+
+    return unScore;
+}
+
+/****************************************/
+/****************************************/
+
+Real SeqLoopFunction::GetColorAggregationScore() {
+
+    UpdateRobotPositions();
+    UpdateRobotColors();
+
+    CColor cMimicryColor = CColor::BLACK;
+    if (m_cArenaColor == m_cTaskAsignedColorBlue)
+        cMimicryColor = m_cTaskEvalColorBlue;
+    else if (m_cArenaColor == m_cTaskAsignedColorRed)
+        cMimicryColor = m_cTaskEvalColorRed;
+
+    Real unScore = 0;
+    Real d = 0;
+    Real fCounter = 0;
+    TRobotStateMap::iterator it, jt;
+
+    for (it = m_tRobotStates.begin(); it != m_tRobotStates.end(); ++it) {
+        for (jt = m_tRobotStates.begin(); jt != it; ++jt) {
+            d = (it->second.cPosition - jt->second.cPosition).Length();
+            unScore+=d;
+
+            if (it->second.cColor == cMimicryColor || jt->second.cColor == cMimicryColor)
+                fCounter+=1;
+        }
+    }
+
+    unScore = unScore / Max(fCounter,1.0);
 
     return unScore;
 }

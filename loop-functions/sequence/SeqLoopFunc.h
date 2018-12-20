@@ -58,6 +58,10 @@ class SeqLoopFunction: public CNeatLoopFunctions {
     Real GetMimicryScore();
     Real GetDistributeScore();
     Real GetAggregationScore();
+    Real GetColorStopScore();
+    Real GetColorAllBlackScore();
+    Real GetColorForageScore();
+    Real GetColorAggregationScore();
 
   private:
 
