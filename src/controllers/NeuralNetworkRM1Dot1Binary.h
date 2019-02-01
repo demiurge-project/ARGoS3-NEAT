@@ -34,9 +34,13 @@ public:
    virtual void Reset();
    virtual void Destroy();
 
+   std::string GetState();
+
 private:
 
    Real m_inputs[25];
+   void UpdateState();
+   std::string m_strStatus;
 
 };
 

@@ -127,12 +127,12 @@ void NeuralNetworkRM1Dot1Binary::ControlStep() {
           cAttractionVector += CVector2((1 / (Real) (1 + (*it)->Range)),(*it)->Bearing.SignedNormalize());
         }
       }
-      
+
       Real len = cAttractionVector.Length();
       if(len != 0) {
 	cAttractionVector.Normalize(); // now, sRabVectorSum.Length = 1
 	cAttractionVector *= (2/(1+exp(-len)) - 1);
-      } 
+      }
 
       UInt8 unNumberNeighbors = m_pcRobotState->GetNumberNeighbors();
 
@@ -173,11 +173,32 @@ void NeuralNetworkRM1Dot1Binary::ControlStep() {
 
 
    if(m_pcWheels != NULL) {
-      m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
+     UpdateState();
+     m_pcWheels->SetLinearVelocity(m_fLeftSpeed, m_fRightSpeed);
    }
 
    m_unTimeStep++;
    //Display(1);
+}
+
+/****************************************/
+/****************************************/
+
+void NeuralNetworkRM1Dot1Binary::UpdateState() {
+  Real fMaxSpeed = m_pcRobotState->GetMaxVelocity();
+  if ((m_fLeftSpeed == 0) & (m_fRightSpeed == 0)) {
+    m_strStatus = "H";
+  } else if ((m_fLeftSpeed == 0) & (m_fRightSpeed == fMaxSpeed)) {
+    m_strStatus = "L";
+  } else if ((m_fLeftSpeed == fMaxSpeed) & (m_fRightSpeed == 0)) {
+    m_strStatus = "R";
+  } else if ((m_fLeftSpeed == fMaxSpeed) & (m_fRightSpeed == fMaxSpeed)) {
+    m_strStatus = "S";
+  }
+}
+
+std::string NeuralNetworkRM1Dot1Binary::GetState() {
+  return m_strStatus;
 }
 
 /****************************************/
