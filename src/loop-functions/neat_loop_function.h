@@ -157,6 +157,12 @@ protected:
     UInt32 m_unEvalTask;
 
     /*
+     * Alpha value for linearly combine the objetive functions
+     * [0,2,4,5,6,8] --- But could be extended as Real
+     */
+    Real m_fAlphaValue;
+
+    /*
      * Transition time in sequence experiments
      */
     UInt32 m_unTrnTime;

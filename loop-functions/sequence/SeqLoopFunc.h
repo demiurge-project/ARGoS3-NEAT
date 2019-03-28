@@ -35,16 +35,20 @@ class SeqLoopFunction: public CNeatLoopFunctions {
     Real GetObjectiveFunction();
 
     CVector3 GetRandomPosition();
+    CVector2 GetRandomArenaPoint();
+    UInt32 GetRandomTime(UInt32 unMin, UInt32 unMax);
 
     void ArenaControl();
     bool SelectColorOrder(UInt32 un_ColorOrderParam);
     void AsignArenaColors(UInt32 un_NumberColorsParam);
 
     void InitRobotStates();
-    void InitSourceItems();
+    void InitSources();
+    void GetArenaPoints(UInt32 unNumberPoints);
     void UpdateRobotPositions();
     void UpdateRobotColors();
 
+    bool IsRobotInDock (CVector2 tRobotPosition);
     bool IsRobotInNest (CVector2 tRobotPosition);
     bool IsRobotInSource (CVector2 tRobotPosition);
     UInt32 IsRobotInSourceID (CVector2 tRobotPosition);
@@ -58,6 +62,18 @@ class SeqLoopFunction: public CNeatLoopFunctions {
     Real GetMimicryScore();
     Real GetDistributeScore();
     Real GetAggregationScore();
+
+    Real GetTransportScore();
+    Real GetRechargeScore();
+    Real GetManufactureScore();
+    Real GetSurveillanceScore();
+    Real GetRestoreScore();
+    Real GetRefillScore();
+    Real GetPickUpScore();
+    Real GetDispersionScore();
+    Real GetCleaningScore();
+    void ExecuteRestore();
+
     Real GetColorStopScore();
     Real GetColorAllBlackScore();
     Real GetColorForageScore();
@@ -81,13 +97,22 @@ class SeqLoopFunction: public CNeatLoopFunctions {
         CVector2 cPosition;
         CColor cColor;
         bool bItem;
+        bool bMaterial;
+        bool bMoving;
     };
 
     typedef std::map<CEPuckEntity*, RobotStateStruct> TRobotStateMap;
     typedef std::map<UInt32, UInt32> TSourceItemsMap;
+    typedef std::map<UInt32, UInt32> TSourceOperationMap;
+    typedef std::map<UInt32, UInt32> TSourceRestoringMap;
+    typedef std::vector<CVector2> TArenaPoints;
 
     TRobotStateMap m_tRobotStates;
     TSourceItemsMap m_tSourceItems;
+    TSourceOperationMap m_tSourceOperation;
+    TSourceOperationMap m_tSourceReparation;
+    TSourceRestoringMap m_tSourceRestoring;
+    TArenaPoints m_tArenaPoints;
 
 };
 

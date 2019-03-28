@@ -42,6 +42,7 @@ void CNeatLoopFunctions::Init(TConfigurationNode& t_tree) {
       GetNodeAttributeOrDefault(cParametersNode, "red_task", m_unRedTask, (UInt32) 0);
       GetNodeAttributeOrDefault(cParametersNode, "eval_task", m_unEvalTask, (UInt32) 0);
       GetNodeAttributeOrDefault(cParametersNode, "trn_time", m_unTrnTime, (UInt32) 600);
+      GetNodeAttributeOrDefault(cParametersNode, "alpha_value", m_fAlphaValue, (Real) 0.5);
     } catch(std::exception e) {
       LOGERR << e.what() << std::endl;
     }
