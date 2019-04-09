@@ -89,6 +89,14 @@ void CEPuckNEATController::LoadNetwork(const std::string& filename) {
 /****************************************/
 /****************************************/
 
+void CEPuckNEATController::LoadNetworkFromCommandLine(std::vector<std::string>& command_line_genome) {
+  NEAT::Genome* g = new NEAT::Genome(command_line_genome);
+}
+
+
+/****************************************/
+/****************************************/
+
 void CEPuckNEATController::Display(int i) {
    LOG << "SEQ: " << i << std::endl;
    /*LOG << "INPUTS" << std::endl;

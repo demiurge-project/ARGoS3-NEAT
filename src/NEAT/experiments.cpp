@@ -1,5 +1,6 @@
 #include "experiments.h"
 #include <stdio.h>
+#include <dirent.h>
 #include <iostream>
 
 /**
@@ -144,4 +145,108 @@ void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperi
 
    // Delete the genome
    delete startGenome;
+}
+
+/**
+ * Function that launches NEAT: load all the useful parameters for NEAT, create the first population based on the starter genome,
+ * call the experiment and evaluation defined by the user, and create the next generations.
+ * @params: trainingSet - folder containing the experiment files (.argos), each describing a different epuck model.
+ *      neatParams - file containing the useful parameters for NEAT.
+ *	    startGenes - file containing the structure of the starter genome.
+ *	    (*fctExperiment)(Population&, int, str) - function defined by the user that launches the experiment on a whole population.
+ *		  The evaluation of each organism can be done in parallel. This parallelism is left to the user to define it.
+ * */
+void launchNEAT(const char *trainingSet, const char *neatParams, const char *startGenes,
+                void (*fctExperiment)(Population&, unsigned int, std::string)) {
+
+  // Useful variables
+  Population* pop = NULL;
+  Genome* startGenome = NULL;
+  char curword[20];
+  int id;
+
+  // Random Setup: Seed the random-number generator with current time.
+  srand((unsigned)time(NULL));
+
+  // Load all the useful parameters for NEAT
+  NEAT::load_neat_params(neatParams,true);
+
+  // Create the starter genome
+  std::ifstream iFile(startGenes, std::ios::in);
+  iFile >> curword;
+  iFile >> id;
+  startGenome = new Genome(id,iFile);
+  iFile.close();
+
+  // Load experiment files (.argos) with the different epuck models.
+  std::cout << " Training set:" << std::endl;
+  DIR *trainingSetFolder;
+  struct dirent *epdf;
+  std::string currentFile;
+  std::vector<std::string> experimentFiles;
+  trainingSetFolder = opendir(trainingSet);
+  if (trainingSetFolder != NULL) {
+    while (epdf = readdir(trainingSetFolder)) {
+      currentFile = std::string(epdf->d_name);
+      if(currentFile.substr(currentFile.find_last_of(".") + 1) == "argos") {
+        std::cout << currentFile << std::endl;
+        experimentFiles.push_back(std::string(trainingSet) + currentFile);
+      }
+    }
+  }
+  std::sort(experimentFiles.begin(), experimentFiles.end());
+
+  // For each run
+  for(int run=1; run <= NEAT::num_runs; run++) {
+    // Set the new population based on the starter genome.
+    pop = new Population(startGenome, NEAT::pop_size);
+
+    // For each generation
+    for(int g=1; g <= NEAT::num_gens; g++) {
+      // Sample epuck model (contained in experiment file)
+      unsigned int randomIndex = rand() % 1;//experimentFiles.size();
+      std::string expFile = experimentFiles.at(randomIndex);
+      std::cout << " Current experiment file: " << expFile << std::endl;
+
+      // Launch the experiment <NEAT::num_runs_per_gen> times with the specified population
+      // passed in argument, and evaluate each organism in this last one.
+      (*fctExperiment)(*pop, NEAT::num_runs_per_gen, expFile);
+
+      // Write the result in a file.
+      if(NEAT::print_every!=0 && (g % NEAT::print_every)==0) {
+        sprintf(curword, "gen/gen_%d_%d", run, g);
+        pop->print_to_file_by_species(curword);
+        sprintf(curword, "gen/gen_%d_%d_champ", run, g);
+        pop->print_champ_to_file(curword);
+        //pop->print_species_champs_tofiles();
+      }
+
+       // Reproduction and creation of the next generation is done by NEAT
+       pop->epoch(g);
+    }
+    // Post-Evaluation of the last population
+    if(NEAT::num_runs_post_eval != 0) {
+       std::cout << "\nPost-Evaluation" << std::endl;
+
+      // Sample epuck model (contained in experiment file)
+       unsigned int randomIndex = rand() % experimentFiles.size();
+       std::string expFile = experimentFiles.at(randomIndex);
+       std::cout << " Current experiment file: " << expFile << std::endl;
+
+       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, expFile);
+    }
+
+    // Write the result in a file.
+    sprintf(curword, "gen/gen_last_%d", run);
+    pop->print_to_file_by_species(curword);
+    sprintf(curword, "gen/gen_last_%d_champ", run);
+    pop->print_champ_to_file(curword);
+    //pop->print_species_champs_tofiles();
+
+    // Delete the population
+    delete pop;
+  }
+
+  // Delete the genome
+  delete startGenome;
 }

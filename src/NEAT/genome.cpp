@@ -175,6 +175,7 @@ Genome::Genome(int id, std::ifstream &iFile) {
 
             ss.getline(argline, 1024);
 			//Allocate the new trait
+			std::cout << "Trait: " << argline << std::endl;
 			newtrait=new Trait(argline);
 
 			//Add trait to vector of traits
@@ -191,6 +192,7 @@ Genome::Genome(int id, std::ifstream &iFile) {
 
             ss.getline(argline, 1024);
 			//Allocate the new node
+			std::cout << "Node: " << argline << std::endl;
 			newnode=new NNode(argline,traits);
 
 			//Add the node to the list of nodes
@@ -208,6 +210,7 @@ Genome::Genome(int id, std::ifstream &iFile) {
             ss.getline(argline, 1024);
             //std::cout << "New gene: " << ss.str() << std::endl;
 			//Allocate the new Gene
+			std::cout << "Gene: " << argline << std::endl;
             newgene=new Gene(argline,traits,nodes);
 
 			//Add the gene to the genome
@@ -217,6 +220,11 @@ Genome::Genome(int id, std::ifstream &iFile) {
 		}
 
 	}
+
+}
+
+Genome::Genome( std::vector<std::string>& vec_genome_description) {
+
 
 }
 

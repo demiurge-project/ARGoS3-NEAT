@@ -42,6 +42,15 @@ if(MPI_FOUND)
 						argos3_demiurge_loop_functions
 						argos3_demiurge_epuck_dao)
 
+	# Add the executable NEAT-evolution-mmts
+	add_executable(NEAT-evolution-mmts evolution-mmts.cpp)
+	# Link the executable evolution with the necessary libraries
+	target_link_libraries(NEAT-evolution-mmts neat neat_controller ${MPI_LIBRARIES}
+						argos3core_${ARGOS_BUILD_FOR}
+						argos3plugin_${ARGOS_BUILD_FOR}_epuck
+						argos3_demiurge_loop_functions
+						argos3_demiurge_epuck_dao)
+
 	# Add the executable scheduler
 	add_executable(scheduler scheduler.cpp)
 	target_link_libraries(scheduler neat neat_controller ${MPI_LIBRARIES}

@@ -21,6 +21,7 @@
 #include "NEAT/genome.h"
 
 #include <map>
+#include <fstream>
 
 using namespace argos;
 
@@ -36,6 +37,7 @@ public:
    virtual void Destroy() = 0;
 
    void LoadNetwork(const std::string& filename);
+   void LoadNetworkFromCommandLine(std::vector<std::string>& command_line_genome);
 
    void Display(int i);
    void DisplayNetwork();
