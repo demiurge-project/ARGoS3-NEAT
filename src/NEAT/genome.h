@@ -107,6 +107,8 @@ namespace NEAT {
 		// Wrapper for print_to_file above
 		void print_to_filename(char *filename);
 
+		const std::string get_genome_description();
+
 		// Duplicate this Genome to create a new one with the specified id
 		Genome *duplicate(int new_id);
 

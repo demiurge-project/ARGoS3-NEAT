@@ -63,7 +63,7 @@ Trait::Trait(const char *argline) {
 	//int curwordnum = 0;
 
 	//strcpy(curword, NEAT::getUnit(argline, curwordnum++, delimiters));
-    
+
 //	trait_id = atoi(curword);
     ss >> trait_id;
 
@@ -95,7 +95,7 @@ void Trait::print_to_file(std::ofstream &outFile) {
 }
 
 
-void Trait::print_to_file(std::ostream &outFile) { 
+void Trait::print_to_file(std::ostream &outFile) {
 
 	//outFile<<"trait "<<trait_id<<" ";
 	//for(int count=0;count<NEAT::num_trait_params;count++)
@@ -113,6 +113,15 @@ void Trait::print_to_file(std::ostream &outFile) {
 	}
 
     outFile << std::endl;
+}
+
+const std::string Trait::get_trait_description() {
+	std::stringstream ssString;
+	ssString<<"trait "<<trait_id<<" ";
+	for(int count=0;count<NEAT::num_trait_params;count++)
+		ssString<<params[count]<<" ";
+
+	return ssString.str();
 }
 
 void Trait::mutate() {

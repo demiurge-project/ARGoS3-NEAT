@@ -82,8 +82,6 @@ void CEPuckNEATController::LoadNetwork(const std::string& filename) {
    }
 
    iFile.close();
-
-   //DisplayNetwork();
 }
 
 /****************************************/
@@ -91,6 +89,9 @@ void CEPuckNEATController::LoadNetwork(const std::string& filename) {
 
 void CEPuckNEATController::LoadNetworkFromCommandLine(std::vector<std::string>& command_line_genome) {
   NEAT::Genome* g = new NEAT::Genome(command_line_genome);
+  m_net = g->genesis(g->genome_id);
+  m_cNetworkVector.push_back(m_net);
+  delete g;
 }
 
 

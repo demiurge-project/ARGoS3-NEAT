@@ -183,7 +183,7 @@ bool NNode::sensor_load(double value) {
 
 // Note: NEAT keeps track of which links are recurrent and which
 // are not even though this is unnecessary for activation.
-// It is useful to do so for 2 other reasons: 
+// It is useful to do so for 2 other reasons:
 // 1. It makes networks visualization of recurrent networks possible
 // 2. It allows genetic control of the proportion of connections
 //    that may become recurrent
@@ -233,7 +233,7 @@ void NNode::flushback() {
 
 		//Flush back recursively
 		for(curlink=incoming.begin();curlink!=incoming.end();++curlink) {
-			//Flush the link itself (For future learning parameters possibility) 
+			//Flush the link itself (For future learning parameters possibility)
 			(*curlink)->added_weight=0;
 			if ((((*curlink)->in_node)->activation_count>0))
 				((*curlink)->in_node)->flushback();
@@ -250,7 +250,7 @@ void NNode::flushback() {
 
 }
 
-// This recursively checks everything leading into and including this NNode, 
+// This recursively checks everything leading into and including this NNode,
 // including recurrencies
 // Useful for debugging
 void NNode::flushback_check(std::vector<NNode*> &seenlist) {
@@ -418,9 +418,18 @@ int NNode::depth(int d, Network *mynet) {
       cur_depth=((*curlink)->in_node)->depth(d+1,mynet);
       if (cur_depth>max) max=cur_depth;
     }
-  
+
     return max;
 
   } //end else
+}
 
+const std::string NNode::get_node_description() {
+  std::stringstream ssString;
+	ssString << "node " << node_id << " ";
+  if (nodetrait!=0) ssString << nodetrait->trait_id << " ";
+  else ssString << "0 ";
+  ssString << type << " ";
+  ssString << gen_node_label << " ";
+	return ssString.str();
 }

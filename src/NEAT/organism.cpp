@@ -96,14 +96,14 @@ void Organism::update_phenotype() {
 }
 
 bool Organism::print_to_file(char *filename) {
-	
+
 	std::ofstream oFile(filename);
 
 	return write_to_file(oFile);
 }
 
 bool Organism::write_to_file(std::ostream &outFile) {
-	
+
 	char tempbuf2[1024];
 	if(modified == true) {
 		sprintf(tempbuf2, "/* Organism #%d Fitness: %f Time: %d */\n", (gnome)->genome_id, fitness, time_alive);
@@ -115,7 +115,11 @@ bool Organism::write_to_file(std::ostream &outFile) {
 	return 1;
 }
 
-//// Print the Organism's genome to a file preceded by a comment             
+const std::string Organism::get_neural_network_description() {
+	return gnome->get_genome_description();
+}
+
+//// Print the Organism's genome to a file preceded by a comment
 ////   detailing the organism's species, number, and fitness
 //bool Organism::print_to_file(char *filename) {
 //

@@ -41,13 +41,13 @@ namespace NEAT {
 	};
 
 	class Link;
-	
+
 	class Network;
 
-	// ----------------------------------------------------------------------- 
-	// A NODE is either a NEURON or a SENSOR.  
+	// -----------------------------------------------------------------------
+	// A NODE is either a NEURON or a SENSOR.
 	//   - If it's a sensor, it can be loaded with a value for output
-	//   - If it's a neuron, it has a list of its incoming input signals (List<Link> is used) 
+	//   - If it's a neuron, it has a list of its incoming input signals (List<Link> is used)
 	// Use an activation count to avoid flushing
 	class NNode {
 
@@ -82,19 +82,19 @@ namespace NEAT {
 		bool frozen; // When frozen, cannot be mutated (meaning its trait pointer is fixed)
 
 		functype ftype; // type is either SIGMOID ..or others that can be added
-		nodetype type; // type is either NEURON or SENSOR 
+		nodetype type; // type is either NEURON or SENSOR
 
-		double activesum;  // The incoming activity before being processed 
-		double activation; // The total activation entering the NNode 
+		double activesum;  // The incoming activity before being processed
+		double activation; // The total activation entering the NNode
 		bool active_flag;  // To make sure outputs are active
 
 		// NOT USED IN NEAT - covered by "activation" above
-		double output;  // Output of the NNode- the value in the NNode 
+		double output;  // Output of the NNode- the value in the NNode
 
-		// ************ LEARNING PARAMETERS *********** 
-		// The following parameters are for use in    
+		// ************ LEARNING PARAMETERS ***********
+		// The following parameters are for use in
 		//   neurons that learn through habituation,
-		//   sensitization, or Hebbian-type processes  
+		//   sensitization, or Hebbian-type processes
 
 		double params[NEAT::num_trait_params];
 
@@ -170,14 +170,16 @@ namespace NEAT {
 		bool overridden();
 
 		// Set activation to the override value and turn off override
-		void activate_override();  
+		void activate_override();
 
 		// Writes back changes weight values into the genome
 		// (Lamarckian trasnfer of characteristics)
 		void Lamarck();
 
 		//Find the greatest depth starting from this neuron at depth d
-		int depth(int d,Network *mynet); 
+		int depth(int d,Network *mynet);
+
+		const std::string get_node_description();
 
 	};
 
