@@ -72,7 +72,9 @@ namespace NEAT {
 
 		//Special constructor which spawns off a command line
 		//This constructor assumes that some routine has already read in GENOMESTART
-    Genome(std::vector<std::string>& vec_genome_description);
+    Genome(std::vector<std::string>& vec_genome_config);
+
+		std::string GetStringFromVector(std::vector<std::string>& vec_of_strings);
 
 		// This special constructor creates a Genome
 		// with i inputs, o outputs, n out of nmax hidden units, and random

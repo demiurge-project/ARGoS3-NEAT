@@ -175,7 +175,6 @@ Genome::Genome(int id, std::ifstream &iFile) {
 
             ss.getline(argline, 1024);
 			//Allocate the new trait
-			std::cout << "Trait: " << argline << std::endl;
 			newtrait=new Trait(argline);
 
 			//Add trait to vector of traits
@@ -192,7 +191,6 @@ Genome::Genome(int id, std::ifstream &iFile) {
 
             ss.getline(argline, 1024);
 			//Allocate the new node
-			std::cout << "Node: " << argline << std::endl;
 			newnode=new NNode(argline,traits);
 
 			//Add the node to the list of nodes
@@ -210,8 +208,7 @@ Genome::Genome(int id, std::ifstream &iFile) {
             ss.getline(argline, 1024);
             //std::cout << "New gene: " << ss.str() << std::endl;
 			//Allocate the new Gene
-			std::cout << "Gene: " << argline << std::endl;
-            newgene=new Gene(argline,traits,nodes);
+		        newgene=new Gene(argline,traits,nodes);
 
 			//Add the gene to the genome
 			genes.push_back(newgene);
@@ -223,11 +220,61 @@ Genome::Genome(int id, std::ifstream &iFile) {
 
 }
 
-Genome::Genome( std::vector<std::string>& vec_genome_description) {
+Genome::Genome( std::vector<std::string>& vec_genome_config) {
+	std::vector<std::string>::iterator it_start;
+	std::vector<std::string>::iterator it_end;
+	try {
+		/* Collect trait description */
+		it_start = std::find(vec_genome_config.begin(), vec_genome_config.end(), "trait");
+		it_end = std::find(vec_genome_config.begin(), vec_genome_config.end(), "node");
+		std::vector<std::string> vecTraitConfig(it_start+1, it_end);
+		std::cout << "Trait: " << GetStringFromVector(vecTraitConfig) << std::endl;
 
+		/* Collect all nodes descriptions */
+		it_start = std::find(vec_genome_config.begin(), vec_genome_config.end(), "node");
+		it_end = std::find(vec_genome_config.begin(), vec_genome_config.end(), "gene");
+		std::vector<std::string> vecNodesConfig(it_start, it_end);
+		// std::vector<std::string>::iterator it;
+		// for (it = vecNodesConfig.begin(); it != vecNodesConfig.end(); ++it) {
+		// 	std::cout << *it << " ";
+		// }
+		// std::cout << std::endl;
+		/* Collect individual node descriptions */
+		it_end = vecNodesConfig.begin();
+		while(it_end != vecNodesConfig.end()) {
+			it_start = std::find(it_end, vecNodesConfig.end(), "node");
+			it_end = std::find(it_start+1, vecNodesConfig.end(), "node");
+			std::vector<std::string> vecNodeConfig(it_start+1, it_end);
+			std::cout << "Node: " << GetStringFromVector(vecNodeConfig) << std::endl;
+		}
+
+		/* Collect all genes descriptions */
+		it_start = std::find(vec_genome_config.begin(), vec_genome_config.end(), "gene");
+		it_end = std::find(vec_genome_config.begin(), vec_genome_config.end(), "genomeend");
+		std::vector<std::string> vecGenesConfig(it_start, it_end);
+		it_end = vecGenesConfig.begin();
+		while(it_end != vecGenesConfig.end()) {
+			it_start = std::find(it_end, vecGenesConfig.end(), "gene");
+			it_end = std::find(it_start+1, vecGenesConfig.end(), "gene");
+			std::vector<std::string> vecGeneConfig(it_start+1, it_end);
+			std::cout << "Gene: " << GetStringFromVector(vecGeneConfig) << std::endl;
+		}
+		
+	} catch (std::exception e) {
+		std::cout << "Error while parsing genome: " << e.what() << std::endl;
+	}
 
 }
 
+
+std::string Genome::GetStringFromVector(std::vector<std::string>& vec_of_strings) {
+	std::stringstream strOutput;
+	std::vector<std::string>::iterator it;
+	for (it = vec_of_strings.begin(); it != vec_of_strings.end(); ++it) {
+		strOutput << *it << " ";
+	}
+	return strOutput.str();
+}
 
 Genome::Genome(int new_id,int i, int o, int n,int nmax, bool r, double linkprob) {
 	int totalnodes;
