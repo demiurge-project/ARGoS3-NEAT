@@ -264,6 +264,7 @@ Genome::Genome( std::vector<std::string>& vec_genome_config) {
 
 	} catch (std::exception e) {
 		std::cout << "Error while parsing genome: " << e.what() << std::endl;
+		exit(0);
 	}
 }
 
