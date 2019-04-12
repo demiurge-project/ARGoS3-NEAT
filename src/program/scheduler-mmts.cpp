@@ -49,10 +49,10 @@ int main(int argc, char* argv[]) {
       parent_comm.Recv(&vecRandomSeed[0], nNum_runs_per_gen, MPI::UNSIGNED, 0, 1);
 
       // Receiving the experiment file
-      
+      parent_comm.Probe(0, 1, status);
+
 
       // Receiving the genome as a string
-      //MPI::Status status;
       parent_comm.Probe(0, 1, status);
       int l = status.Get_count(MPI::CHAR);
       char *buf = new char[l];
@@ -60,57 +60,9 @@ int main(int argc, char* argv[]) {
       std::string strGenome(buf, l);
       delete[] buf;
 
-      // Deserialize: String -> Genome
-      std::vector<NEAT::Trait*> vecTraits;
-      std::vector<NEAT::NNode*> vecNodes;
-      std::vector<NEAT::Gene*> vecGenes;
-      size_t i = 0, j = strGenome.find("\n",i);
-      std::string str;
-
-      while(j != std::string::npos) {
-
-         str = strGenome.substr(i,j-i);
-
-         if(str.compare(0,5,"trait") == 0) { //Trait
-
-            str = str.substr(6);
-            NEAT::Trait* pTrait = new NEAT::Trait(str.c_str());
-            vecTraits.push_back(pTrait);
-
-         } else if(str.compare(0,4,"node") == 0) { //Node
-
-            str = str.substr(5);
-            NEAT::NNode* pNode = new NEAT::NNode(str.c_str(), vecTraits);
-            vecNodes.push_back(pNode);
-
-         } else if(str.compare(0,4,"gene") == 0) { //Gene
-
-            str = str.substr(5);
-            NEAT::Gene* pGene = new NEAT::Gene(str.c_str(), vecTraits, vecNodes);
-            vecGenes.push_back(pGene);
-
-         }
-
-         i = j+1;
-         j = strGenome.find("\n",i);
-      }
-
-      // Create the new genome, and the network
-      NEAT::Genome* genome = new NEAT::Genome(id, vecTraits, vecNodes, vecGenes);
-      NEAT::Network* net = genome->genesis(genome->genome_id);
-
       // Launch the experiment with the correct random seed and network,
       // and evaluate the average fitness
-      CSpace::TMapPerType cEntities = cSimulator.GetSpace().GetEntitiesByType("controller");
-      for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
-          CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
-          try {
-              CEPuckNEATController& cController = dynamic_cast<CEPuckNEATController&>(pcEntity->GetController());
-              cController.SetNetwork(*net);
-          } catch (std::exception& ex) {
-              LOGERR << "Error while setting network: " << ex.what() << std::endl;
-          }
-      }
+
 
       double dFitness = 0.0;
       try {
@@ -141,9 +93,6 @@ int main(int argc, char* argv[]) {
       delete genome;
       delete net;
    }
-
-   // Dispose of ARGoS stuff
-   cSimulator.Destroy();
 
    // Terminates MPI execution environment.
    MPI_Finalize();

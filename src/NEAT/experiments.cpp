@@ -37,7 +37,7 @@ void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExpe
       // Set the new population based on the starter genome.
       pop = new Population(startGenome, NEAT::pop_size);
       // For each generation
-      for(int g=1; g <= NEAT::num_gens; g++) {
+      for(unsigned int g=1; g <= NEAT::num_gens; g++) {
          printf("\n Generation %d\n", g);
 
          // Evaluate each organism on a test
@@ -108,7 +108,7 @@ void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperi
       pop = new Population(startGenome, NEAT::pop_size);
 
       // For each generation
-      for(int g=1; g <= NEAT::num_gens; g++) {
+      for(unsigned int g=1; g <= NEAT::num_gens; g++) {
 
          // Launch the experiment <NEAT::num_runs_per_gen> times with the specified population
          // passed in argument, and evaluate each organism in this last one.
@@ -157,7 +157,7 @@ void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperi
  *		  The evaluation of each organism can be done in parallel. This parallelism is left to the user to define it.
  * */
 void launchNEAT(const char *trainingSet, const char *neatParams, const char *startGenes,
-                void (*fctExperiment)(Population&, unsigned int, std::string)) {
+                void (*fctExperiment)(Population&, unsigned int, std::vector<std::string>&)) {
 
   // Useful variables
   Population* pop = NULL;
@@ -166,7 +166,7 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
   int id;
 
   // Random Setup: Seed the random-number generator with current time.
-  srand((unsigned)time(NULL));
+  //srand((unsigned)time(NULL));
 
   // Load all the useful parameters for NEAT
   NEAT::load_neat_params(neatParams,true);
@@ -179,17 +179,17 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
   iFile.close();
 
   // Load experiment files (.argos) with the different epuck models.
-  std::cout << " Training set:" << std::endl;
+  //std::cout << " Training set:" << std::endl;
   DIR *trainingSetFolder;
   struct dirent *epdf;
   std::string currentFile;
   std::vector<std::string> experimentFiles;
   trainingSetFolder = opendir(trainingSet);
   if (trainingSetFolder != NULL) {
-    while (epdf = readdir(trainingSetFolder)) {
+    while ((epdf = readdir(trainingSetFolder))) {
       currentFile = std::string(epdf->d_name);
       if(currentFile.substr(currentFile.find_last_of(".") + 1) == "argos") {
-        std::cout << currentFile << std::endl;
+        //std::cout << currentFile << std::endl;
         experimentFiles.push_back(std::string(trainingSet) + currentFile);
       }
     }
@@ -202,15 +202,10 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
     pop = new Population(startGenome, NEAT::pop_size);
 
     // For each generation
-    for(int g=1; g <= NEAT::num_gens; g++) {
-      // Sample epuck model (contained in experiment file)
-      unsigned int randomIndex = rand() % 1;//experimentFiles.size();
-      std::string expFile = experimentFiles.at(randomIndex);
-      std::cout << " Current experiment file: " << expFile << std::endl;
-
+    for(unsigned int g=1; g <= NEAT::num_gens; g++) {
       // Launch the experiment <NEAT::num_runs_per_gen> times with the specified population
       // passed in argument, and evaluate each organism in this last one.
-      (*fctExperiment)(*pop, NEAT::num_runs_per_gen, expFile);
+      (*fctExperiment)(*pop, NEAT::num_runs_per_gen, experimentFiles);
 
       // Write the result in a file.
       if(NEAT::print_every!=0 && (g % NEAT::print_every)==0) {
@@ -228,12 +223,7 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
     if(NEAT::num_runs_post_eval != 0) {
        std::cout << "\nPost-Evaluation" << std::endl;
 
-      // Sample epuck model (contained in experiment file)
-       unsigned int randomIndex = rand() % experimentFiles.size();
-       std::string expFile = experimentFiles.at(randomIndex);
-       std::cout << " Current experiment file: " << expFile << std::endl;
-
-       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, expFile);
+       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, experimentFiles);
     }
 
     // Write the result in a file.

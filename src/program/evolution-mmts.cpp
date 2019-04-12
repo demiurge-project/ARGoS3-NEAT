@@ -33,7 +33,7 @@
 
 // GLOBAL VARIABLE
 MPI::Intercomm g_com;
-int g_nbProcess;
+unsigned int nbProcess;
 unsigned int g_unRandomSeed = 1;
 
 std::string exec(const char* cmd) {
@@ -90,7 +90,7 @@ signed int extractPerformance(std::string output) {
  * Function that launches the experiment and evaluates this last one.
  * @note: To launch your own program: you can use, for example, system("") which is a combination of fork(), exec() and waitpid().
  */
-void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::string experiment_file) {
+void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files) {
   std::cout << "Beginning of evaluation procedure" << std::endl;
    // Check
   if(num_runs_per_gen == 0) return;
@@ -98,12 +98,17 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
   std::cout << "numgen: " << NEAT::num_gens << std::endl;
   std::cout << "numruns: " << NEAT::num_runs << std::endl;
 
-
   // Produces the different random seeds for the experiment
-  argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
   std::vector<UInt32> vecRandomSeed;
   for(size_t i=0; i<num_runs_per_gen; i++) {
-    vecRandomSeed.push_back( pRNG->Uniform(argos::CRange<UInt32>(0, UINT32_MAX)) );
+    vecRandomSeed.push_back(rand());
+  }
+
+  // Sample epuck model (contained in experiment file)
+  std::vector<UInt32> vecRandomExpFileIndexes;
+  for(size_t i=0; i<num_runs_per_gen; i++) {
+    vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
+
   }
 
   // Iterating over all genomes
@@ -115,20 +120,23 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
     double dPerformance = 0.0;
     // Each genome is evaluate one or multiple times, and the performance is averaged.
     for(size_t j = 0; j < num_runs_per_gen; j++) {
-      std::cout << "Random seed: " << vecRandomSeed[j] << std::endl;
+      std::cout << "Exp file: " << experiment_files[vecRandomExpFileIndexes[j]] << "; Random seed: " << vecRandomSeed[j] << std::endl;
 
       std::stringstream ssGenome;
       ((*itOrg)->gnome)->print_to_file(ssGenome);
+      std::cout << "Genome = " << std::endl;
+      std::cout << transformOneLine(ssGenome.str()) << std::endl;
 
       // Create command to execute
       std::stringstream ssCommandLine;
       ssCommandLine << "/home/aligot/Desktop/Arena/NEAT-mmts/bin/NEAT-launch";
-      ssCommandLine << " -c " << experiment_file;
+      ssCommandLine << " -c " << experiment_files[vecRandomExpFileIndexes[j]];
       ssCommandLine << " -s " << vecRandomSeed[j];
       ssCommandLine << " --cl-genome " << transformOneLine(ssGenome.str());
       const std::string temp = ssCommandLine.str();
 
       std::string output = exec(temp.c_str());
+      std::cout << "Perf = " << extractPerformance(output) << std::endl;
       dPerformance += extractPerformance(output);
     }
     // Computes the average performance
@@ -147,7 +155,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
 /**
  * Function that launches in parallel (with MPI) the experiment for each organism in the population and evaluates each one.
  */
-void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen) {
+void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files) {
 
    // Check
    if(num_runs_per_gen == 0) return;
@@ -160,25 +168,20 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
    }
 
    // Serialization: Genome -> string
-   std::vector<std::string> vecStr;
+   std::vector<std::string> vecStrGenomes;
    for(std::vector<Organism*>::iterator itOrg = (pop.organisms).begin(); itOrg != (pop.organisms).end(); ++itOrg) {
 
-      std::stringstream s;
-      std::string str;
-
-      NEAT::Genome* g = (*itOrg)->gnome;
-      g->print_to_file(s);
-      str = s.str();
-      size_t pos = str.find("\n")+1;
-      str = str.substr(pos, str.find("genomeend")-pos);
-
-      vecStr.push_back(str);
+      std::stringstream ssGenome;
+      std::string strGenome;
+      ((*itOrg)->gnome)->print_to_file(ssGenome);
+      strGenome = transformOneLine(ssGenome.str());
+      vecStrGenomes.push_back(strGenome);
    }
 
    // MPI: Sends the random seed and the genome & Receives the fitness.
    int nId = 0, nId1=0;
-   int nSize = vecStr.size();
-   int nGroup = ceil((double) nSize/g_nbProcess);
+   int nSize = vecStrGenomes.size();
+   int nGroup = ceil((double) nSize/nbProcess);
    MPI::Status status;
    int nSource;
    bool cont = true;
@@ -188,14 +191,14 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
    for(int i=0; i < nGroup; i++) {
 
       // Sends the random seed and the genome (string) to all the child processes.
-      for(int j=0; (j < g_nbProcess) && (nId < nSize); j++, nId++) {
+      for(int j=0; (j < nbProcess) && (nId < nSize); j++, nId++) {
       	g_com.Send(&cont, 1, MPI::BOOL, j, 1);
          g_com.Send(&vecRandomSeed[0], vecRandomSeed.size(), MPI::UNSIGNED, j, 1);
-         g_com.Send(vecStr[nId].c_str(), vecStr[nId].length(), MPI::CHAR, j, 1);
+         g_com.Send(vecStrGenomes[nId].c_str(), vecStrGenomes[nId].length(), MPI::CHAR, j, 1);
       }
 
       // Receives the result of each process and store it in the fitness of each organism
-      for(int j=0; (j < g_nbProcess) && (nId1 < nSize); j++, nId1++) {
+      for(int j=0; (j < nbProcess) && (nId1 < nSize); j++, nId1++) {
          g_com.Recv(&dFitness, 1, MPI::DOUBLE, MPI::ANY_SOURCE, MPI::ANY_TAG, status);
          nSource = status.Get_source();
          (pop.organisms[nSource + (nId1-j)])->fitness = dFitness;
@@ -204,83 +207,139 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
    }
 }
 
+
+static void show_usage(std::string name) {
+  std::cerr << "Mandatory arguments:\n"
+            << "\t-cf,--config-folder\tSpecify the folder containing the configuration files (.argos)\n"
+            << "\t-p,--params\t\tSpecify the NEAT parameters file (.ne)\n"
+            << "\t-sg,--start-genome\tSpecify the starter genome file for the creation of the initial population\n"
+            << "Optional arguments:\n"
+            << "\t-s,--seed\t\tSpecify the seed for the design process\n"
+            << "\t-np,--nb-processes\tSpecify the number of process to launch (if more than 1)\n"
+            << "\t-b,--binary\t\tSpecify the scheduling binary file if more than 1 process in parallel.\n"
+            << std::endl;
+}
+
 /**
  * Main program.
  */
 int main(int argc, char *argv[]) {
 
-   // Checks the arguments
-   if (argc < 4) {
-      std::cerr << "Arg1: A folder containing the configuration file (.argos or .xml)." << std::endl;
-      std::cerr << "Arg2: A NEAT parameters file (.ne file) is required to run the experiments." << std::endl;
-      std::cerr << "Arg3: A starter genome file is required for the creation of the initial population." << std::endl;
-      std::cerr << "Arg4 (optional): The number (natural number) of processes you want to launch. If none is specified, or if it's 0 or 1, there will be only one process." << std::endl;
-      std::cerr << "Arg5 (non-optional if more than 1process!): the name of the binary file to launch in parallel." << std::endl;
-      return -1;
-   }
-
-   // Checks the number of processes to launch
-   g_nbProcess = 0;
-   if (argc > 5) {
-      try {
-         g_nbProcess = atoi(argv[4]); //should check if it's negative
-      } catch (const std::invalid_argument& err) {
-         std::cerr << "Invalid argument: " << err.what() << std::endl;
-         std::cerr << "There will be only one process!" << std::endl;
+  if (argc < 6) {
+    show_usage(argv[0]);
+    return 1;
+  }
+  std::vector <std::string> sources;
+  std::string destination;
+  const char * configFolder; // AKA the training set
+  const char * neatParams;
+  const char * startGenome;
+  unsigned int seed = 0;
+  unsigned int nbProcess = 0;
+  const char * binaryProcess;
+  for (int i = 1; i < argc; ++i) {
+    std::string arg = argv[i];
+    if ((arg == "-cf") || (arg == "--config-folder")) {
+      if (i + 1 < argc) {
+        configFolder = argv[i+1];
+      } else {
+        std::cerr << "-cf,--config-folder option requires one argument." << std::endl;
+        return 1;
       }
+    } else if ((arg == "-p") || (arg == "--params")) {
+      if (i + 1 < argc) {
+        neatParams = argv[i+1];
+      } else {
+        std::cerr << "-p,--params option requires one argument." << std::endl;
+        return 1;
+      }
+    } else if ((arg == "-sg") || (arg == "--start-genome")) {
+      if (i + 1 < argc) {
+        startGenome = argv[i+1];
+      } else {
+        std::cerr << "-sg,--start-genome option requires one argument." << std::endl;
+        return 1;
+      }
+    } else if ((arg == "-s") || (arg == "--seed")) {
+      if (i + 1 < argc) {
+        try {
+          seed = atoi(argv[i+1]);
+        } catch (const std::invalid_argument& e) {
+          std::cerr << "Invalid argument: " << e.what() << std::endl;
+          return 1;
+        }
+      } else {
+        std::cerr << "-s,--seed option requires one argument." << std::endl;
+        return 1;
+      }
+    } else if ((arg == "-np") || (arg == "--nb-processes")) {
+      if (i + 1 < argc) {
+        try {
+          nbProcess = atoi(argv[i+1]);
+        } catch (const std::invalid_argument& e) {
+          std::cerr << "Invalid argument: " << e.what() << std::endl;
+          return 1;
+        }
+      } else {
+        std::cerr << "-np,--num-processes option requires one argument." << std::endl;
+        return 1;
+      }
+    } else if ((arg == "-b") || (arg == "--binary")) {
+      if (i + 1 < argc) {
+        binaryProcess = argv[i+1];
+      } else {
+        std::cerr << "-b,--binary option requires one argument." << std::endl;
+        return 1;
+      }
+    }
   }
 
-   // Intializes the random number generator
-   time_t t;
-   srand((unsigned) time(&t));
-   g_unRandomSeed = rand();
+  // Intializes the random number generator
+  time_t t;
+  if (seed > 0) {
+    srand((unsigned) seed);
+  } else {
+    srand((unsigned) time(&t));
+  }
 
-   argos::CRandom::CreateCategory("neat", g_unRandomSeed);
+  // Launches the program
+  if(nbProcess > 1) { // in parallel
+    std::cout << "PARALLEL RUN" << std::endl;
 
-   // Launches the program
-   if(g_nbProcess > 1) { // in parallel
+    // Initializes the MPI execution environment.
+    MPI::Init();
 
-      std::cout << "PARALLEL RUN" << std::endl;
+    // Spawns a number of identical binaries.
+    g_com = MPI::COMM_WORLD.Spawn(binaryProcess, (const char**) argv, nbProcess, MPI::Info(), 0);
 
-      // Initializes the MPI execution environment.
-      MPI::Init();
+    // Launches NEAT with the specified experiment
+    launchNEAT(configFolder, neatParams, startGenome, launchARGoSInParallelAndEvaluate);
 
-      // Spawns a number of identical binaries.
-      g_com = MPI::COMM_WORLD.Spawn(argv[5], (const char**) argv, g_nbProcess, MPI::Info(), 0);
+    // Sends a signal to terminate the children.
+    std::cout << "Parent: Terminate children" << std::endl;
+    bool cont = false;
+    for(int j=0; (j < nbProcess); j++) {
+      g_com.Send(&cont, 1, MPI::BOOL, j, 1);
+    }
 
-      // Launches NEAT with the specified experiment
-      launchNEAT(argv[2], argv[3], launchARGoSInParallelAndEvaluate);
+    // Terminates MPI execution environment.
+    MPI_Finalize();
 
-      // Sends a signal to terminate the children.
-      std::cout << "Parent: Terminate children" << std::endl;
-      bool cont = false;
-      for(int j=0; (j < g_nbProcess); j++) {
-         g_com.Send(&cont, 1, MPI::BOOL, j, 1);
-      }
+  } else { // sequential
+    std::cout << "SEQUENTIAL RUN" << std::endl;
 
-      // Terminates MPI execution environment.
-      MPI_Finalize();
+    // Initialization of ARGoS
+    //argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
+    //argos::CDynamicLoading::LoadAllLibraries();
+    //cSimulator.SetExperimentFileName(argv[1]);
+    //cSimulator.LoadExperiment();
 
-   } else { // sequential
+    // Launches NEAT with the specified experiment
+    launchNEAT(configFolder, neatParams, startGenome, launchARGoSAndEvaluate);
 
-      std::cout << "SEQUENTIAL RUN" << std::endl;
-
-      // Initialization of ARGoS
-      //argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
-      //argos::CDynamicLoading::LoadAllLibraries();
-      //cSimulator.SetExperimentFileName(argv[1]);
-      //cSimulator.LoadExperiment();
-
-      // Launches NEAT with the specified experiment
-      launchNEAT(argv[1], argv[2], argv[3], launchARGoSAndEvaluate);
-
-      // Disposes of ARGoS stuff
-      //cSimulator.Destroy();
-   }
-
-   if(CRandom::ExistsCategory("neat")) {
-      CRandom::RemoveCategory("neat");
-   }
+    // Disposes of ARGoS stuff
+    //cSimulator.Destroy();
+  }
 
    return 0;
 }
