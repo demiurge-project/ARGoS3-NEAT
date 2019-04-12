@@ -53,7 +53,6 @@ namespace NEAT {
     void print_to_file(std::ostream &outFile);
 		void print_to_file(std::ofstream &outFile);
 
-		const std::string get_gene_description();
 	};
 
 } // namespace NEAT

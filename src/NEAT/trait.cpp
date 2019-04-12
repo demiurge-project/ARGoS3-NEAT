@@ -115,15 +115,6 @@ void Trait::print_to_file(std::ostream &outFile) {
     outFile << std::endl;
 }
 
-const std::string Trait::get_trait_description() {
-	std::stringstream ssString;
-	ssString<<"trait "<<trait_id<<" ";
-	for(int count=0;count<NEAT::num_trait_params;count++)
-		ssString<<params[count]<<" ";
-
-	return ssString.str();
-}
-
 void Trait::mutate() {
 	for(int count=0;count<NEAT::num_trait_params;count++) {
 		if (randfloat()>NEAT::trait_param_mut_prob) {

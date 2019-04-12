@@ -64,7 +64,6 @@ namespace NEAT {
 		// Print the Organism's genome to a file preceded by a comment detailing the organism's species, number, and fitness
 		bool print_to_file(char *filename);
 		bool write_to_file(std::ostream &outFile);
-		const std::string get_neural_network_description();
 
 		Organism(double fit, Genome *g, int gen, const char* md = 0);
 		Organism(const Organism& org);	// Copy Constructor

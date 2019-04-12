@@ -970,34 +970,6 @@ void Genome::print_to_filename(char *filename) {
 	oFile.close();
 }
 
-const std::string Genome::get_genome_description() {
-	std::vector<Trait*>::iterator curtrait;
-	std::vector<NNode*>::iterator curnode;
-	std::vector<Gene*>::iterator curgene;
-
-	std::stringstream ssString;
-	ssString << "genomestart " << genome_id << " ";
-
-	//Descriptions of traits
-	for(curtrait=traits.begin();curtrait!=traits.end();++curtrait) {
-		(*curtrait)->trait_id=curtrait-traits.begin()+1;
-		ssString << (*curtrait)->get_trait_description();
-	}
-
-	//Descriptions of nodes
-	for(curnode=nodes.begin();curnode!=nodes.end();++curnode) {
-		ssString << (*curnode)->get_node_description();
-	}
-
-	//Descriptions of genes
-	for(curgene=genes.begin();curgene!=genes.end();++curgene) {
-		ssString << (*curgene)->get_gene_description();
-	}
-
-	ssString << "genomeend " << genome_id;
-	return ssString.str();
-}
-
 int Genome::get_last_node_id() {
 	return ((*(nodes.end() - 1))->node_id)+1;
 }

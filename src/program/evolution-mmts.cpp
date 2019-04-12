@@ -67,6 +67,16 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
+const std::string transformOneLine(const std::string &s) {
+  std::vector<std::string> elems = split(s, '\n');
+  std::vector<std::string>::iterator it;
+  std::stringstream ssOneLine;
+  for (it = elems.begin(); it != elems.end(); it++) {
+    ssOneLine << *it << ' ';
+  }
+  return ssOneLine.str();
+}
+
 signed int extractPerformance(std::string output) {
     std::vector<std::string> elements;
     elements = split(output, '\n');
@@ -107,15 +117,19 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
     for(size_t j = 0; j < num_runs_per_gen; j++) {
       std::cout << "Random seed: " << vecRandomSeed[j] << std::endl;
 
+      std::stringstream ssGenome;
+      ((*itOrg)->gnome)->print_to_file(ssGenome);
+
       // Create command to execute
       std::stringstream ssCommandLine;
       ssCommandLine << "/home/aligot/Desktop/Arena/NEAT-mmts/bin/NEAT-launch";
       ssCommandLine << " -c " << experiment_file;
       ssCommandLine << " -s " << vecRandomSeed[j];
-      ssCommandLine << " --cl-genome " << (*itOrg)->get_neural_network_description();
+      ssCommandLine << " --cl-genome " << transformOneLine(ssGenome.str());
       const std::string temp = ssCommandLine.str();
 
-      dPerformance += extractPerformance(exec(temp.c_str()));
+      std::string output = exec(temp.c_str());
+      dPerformance += extractPerformance(output);
     }
     // Computes the average performance
     if(num_runs_per_gen > 0) {

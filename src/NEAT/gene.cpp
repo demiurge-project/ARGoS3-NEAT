@@ -181,19 +181,3 @@ void Gene::print_to_file(std::ostream &outFile) {
 	outFile<<mutation_num<<" ";
     outFile<<enable<<std::endl;
 }
-
-const std::string Gene::get_gene_description() {
-	std::stringstream ssString;
-	ssString<<"gene ";
-	//Start off with the trait number for this gene
-	if ((lnk->linktrait)==0) ssString<<"0 ";
-	else ssString<<((lnk->linktrait)->trait_id)<<" ";
-	ssString<<(lnk->in_node)->node_id<<" ";
-	ssString<<(lnk->out_node)->node_id<<" ";
-	ssString<<(lnk->weight)<<" ";
-	ssString<<(lnk->is_recurrent)<<" ";
-	ssString<<innovation_num<<" ";
-	ssString<<mutation_num<<" ";
-	ssString<<enable<<" ";
-	return ssString.str();
-}

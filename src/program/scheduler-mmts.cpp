@@ -9,18 +9,6 @@
 // NEAT
 #include "../NEAT/genome.h"
 
-// ARGOS
-#include <argos3/core/simulator/simulator.h>
-#include <argos3/core/simulator/loop_functions.h>
-#include <argos3/core/utility/plugins/dynamic_loading.h>
-#include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
-
-// Controller
-#include "../NEATController.h"
-
-// Loop function
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
-
 
 /**
  * Child process: Initializes the MPI execution environment, ARGoS, and waits for the parent to give the random seed and the genome (string).
@@ -39,13 +27,6 @@ int main(int argc, char* argv[]) {
    int id = MPI::COMM_WORLD.Get_rank();
 
    std::cout << "Hello, I'm the process " << id << "."<< std::endl;
-
-   // Initialization of ARGoS
-   argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
-   argos::CDynamicLoading::LoadAllLibraries();
-   cSimulator.SetExperimentFileName(argv[2]);
-   cSimulator.LoadExperiment();
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Waiting for the parent to give us some work to do.
    while(true) {
@@ -66,6 +47,9 @@ int main(int argc, char* argv[]) {
       int nNum_runs_per_gen = status.Get_count(MPI::UNSIGNED);
       vecRandomSeed.resize(nNum_runs_per_gen);
       parent_comm.Recv(&vecRandomSeed[0], nNum_runs_per_gen, MPI::UNSIGNED, 0, 1);
+
+      // Receiving the experiment file
+      
 
       // Receiving the genome as a string
       //MPI::Status status;

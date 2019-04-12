@@ -58,8 +58,6 @@ namespace NEAT {
     void print_to_file(std::ostream &outFile);
 		void print_to_file(std::ofstream &outFile);
 
-		const std::string get_trait_description();
-
 		// Perturb the trait parameters slightly
 		void mutate();
 

@@ -115,10 +115,6 @@ bool Organism::write_to_file(std::ostream &outFile) {
 	return 1;
 }
 
-const std::string Organism::get_neural_network_description() {
-	return gnome->get_genome_description();
-}
-
 //// Print the Organism's genome to a file preceded by a comment
 ////   detailing the organism's species, number, and fitness
 //bool Organism::print_to_file(char *filename) {
