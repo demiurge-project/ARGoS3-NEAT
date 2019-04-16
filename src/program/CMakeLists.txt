@@ -58,6 +58,12 @@ if(MPI_FOUND)
 						argos3_demiurge_loop_functions
 						argos3_demiurge_epuck_dao)
 
+	add_executable(scheduler-mmts scheduler-mmts.cpp)
+	target_link_libraries(scheduler-mmts neat neat_controller ${MPI_LIBRARIES}
+						argos3core_${ARGOS_BUILD_FOR}
+						argos3_demiurge_loop_functions
+						argos3_demiurge_epuck_dao)
+
 else(MPI_FOUND)
 
 	# Message to print in the terminal

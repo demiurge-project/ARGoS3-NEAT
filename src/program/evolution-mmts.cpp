@@ -29,7 +29,6 @@
 
 #include <stdint.h>
 #include <unistd.h>
-#define UINT32_MAX (0xffffffff)
 
 // GLOBAL VARIABLE
 MPI::Intercomm g_com;
@@ -80,7 +79,6 @@ const std::string transformOneLine(const std::string &s) {
 signed int extractPerformance(std::string output) {
     std::vector<std::string> elements;
     elements = split(output, '\n');
-    std::vector<std::string>::iterator it;
     elements = split(elements.at(elements.size()-2), ' ');
 
     return atoi((elements.at(elements.size()-1)).c_str());
@@ -91,8 +89,7 @@ signed int extractPerformance(std::string output) {
  * @note: To launch your own program: you can use, for example, system("") which is a combination of fork(), exec() and waitpid().
  */
 void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files) {
-  std::cout << "Beginning of evaluation procedure" << std::endl;
-   // Check
+  // Check
   if(num_runs_per_gen == 0) return;
 
   std::cout << "numgen: " << NEAT::num_gens << std::endl;
@@ -108,7 +105,6 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
   std::vector<UInt32> vecRandomExpFileIndexes;
   for(size_t i=0; i<num_runs_per_gen; i++) {
     vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
-
   }
 
   // Iterating over all genomes
@@ -120,12 +116,10 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
     double dPerformance = 0.0;
     // Each genome is evaluate one or multiple times, and the performance is averaged.
     for(size_t j = 0; j < num_runs_per_gen; j++) {
-      std::cout << "Exp file: " << experiment_files[vecRandomExpFileIndexes[j]] << "; Random seed: " << vecRandomSeed[j] << std::endl;
+      std::cout << "Exp file: " << experiment_files[vecRandomExpFileIndexes[j]] << "; Seed: " << vecRandomSeed[j] << std::endl;
 
       std::stringstream ssGenome;
       ((*itOrg)->gnome)->print_to_file(ssGenome);
-      std::cout << "Genome = " << std::endl;
-      std::cout << transformOneLine(ssGenome.str()) << std::endl;
 
       // Create command to execute
       std::stringstream ssCommandLine;
@@ -156,55 +150,61 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
  * Function that launches in parallel (with MPI) the experiment for each organism in the population and evaluates each one.
  */
 void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files) {
+  // Check
+  if(num_runs_per_gen == 0) return;
 
-   // Check
-   if(num_runs_per_gen == 0) return;
+  // Produces the different random seeds and configuration files for the experiment, initialized with the clock
+  std::vector<unsigned int> vecRandomSeed;
+  std::vector<unsigned int> vecRandomExpFileIndexes;
+  for(size_t i=0; i<num_runs_per_gen; i++) {
+    vecRandomSeed.push_back(rand());
+    vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
+  }
 
-   // Produces the different random seeds for the experiment, initialized with the clock
-   argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
-   std::vector<UInt32> vecRandomSeed;
-   for(size_t i=0; i<num_runs_per_gen; i++) {
-      vecRandomSeed.push_back( pRNG->Uniform(argos::CRange<UInt32>(0, UINT32_MAX)) );
-   }
+  std::stringstream ssCombinedConfigurationFiles;
+  std::string strCombinedConfigurationFiles;
+  std::vector<unsigned int>::iterator it;
+  for (it = vecRandomExpFileIndexes.begin(); it != vecRandomExpFileIndexes.end(); ++it) {
+    ssCombinedConfigurationFiles << experiment_files[*it] << ";";
+  }
+  strCombinedConfigurationFiles = ssCombinedConfigurationFiles.str();
 
-   // Serialization: Genome -> string
-   std::vector<std::string> vecStrGenomes;
-   for(std::vector<Organism*>::iterator itOrg = (pop.organisms).begin(); itOrg != (pop.organisms).end(); ++itOrg) {
+  // Serialization: Genome -> string
+  std::vector<std::string> vecStrGenomes;
+  for(std::vector<Organism*>::iterator itOrg = (pop.organisms).begin(); itOrg != (pop.organisms).end(); ++itOrg) {
+    std::stringstream ssGenome;
+    std::string strGenome;
+    ((*itOrg)->gnome)->print_to_file(ssGenome);
+    strGenome = transformOneLine(ssGenome.str());
+    vecStrGenomes.push_back(strGenome);
+  }
 
-      std::stringstream ssGenome;
-      std::string strGenome;
-      ((*itOrg)->gnome)->print_to_file(ssGenome);
-      strGenome = transformOneLine(ssGenome.str());
-      vecStrGenomes.push_back(strGenome);
-   }
+  // MPI: Sends the random seed and the genome & Receives the fitness.
+  int nId = 0, nId1=0;
+  int nSize = vecStrGenomes.size();
+  unsigned int nGroup = ceil((double) nSize/nbProcess);
+  MPI::Status status;
+  int nSource;
+  bool cont = true;
+  double dFitness;
 
-   // MPI: Sends the random seed and the genome & Receives the fitness.
-   int nId = 0, nId1=0;
-   int nSize = vecStrGenomes.size();
-   int nGroup = ceil((double) nSize/nbProcess);
-   MPI::Status status;
-   int nSource;
-   bool cont = true;
-   double dFitness;
+  // The following for-loop takes into account the case where the #Processes ≠ #Organisms.
+  for(unsigned int i=0; i < nGroup; i++) {
+    // Sends the random seed and the genome (string) to all the child processes.
+    for(unsigned int j=0; (j < nbProcess) && (nId < nSize); j++, nId++) {
+    	 g_com.Send(&cont, 1, MPI::BOOL, j, 1);
+       g_com.Send(&vecRandomSeed[0], vecRandomSeed.size(), MPI::UNSIGNED, j, 1);
+       g_com.Send(strCombinedConfigurationFiles.c_str(), strCombinedConfigurationFiles.length(), MPI::CHAR, j, 1);
+       g_com.Send(vecStrGenomes[nId].c_str(), vecStrGenomes[nId].length(), MPI::CHAR, j, 1);
+    }
 
-   // The following for-loop takes into account the case where the #Processes ≠ #Organisms.
-   for(int i=0; i < nGroup; i++) {
-
-      // Sends the random seed and the genome (string) to all the child processes.
-      for(int j=0; (j < nbProcess) && (nId < nSize); j++, nId++) {
-      	g_com.Send(&cont, 1, MPI::BOOL, j, 1);
-         g_com.Send(&vecRandomSeed[0], vecRandomSeed.size(), MPI::UNSIGNED, j, 1);
-         g_com.Send(vecStrGenomes[nId].c_str(), vecStrGenomes[nId].length(), MPI::CHAR, j, 1);
-      }
-
-      // Receives the result of each process and store it in the fitness of each organism
-      for(int j=0; (j < nbProcess) && (nId1 < nSize); j++, nId1++) {
-         g_com.Recv(&dFitness, 1, MPI::DOUBLE, MPI::ANY_SOURCE, MPI::ANY_TAG, status);
-         nSource = status.Get_source();
-         (pop.organisms[nSource + (nId1-j)])->fitness = dFitness;
-      }
-
-   }
+    // Receives the result of each process and store it in the fitness of each organism
+    for(unsigned int j=0; (j < nbProcess) && (nId1 < nSize); j++, nId1++) {
+       g_com.Recv(&dFitness, 1, MPI::DOUBLE, MPI::ANY_SOURCE, MPI::ANY_TAG, status);
+       nSource = status.Get_source();
+       (pop.organisms[nSource + (nId1-j)])->fitness = dFitness;
+    }
+  }
 }
 
 
@@ -235,7 +235,6 @@ int main(int argc, char *argv[]) {
   const char * neatParams;
   const char * startGenome;
   unsigned int seed = 0;
-  unsigned int nbProcess = 0;
   const char * binaryProcess;
   for (int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
@@ -318,7 +317,7 @@ int main(int argc, char *argv[]) {
     // Sends a signal to terminate the children.
     std::cout << "Parent: Terminate children" << std::endl;
     bool cont = false;
-    for(int j=0; (j < nbProcess); j++) {
+    for(unsigned int j=0; (j < nbProcess); j++) {
       g_com.Send(&cont, 1, MPI::BOOL, j, 1);
     }
 
