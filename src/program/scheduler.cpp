@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
       double dFitness = 0.0;
       try {
         for(int j = 0; j < nNum_runs_per_gen; j++) {
-          std::cout << "ID" << id << ": Random Seed received: " << vecRandomSeed[j] << std::endl;
+          //std::cout << "ID" << id << ": Random Seed received: " << vecRandomSeed[j] << std::endl;
           cSimulator.SetRandomSeed(vecRandomSeed[j]);
           cSimulator.Reset();
           cSimulator.Execute();
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
       }
 
       // Send the fitness to the parent.
-      std::cout << "ID" << id << " --> Average fitness = " << dFitness << std::endl;
+      //std::cout << "ID" << id << " --> Average fitness = " << dFitness << std::endl;
       parent_comm.Send(&dFitness, 1, MPI::DOUBLE, 0, 1);
 
       // Removing stuffs

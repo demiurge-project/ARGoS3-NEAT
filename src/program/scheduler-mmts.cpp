@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
       // Launch the experiment with the correct configuration file, random seed, and genome.
       double dFitness = 0.0;
       for(int j = 0; j < nNum_runs_per_gen; j++) {
-        std::cout << "ID" << id << " received config file: " << split(vecConfigFiles[j],'/').back() << " and seed: " << vecRandomSeed[j] << std::endl;
+        //std::cout << "ID" << id << " received config file: " << split(vecConfigFiles[j],'/').back() << " and seed: " << vecRandomSeed[j] << std::endl;
 
         // Create command to execute
         std::stringstream ssCommandLine;
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
         const std::string temp = ssCommandLine.str();
 
         std::string output = exec(temp.c_str());
-        std::cout << "ID" << id << " Perf = " << extractPerformance(output) << std::endl;
+        //std::cout << "ID" << id << " Perf = " << extractPerformance(output) << std::endl;
         dFitness += extractPerformance(output);
       }
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
       }
 
       // Send the fitness to the parent.
-      std::cout << "ID" << id << " --> Average fitness = " << dFitness << std::endl;
+      //std::cout << "ID" << id << " --> Average fitness = " << dFitness << std::endl;
       parent_comm.Send(&dFitness, 1, MPI::DOUBLE, 0, 1);
    }
 
