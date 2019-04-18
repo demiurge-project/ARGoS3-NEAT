@@ -189,8 +189,8 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
     while ((epdf = readdir(trainingSetFolder))) {
       currentFile = std::string(epdf->d_name);
       if(currentFile.substr(currentFile.find_last_of(".") + 1) == "argos") {
-        //std::cout << currentFile << std::endl;
-        experimentFiles.push_back(std::string(trainingSet) + currentFile);
+        std::cout << currentFile << std::endl;
+        experimentFiles.push_back(std::string(trainingSet) + "/" + currentFile);
       }
     }
   }

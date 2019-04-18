@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 // NEAT
 #include "../NEAT/genome.h"
@@ -113,6 +114,8 @@ int main(int argc, char* argv[]) {
       std::string strGenome(buf2, l);
       delete[] buf2;
 
+      std::cout << vecConfigFiles.back() << std::endl;
+      
       // Launch the experiment with the correct configuration file, random seed, and genome.
       double dFitness = 0.0;
       for(int j = 0; j < nNum_runs_per_gen; j++) {
@@ -120,7 +123,7 @@ int main(int argc, char* argv[]) {
 
         // Create command to execute
         std::stringstream ssCommandLine;
-        ssCommandLine << "/home/aligot/Desktop/Arena/NEAT-mmts/bin/NEAT-launch";
+        ssCommandLine << "/home/aligot/MMTS/NEAT-mmts/bin/NEAT-launch";
         ssCommandLine << " -c " << vecConfigFiles[j];
         ssCommandLine << " -s " << vecRandomSeed[j];
         ssCommandLine << " --cl-genome " << transformOneLine(strGenome);
