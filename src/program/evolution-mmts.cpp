@@ -76,12 +76,12 @@ const std::string transformOneLine(const std::string &s) {
   return ssOneLine.str();
 }
 
-signed int extractPerformance(std::string output) {
+double extractPerformance(std::string output) {
     std::vector<std::string> elements;
     elements = split(output, '\n');
     elements = split(elements.at(elements.size()-2), ' ');
-
-    return atoi((elements.at(elements.size()-1)).c_str());
+    
+    return atof((elements.at(elements.size()-1)).c_str());
 }
 
 /**
