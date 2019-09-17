@@ -112,8 +112,21 @@ int main(int argc, char *argv[]) {
       std::cerr << "Arg1: A configuration file (.argos or .xml) is required for ARGoS." << std::endl;
       std::cerr << "Arg2: A NEAT parameters file (.ne file) is required to run the experiments." << std::endl;
       std::cerr << "Arg3: A starter genome file is required for the creation of the initial population." << std::endl;
+      std::cerr << "Arg4 (optional): The seed (unsigned integer) used to initialize NEAT. If none is specified, then NEAT will initialize with the current time" << std::endl;
       return -1;
    }
+
+  // Checks the seed (if it exists)
+  int seed = 0;
+  if (argc >= 5) {
+    try {
+      seed = atoi(argv[4]);
+    }
+    catch (const std::invalid_argument& err) {
+      std::cerr << "Invalid argument: " << err.what() << std::endl;
+      std::cerr << "The seed will be left at 0!" << std::endl;
+    }
+  }
 
    // Initialization of ARGoS
    argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
@@ -121,7 +134,7 @@ int main(int argc, char *argv[]) {
    cSimulator.LoadExperiment();
 
    // Launch NEAT with the specified experiment
-   launchNEAT(argv[2], argv[3], launchARGoSAndEvaluate);
+   launchNEAT(argv[2], argv[3], launchARGoSAndEvaluate, seed);
    std::cout << "/*   End of evolution...   */" << std::endl;
    std::cout << "/*   Output files writen in gen/ folder   */" << std::endl;
    // Dispose of ARGoS stuff
