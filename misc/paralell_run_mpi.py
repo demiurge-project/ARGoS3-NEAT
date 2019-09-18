@@ -66,7 +66,7 @@ def run_neat(args,run):
 
 USERNAME=`whoami`
 NEATDIR=%(neatdir)s
-COMMAND="$NEATDIR/bin/train %(experiment)s %(params)s %(startgenes)s %(nbjob)s $NEATDIR/bin/scheduler %(seed)s"
+COMMAND="$NEATDIR/bin/NEAT-evolution %(experiment)s %(params)s %(startgenes)s %(nbjob)s $NEATDIR/bin/scheduler %(seed)s"
 
 cd %(execdir)s
 echo "$COMMAND"
