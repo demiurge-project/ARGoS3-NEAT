@@ -47,7 +47,7 @@ def run_neat(args,run):
             "experiment": os.path.abspath(args.exp),
             "params": os.path.abspath(args.params),
             "startgenes": os.path.abspath(args.startgenes),
-            "seed": random.randrange(2147483647), # 2147483647 is the maximum of a signed int
+            "seed": random.randrange(2, 2147483647), # 2147483647 is the maximum of a signed int
     }
     script = """#!/bin/bash
 #$ -N %(jobname)s
