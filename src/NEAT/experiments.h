@@ -11,7 +11,8 @@
 
 using namespace NEAT;
 
-void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExperiment)(Network&));
-void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperiment)(Population&, unsigned int));
+void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExperiment)(Network&), unsigned int seed = 0);
+void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperiment)(Population&, unsigned int),
+                unsigned int seed = 0);
 
 #endif

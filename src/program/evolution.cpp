@@ -170,7 +170,8 @@ int main(int argc, char *argv[]) {
       std::cerr << "Arg3: A starter genome file is required for the creation of the initial population." << std::endl;
       std::cerr << "Arg4 (optional): The number (natural number) of processes you want to launch. If none is specified, or if it's 0 or 1, there will be only one process." << std::endl;
       std::cerr << "Arg5 (non-optional if more than 1process!): the name of the binary file to launch in parallel." << std::endl;
-      return -1;
+      std::cerr << "Arg6 (optional): The seed (unsigned integer) used to initialize NEAT. If none is specified, then NEAT will initialize with the current time" << std::endl;
+     return -1;
    }
 
    // Checks the number of processes to launch
@@ -179,14 +180,30 @@ int main(int argc, char *argv[]) {
       try {
          g_nbProcess = atoi(argv[4]); //should check if it's negative
       } catch (const std::invalid_argument& err) {
-         std::cerr << "Invalid argument: " << err.what() << std::endl;
-         std::cerr << "There will be only one process!" << std::endl;
+        std::cerr << "Invalid argument: " << err.what() << std::endl;
+        std::cerr << "There will be only one process!" << std::endl;
       }
   }
 
-   // Intializes the random number generator
+   // Checks the seed (if it exists)
+   int seed = 0;
+   if (argc >= 7) {
+     try {
+       seed = atoi(argv[6]);
+     }
+     catch (const std::invalid_argument& err) {
+       std::cerr << "Invalid argument: " << err.what() << std::endl;
+       std::cerr << "The seed will be left at 0!" << std::endl;
+     }
+   }
+
+   // Initializes the random number generator
    time_t t;
-   srand((unsigned) time(&t));
+   if (seed == 0) {
+     srand((unsigned) time(&t));
+   } else {
+     srand(seed);
+   }
    g_unRandomSeed = rand();
 
    argos::CRandom::CreateCategory("neat", g_unRandomSeed);
@@ -203,7 +220,7 @@ int main(int argc, char *argv[]) {
       g_com = MPI::COMM_WORLD.Spawn(argv[5], (const char**) argv, g_nbProcess, MPI::Info(), 0);
 
       // Launches NEAT with the specified experiment
-      launchNEAT(argv[2], argv[3], launchARGoSInParallelAndEvaluate);
+      launchNEAT(argv[2], argv[3], launchARGoSInParallelAndEvaluate, seed);
 
       // Sends a signal to terminate the children.
       std::cout << "Parent: Terminate children" << std::endl;
@@ -226,7 +243,7 @@ int main(int argc, char *argv[]) {
       cSimulator.LoadExperiment();
 
       // Launches NEAT with the specified experiment
-      launchNEAT(argv[2], argv[3], launchARGoSAndEvaluate);
+      launchNEAT(argv[2], argv[3], launchARGoSAndEvaluate, seed);
 
       // Disposes of ARGoS stuff
       cSimulator.Destroy();

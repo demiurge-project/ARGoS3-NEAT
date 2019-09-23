@@ -9,7 +9,7 @@
  *	    startGenes - file containing the structure of the starter genome.
  *	    (*fctExperiment)(Network&) - function defined by the user that launches the experiment on a network, and return the evaluation on this last one.
  * */
-void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExperiment)(Network&)) {
+void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExperiment)(Network&), unsigned int seed) {
 
    // Useful variables
    Population* pop = NULL;
@@ -17,8 +17,12 @@ void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExpe
    char curword[20];
    int id;
 
-   // Random Setup: Seed the random-number generator with current time.
-   srand((unsigned)time(NULL));
+   if (seed == 0) {
+     // Random Setup: Seed the random-number generator with current time.
+     srand((unsigned)time(NULL));
+   } else {
+     srand(seed);
+   }
 
    // Load all the useful parameters for NEAT
    NEAT::load_neat_params(neatParams,true);
@@ -80,7 +84,8 @@ void launchNEAT(const char *neatParams, const char *startGenes, double (*fctExpe
  *	    (*fctExperiment)(Population&) - function defined by the user that launches the experiment on a whole population.
  *		  The evaluation of each organism can be done in parallel. This parallelism is left to the user to define it.
  * */
-void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperiment)(Population&, unsigned int)) {
+void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperiment)(Population&, unsigned int),
+                unsigned int seed) {
 
    // Useful variables
    Population* pop = NULL;
@@ -88,8 +93,12 @@ void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperi
    char curword[20];
    int id;
 
-   // Random Setup: Seed the random-number generator with current time.
-   srand((unsigned)time(NULL));
+  if (seed == 0) {
+    // Random Setup: Seed the random-number generator with current time.
+    srand((unsigned)time(NULL));
+  } else {
+    srand(seed);
+  }
 
    // Load all the useful parameters for NEAT
    NEAT::load_neat_params(neatParams,true);

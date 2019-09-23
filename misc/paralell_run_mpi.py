@@ -6,6 +6,7 @@ from subprocess import *
 import os
 import re
 import time
+import random
 ###############################################################################
 # This script launches several runs in parallel in a SGE Cluster, and
 # each run is parallelized using MPI.  Execute without parameters to see usage.
@@ -13,7 +14,7 @@ import time
 
 ########################### CONFIGURATION POINTS ##############################
 
-NEAT_DIR = "/home/khasselmann/neat-argos3"
+NEAT_DIR = "/path/to/your/installation"
 
 QUEUE='short' #or 'long'
 #MACHINE='opteron2216' #rack 1
@@ -46,6 +47,7 @@ def run_neat(args,run):
             "experiment": os.path.abspath(args.exp),
             "params": os.path.abspath(args.params),
             "startgenes": os.path.abspath(args.startgenes),
+            "seed": random.randrange(2, 2147483647), # 2147483647 is the maximum of a signed int
     }
     script = """#!/bin/bash
 #$ -N %(jobname)s
@@ -64,7 +66,7 @@ def run_neat(args,run):
 
 USERNAME=`whoami`
 NEATDIR=%(neatdir)s
-COMMAND="$NEATDIR/bin/train %(experiment)s %(params)s %(startgenes)s %(nbjob)s $NEATDIR/bin/scheduler"
+COMMAND="$NEATDIR/bin/NEAT-evolution %(experiment)s %(params)s %(startgenes)s %(nbjob)s $NEATDIR/bin/scheduler %(seed)s"
 
 cd %(execdir)s
 echo "$COMMAND"
