@@ -223,7 +223,7 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
     if(NEAT::num_runs_post_eval != 0) {
        std::cout << "\nPost-Evaluation" << std::endl;
 
-       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, experimentFiles, g);
+       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, experimentFiles, 0);
     }
 
     // Write the result in a file.

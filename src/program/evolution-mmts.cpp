@@ -158,8 +158,11 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
   std::vector<unsigned int> vecRandomExpFileIndexes;
   for(size_t i=0; i<num_runs_per_gen; i++) {
     vecRandomSeed.push_back(rand());
-    //vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
-    vecRandomExpFileIndexes.push_back(i + (num_runs_per_gen * (generation-1)));
+    if (generation > 0) {
+      vecRandomExpFileIndexes.push_back(i + (num_runs_per_gen * (generation-1)));
+    } else {    // For post evaluation, randomly select models from training set
+      vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
+    }
   }
 
   std::stringstream ssCombinedConfigurationFiles;
