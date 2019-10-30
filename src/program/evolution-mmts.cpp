@@ -149,7 +149,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
 /**
  * Function that launches in parallel (with MPI) the experiment for each organism in the population and evaluates each one.
  */
-void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files, unsigned int generation) {
+void launchARGoSInParallelRandomizationLevelEvaluation(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files, unsigned int generation) {
   // Check
   if(num_runs_per_gen == 0) return;
 
@@ -160,6 +160,71 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
     vecRandomSeed.push_back(rand());
     if (generation > 0) {
       vecRandomExpFileIndexes.push_back(i + (num_runs_per_gen * (generation-1)));
+    } else {    // For post evaluation, randomly select models from training set
+      vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
+    }
+  }
+
+  std::stringstream ssCombinedConfigurationFiles;
+  std::string strCombinedConfigurationFiles;
+  std::vector<unsigned int>::iterator it;
+  for (it = vecRandomExpFileIndexes.begin(); it != vecRandomExpFileIndexes.end(); ++it) {
+    ssCombinedConfigurationFiles << experiment_files[*it] << ";";
+  }
+  strCombinedConfigurationFiles = ssCombinedConfigurationFiles.str();
+
+  // Serialization: Genome -> string
+  std::vector<std::string> vecStrGenomes;
+  for(std::vector<Organism*>::iterator itOrg = (pop.organisms).begin(); itOrg != (pop.organisms).end(); ++itOrg) {
+    std::stringstream ssGenome;
+    std::string strGenome;
+    ((*itOrg)->gnome)->print_to_file(ssGenome);
+    strGenome = transformOneLine(ssGenome.str());
+    vecStrGenomes.push_back(strGenome);
+  }
+
+  // MPI: Sends the random seed and the genome & Receives the fitness.
+  int nId = 0, nId1=0;
+  int nSize = vecStrGenomes.size();
+  unsigned int nGroup = ceil((double) nSize/nbProcess);
+  MPI::Status status;
+  int nSource;
+  bool cont = true;
+  double dFitness;
+
+  // The following for-loop takes into account the case where the #Processes ≠ #Organisms.
+  for(unsigned int i=0; i < nGroup; i++) {
+    // Sends the random seed and the genome (string) to all the child processes.
+    for(unsigned int j=0; (j < nbProcess) && (nId < nSize); j++, nId++) {
+    	 g_com.Send(&cont, 1, MPI::BOOL, j, 1);
+       g_com.Send(&vecRandomSeed[0], vecRandomSeed.size(), MPI::UNSIGNED, j, 1);
+       g_com.Send(strCombinedConfigurationFiles.c_str(), strCombinedConfigurationFiles.length(), MPI::CHAR, j, 1);
+       g_com.Send(vecStrGenomes[nId].c_str(), vecStrGenomes[nId].length(), MPI::CHAR, j, 1);
+    }
+
+    // Receives the result of each process and store it in the fitness of each organism
+    for(unsigned int j=0; (j < nbProcess) && (nId1 < nSize); j++, nId1++) {
+       g_com.Recv(&dFitness, 1, MPI::DOUBLE, MPI::ANY_SOURCE, MPI::ANY_TAG, status);
+       nSource = status.Get_source();
+       (pop.organisms[nSource + (nId1-j)])->fitness = dFitness;
+    }
+  }
+}
+
+/**
+ * Function that launches in parallel (with MPI) the experiment for each organism in the population and evaluates each one.
+ */
+void launchARGoSInParallelRandomizationLevelGeneration(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files, unsigned int generation) {
+  // Check
+  if(num_runs_per_gen == 0) return;
+
+  // Produces the different random seeds and configuration files for the experiment, initialized with the clock
+  std::vector<unsigned int> vecRandomSeed;
+  std::vector<unsigned int> vecRandomExpFileIndexes;
+  for(size_t i=0; i<num_runs_per_gen; i++) {
+    vecRandomSeed.push_back(rand());
+    if (generation > 0) {
+      vecRandomExpFileIndexes.push_back(generation-1);
     } else {    // For post evaluation, randomly select models from training set
       vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
     }
@@ -238,6 +303,7 @@ int main(int argc, char *argv[]) {
   const char * configFolder; // AKA the training set
   const char * neatParams;
   const char * startGenome;
+  std::string randomizationLevel;
   unsigned int seed = 0;
   const char * binaryProcess;
   for (int i = 1; i < argc; ++i) {
@@ -287,6 +353,13 @@ int main(int argc, char *argv[]) {
         std::cerr << "-np,--num-processes option requires one argument." << std::endl;
         return 1;
       }
+    } else if ((arg == "-lr") || (arg == "--level-randomization")) {
+      if (i + 1 < argc) {
+        randomizationLevel = argv[i+1];
+      } else {
+        std::cerr << "-lr,--level-randomization option requires one argument." << std::endl;
+        return 1;
+      }
     } else if ((arg == "-b") || (arg == "--binary")) {
       if (i + 1 < argc) {
         binaryProcess = argv[i+1];
@@ -316,7 +389,11 @@ int main(int argc, char *argv[]) {
     g_com = MPI::COMM_WORLD.Spawn(binaryProcess, (const char**) argv, nbProcess, MPI::Info(), 0);
 
     // Launches NEAT with the specified experiment
-    launchNEAT(configFolder, neatParams, startGenome, launchARGoSInParallelAndEvaluate);
+    if (randomizationLevel == "Evaluation") {
+      launchNEAT(configFolder, neatParams, startGenome, launchARGoSInParallelRandomizationLevelEvaluation);
+    } else if (randomizationLevel == "Generation") {
+      launchNEAT(configFolder, neatParams, startGenome, launchARGoSInParallelRandomizationLevelGeneration);
+    }
 
     // Sends a signal to terminate the children.
     std::cout << "Parent: Terminate children" << std::endl;

@@ -118,8 +118,16 @@ int main(int argc, char* argv[]) {
 
       // Launch the experiment with the correct configuration file, random seed, and genome.
       double dFitness = 0.0;
+      std::string strCurrentConfigFile;
       for(int j = 0; j < nNum_runs_per_gen; j++) {
         //std::cout << "ID" << id << " received config file: " << split(vecConfigFiles[j],'/').back() << " and seed: " << vecRandomSeed[j] << std::endl;
+        if (vecConfigFiles.size() == nNum_runs_per_gen) {
+          strCurrentConfigFile = vecConfigFiles[j];
+        } else if (vecConfigFiles.size() == 1) {
+          strCurrentConfigFile = vecConfigFiles[0];
+        } else {
+          std::cerr << "Error: weird number of config files received!!" << std::endl;
+        }
 
         // Create command to execute
         std::stringstream ssCommandLine;
