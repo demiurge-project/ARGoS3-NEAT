@@ -157,7 +157,7 @@ void launchNEAT(const char *neatParams, const char *startGenes, void (*fctExperi
  *		  The evaluation of each organism can be done in parallel. This parallelism is left to the user to define it.
  * */
 void launchNEAT(const char *trainingSet, const char *neatParams, const char *startGenes,
-                void (*fctExperiment)(Population&, unsigned int, std::vector<std::string>&)) {
+                void (*fctExperiment)(Population&, unsigned int, std::vector<std::string>&, unsigned int)) {
 
   // Useful variables
   Population* pop = NULL;

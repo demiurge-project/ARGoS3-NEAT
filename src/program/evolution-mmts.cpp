@@ -149,7 +149,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
 /**
  * Function that launches in parallel (with MPI) the experiment for each organism in the population and evaluates each one.
  */
-void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files) {
+void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen, std::vector<std::string> &experiment_files, unsigned int generation) {
   // Check
   if(num_runs_per_gen == 0) return;
 
@@ -158,7 +158,8 @@ void launchARGoSInParallelAndEvaluate(NEAT::Population& pop, unsigned int num_ru
   std::vector<unsigned int> vecRandomExpFileIndexes;
   for(size_t i=0; i<num_runs_per_gen; i++) {
     vecRandomSeed.push_back(rand());
-    vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
+    //vecRandomExpFileIndexes.push_back(rand() % experiment_files.size());
+    vecRandomExpFileIndexes.push_back(i + (num_runs_per_gen * (generation-1)));
   }
 
   std::stringstream ssCombinedConfigurationFiles;
