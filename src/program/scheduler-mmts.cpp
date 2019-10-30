@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 // NEAT
 #include "../NEAT/genome.h"
@@ -51,12 +52,12 @@ const std::string transformOneLine(const std::string &s) {
   return ssOneLine.str();
 }
 
-signed int extractPerformance(std::string output) {
+double extractPerformance(std::string output) {
     std::vector<std::string> elements;
     elements = split(output, '\n');
     elements = split(elements.at(elements.size()-2), ' ');
 
-    return atoi((elements.at(elements.size()-1)).c_str());
+    return atof((elements.at(elements.size()-1)).c_str());
 }
 
 /**
@@ -113,14 +114,16 @@ int main(int argc, char* argv[]) {
       std::string strGenome(buf2, l);
       delete[] buf2;
 
+      //std::cout << vecConfigFiles.back() << std::endl;
+      
       // Launch the experiment with the correct configuration file, random seed, and genome.
       double dFitness = 0.0;
       for(int j = 0; j < nNum_runs_per_gen; j++) {
-        std::cout << "ID" << id << " received config file: " << split(vecConfigFiles[j],'/').back() << " and seed: " << vecRandomSeed[j] << std::endl;
+        //std::cout << "ID" << id << " received config file: " << split(vecConfigFiles[j],'/').back() << " and seed: " << vecRandomSeed[j] << std::endl;
 
         // Create command to execute
         std::stringstream ssCommandLine;
-        ssCommandLine << "/home/aligot/Desktop/Arena/NEAT-mmts/bin/NEAT-launch";
+        ssCommandLine << "/home/aligot/MMTS/NEAT-mmts/bin/NEAT-launch";
         ssCommandLine << " -c " << vecConfigFiles[j];
         ssCommandLine << " -s " << vecRandomSeed[j];
         ssCommandLine << " --cl-genome " << transformOneLine(strGenome);
@@ -137,7 +140,7 @@ int main(int argc, char* argv[]) {
       }
 
       // Send the fitness to the parent.
-      std::cout << "ID" << id << " --> Average fitness = " << dFitness << std::endl;
+      //std::cout << "ID" << id << " --> Average fitness = " << dFitness << std::endl;
       parent_comm.Send(&dFitness, 1, MPI::DOUBLE, 0, 1);
    }
 
