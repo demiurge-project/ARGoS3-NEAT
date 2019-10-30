@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
       delete[] buf2;
 
       //std::cout << vecConfigFiles.back() << std::endl;
-      
+
       // Launch the experiment with the correct configuration file, random seed, and genome.
       double dFitness = 0.0;
       for(int j = 0; j < nNum_runs_per_gen; j++) {
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
         const std::string temp = ssCommandLine.str();
 
         std::string output = exec(temp.c_str());
-        std::cout << "ID" << id << " Perf = " << extractPerformance(output) << std::endl;
+        std::cout << "ID " << id << " On " << split(vecConfigFiles[j],'/').back() << " " << vecRandomSeed[j] << " Perf = " << extractPerformance(output) << std::endl;
         dFitness += extractPerformance(output);
       }
 
