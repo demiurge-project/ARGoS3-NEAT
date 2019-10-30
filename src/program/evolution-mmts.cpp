@@ -338,7 +338,7 @@ int main(int argc, char *argv[]) {
     //cSimulator.LoadExperiment();
 
     // Launches NEAT with the specified experiment
-    launchNEAT(configFolder, neatParams, startGenome, launchARGoSAndEvaluate);
+    //launchNEAT(configFolder, neatParams, startGenome, launchARGoSAndEvaluate);
 
     // Disposes of ARGoS stuff
     //cSimulator.Destroy();
