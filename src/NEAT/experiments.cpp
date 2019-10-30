@@ -205,7 +205,7 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
     for(unsigned int g=1; g <= NEAT::num_gens; g++) {
       // Launch the experiment <NEAT::num_runs_per_gen> times with the specified population
       // passed in argument, and evaluate each organism in this last one.
-      (*fctExperiment)(*pop, NEAT::num_runs_per_gen, experimentFiles);
+      (*fctExperiment)(*pop, NEAT::num_runs_per_gen, experimentFiles, g);
 
       // Write the result in a file.
       if(NEAT::print_every!=0 && (g % NEAT::print_every)==0) {
@@ -223,7 +223,7 @@ void launchNEAT(const char *trainingSet, const char *neatParams, const char *sta
     if(NEAT::num_runs_post_eval != 0) {
        std::cout << "\nPost-Evaluation" << std::endl;
 
-       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, experimentFiles);
+       (*fctExperiment)(*pop, NEAT::num_runs_post_eval, experimentFiles, g);
     }
 
     // Write the result in a file.
