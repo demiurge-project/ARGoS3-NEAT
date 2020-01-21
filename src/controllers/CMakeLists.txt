@@ -34,17 +34,17 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 
     # Add shared library epuck_nn
     # shared libraries are linked dynamically and loaded at runtime
-    add_library(nn_rm_1dot3 SHARED
-      NeuralNetworkRM1Dot3.cpp
-      NeuralNetworkRM1Dot3.h
-    )
+#    add_library(nn_rm_1dot3 SHARED
+#      NeuralNetworkRM1Dot3.cpp
+#      NeuralNetworkRM1Dot3.h
+#    )
 
     # Link the library epuck_nn with the necessary libraries
-    target_link_libraries(nn_rm_1dot3
-      neat_controller
-      argos3core_${ARGOS_BUILD_FOR}
-      argos3plugin_${ARGOS_BUILD_FOR}_epuck
-      argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+#    target_link_libraries(nn_rm_1dot3
+#      neat_controller
+#      argos3core_${ARGOS_BUILD_FOR}
+#      argos3plugin_${ARGOS_BUILD_FOR}_epuck
+#      argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
 
 
     #########
@@ -99,15 +99,15 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 
 else()
     # Add exec for running on epuck
-    add_executable(nn_rm_1dot3
-      NeuralNetworkRM1Dot3.cpp
-      NeuralNetworkRM1Dot3.h
-    )
+#    add_executable(nn_rm_1dot3
+#      NeuralNetworkRM1Dot3.cpp
+#      NeuralNetworkRM1Dot3.h
+#    )
 
     # Link with the necessary libraries
-    target_link_libraries(nn_rm_1dot3
-      neat_controller
-      argos3plugin_${ARGOS_BUILD_FOR}_epuck
-      argos3_demiurge_epuck_dao)
+#    target_link_libraries(nn_rm_1dot3
+#      neat_controller
+#      argos3plugin_${ARGOS_BUILD_FOR}_epuck
+#      argos3_demiurge_epuck_dao)
 
 endif()
