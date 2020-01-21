@@ -19,8 +19,7 @@
 #include "../NEATController.h"
 
 // Loop function
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
-
+#include <argos3/demiurge/generic-loop-functions/Missions/GenericLoopFunctions.h>
 
 /**
  * Child process: Initializes the MPI execution environment, ARGoS, and waits for the parent to give the random seed and the genome (string).
@@ -45,7 +44,7 @@ int main(int argc, char* argv[]) {
    argos::CDynamicLoading::LoadAllLibraries();
    cSimulator.SetExperimentFileName(argv[2]);
    cSimulator.LoadExperiment();
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static GenericLoopFunctions& cLoopFunctions = dynamic_cast<GenericLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Waiting for the parent to give us some work to do.
    while(true) {
@@ -135,7 +134,7 @@ int main(int argc, char* argv[]) {
           cSimulator.SetRandomSeed(vecRandomSeed[j]);
           cSimulator.Reset();
           cSimulator.Execute();
-          dFitness += cLoopFunctions.GetObjectiveFunction();
+          dFitness += cLoopFunctions.GetScore();
         }
       } catch(...) {
         std::cout << "ERROR: ARGoS" << std::endl;

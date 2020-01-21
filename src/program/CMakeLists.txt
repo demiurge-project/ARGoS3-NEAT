@@ -21,7 +21,7 @@ add_executable(NEAT-launch launch.cpp)
 target_link_libraries(NEAT-launch neat neat_controller
 					argos3core_${ARGOS_BUILD_FOR}
 					argos3plugin_${ARGOS_BUILD_FOR}_epuck
-					argos3_demiurge_loop_functions
+					argos3_demiurge_generic_loopfunc
 					argos3_demiurge_epuck_dao)
 
 find_package(MPI)
@@ -39,14 +39,14 @@ if(MPI_FOUND)
 	target_link_libraries(NEAT-evolution neat neat_controller ${MPI_LIBRARIES}
 						argos3core_${ARGOS_BUILD_FOR}
 						argos3plugin_${ARGOS_BUILD_FOR}_epuck
-						argos3_demiurge_loop_functions
+						argos3_demiurge_generic_loopfunc
 						argos3_demiurge_epuck_dao)
 
 	# Add the executable scheduler
 	add_executable(scheduler scheduler.cpp)
 	target_link_libraries(scheduler neat neat_controller ${MPI_LIBRARIES}
 						argos3core_${ARGOS_BUILD_FOR}
-						argos3_demiurge_loop_functions
+						argos3_demiurge_generic_loopfunc
 						argos3_demiurge_epuck_dao)
 
 else(MPI_FOUND)
@@ -56,14 +56,14 @@ else(MPI_FOUND)
 
 	# Add the executable evolution
 	add_executable(NEAT-evolution-seq evolution-sequential.cpp
-						argos3_demiurge_loop_functions
+						argos3_demiurge_generic_loopfunc
 						argos3_demiurge_epuck_dao)
 
 	# Link the executable evolution with the necessary libraries
 	target_link_libraries(NEAT-evolution-seq neat neat_controller
 						argos3core_${ARGOS_BUILD_FOR}
 						argos3plugin_${ARGOS_BUILD_FOR}_epuck
-						argos3_demiurge_loop_functions
+						argos3_demiurge_generic_loopfunc
 						argos3_demiurge_epuck_dao)
 
 endif(MPI_FOUND)

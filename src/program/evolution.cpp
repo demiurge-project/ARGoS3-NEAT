@@ -22,7 +22,7 @@
 #include "../NEATController.h"
 
 // Loop function
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
+#include <argos3/demiurge/generic-loop-functions/Missions/GenericLoopFunctions.h>
 
 #include <stdint.h>
 #define UINT32_MAX (0xffffffff)
@@ -49,7 +49,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Gets a reference to the loop functions (the evaluation is done by the loop fct)
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static GenericLoopFunctions& cLoopFunctions = dynamic_cast<GenericLoopFunctions&>(cSimulator.GetLoopFunctions());
    // Produces the different random seeds for the experiment
    argos::CRandom::CRNG* pRNG = argos::CRandom::CreateRNG("neat");
    std::vector<UInt32> vecRandomSeed;
@@ -84,7 +84,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
          cSimulator.SetRandomSeed(vecRandomSeed[j]);
          cSimulator.Reset();
          cSimulator.Execute();
-         dPerformance += cLoopFunctions.GetObjectiveFunction();
+         dPerformance += cLoopFunctions.GetScore();
       }
       // Computes the average performance
       if(num_runs_per_gen > 0) {

@@ -17,7 +17,7 @@
 #include "../NEATController.h"
 
 // Loop function
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
+#include <argos3/demiurge/generic-loop-functions/Missions/GenericLoopFunctions.h>
 
 /**
  * Function that launches the experiment and evaluates this last one.
@@ -29,7 +29,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Get a reference to the loop functions (the evaluation is done by the loop fct)
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static GenericLoopFunctions& cLoopFunctions = dynamic_cast<GenericLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Produce the different random seeds for the experiment
    argos::CRandom::CreateCategory("neat", 1);
@@ -64,7 +64,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
          cSimulator.SetRandomSeed(vecRandomSeed[j]);
          cSimulator.Reset();
          cSimulator.Execute();
-         dPerformance += cLoopFunctions.GetObjectiveFunction();
+         dPerformance += cLoopFunctions.GetScore();
       }
 
       // Compute the average performance
