@@ -13,7 +13,7 @@ NeuralNetworkRM3Dot0::NeuralNetworkRM3Dot0() {
     m_pcLight = NULL;
     m_pcGround = NULL;
     m_pcRAB = NULL;
-    m_pcOmniCam = (NULL);
+    m_pcOmniCam = NULL;
     m_net = NULL;
     m_nId = -1;
     m_unTimeStep = 0;
@@ -40,7 +40,10 @@ void NeuralNetworkRM3Dot0::Init(TConfigurationNode& t_node) {
   m_pcRobotState = new ReferenceModel3Dot0();
   m_pcRobotState->SetRobotIdentifier(getRobotId());
   m_cWheelActuationRange.Set(-m_pcRobotState->GetMaxVelocity(), m_pcRobotState->GetMaxVelocity());
-  m_pcLEDsActuator->SetColors(CColor::BLACK);
+
+  if(m_pcLEDsActuator != NULL){
+     m_pcLEDsActuator->SetColors(CColor::BLACK);
+  }
 
   m_cNeuralNetworkOutputRange.Set(0.0f, 1.0f);
 
@@ -51,6 +54,7 @@ void NeuralNetworkRM3Dot0::Init(TConfigurationNode& t_node) {
     data[1] = 0;
     m_pcRABAct->SetData(data);
   }
+
 }
 
 /****************************************/
@@ -58,6 +62,7 @@ void NeuralNetworkRM3Dot0::Init(TConfigurationNode& t_node) {
 /****************************************/
 
 void NeuralNetworkRM3Dot0::ControlStep() {
+
    // Get Proximity sensory data.
    if(m_pcProximity != NULL) {
       const CCI_EPuckProximitySensor::TReadings& cProxiReadings = m_pcProximity->GetReadings();

@@ -14,6 +14,10 @@ void CEPuckNEATController::Init(TConfigurationNode& t_node) {
   } catch(CARGoSException& ex) {}
 
   try {
+     m_pcLEDsActuator = GetActuator<CCI_EPuckRGBLEDsActuator>("epuck_rgb_leds");
+  } catch(CARGoSException& ex) {}
+
+  try {
     m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
   } catch(CARGoSException& ex) {}
 
@@ -31,7 +35,6 @@ void CEPuckNEATController::Init(TConfigurationNode& t_node) {
 
   try {
      m_pcOmniCam = GetSensor<CCI_EPuckOmnidirectionalCameraSensor>("epuck_omnidirectional_camera");
-     m_pcOmniCam->Enable();
   } catch(CARGoSException& ex) {}
 
   if(m_pcOmniCam != NULL){
