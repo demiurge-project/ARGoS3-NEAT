@@ -29,6 +29,15 @@ void CEPuckNEATController::Init(TConfigurationNode& t_node) {
     m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
   } catch(CARGoSException& ex) {}
 
+  try {
+     m_pcOmniCam = GetSensor<CCI_EPuckOmnidirectionalCameraSensor>("epuck_omnidirectional_camera");
+     m_pcOmniCam->Enable();
+  } catch(CARGoSException& ex) {}
+
+  if(m_pcOmniCam != NULL){
+     m_pcOmniCam->Enable();
+  }
+
   // Load the parameters for the neural network.
   GetNodeAttributeOrDefault(t_node, "genome_file", m_strFile, m_strFile);
   if(m_strFile != "") {
@@ -113,7 +122,7 @@ void CEPuckNEATController::Display(int i) {
 
    DisplayNetwork();
 
-   LOG << "wheels: (" << m_fLeftSpeed << ", " << m_fRightSpeed << ")." << std::endl;
+   LOG << "wheels: (" << m_fLeftSpeedO1 - m_fLeftSpeedO2 << ", " << m_fRightSpeedO1 - m_fRightSpeedO2 << ")." << std::endl;
 }
 
 /****************************************/
