@@ -39,7 +39,7 @@ void NeuralNetworkRM3Dot0::Init(TConfigurationNode& t_node) {
   /* Reference model */
   m_pcRobotState = new ReferenceModel3Dot0();
   m_pcRobotState->SetRobotIdentifier(getRobotId());
-  m_cWheelActuationRange.Set(-m_pcRobotState->GetMaxVelocity(), m_pcRobotState->GetMaxVelocity());
+  m_cWheelActuationRange.Set(0.0f, m_pcRobotState->GetMaxVelocity());
 
   if(m_pcLEDsActuator != NULL){
      m_pcLEDsActuator->SetColors(CColor::BLACK);
@@ -69,10 +69,10 @@ void NeuralNetworkRM3Dot0::ControlStep() {
       // Feed readings to EpuckDAO which will process them as needed
       m_pcRobotState->SetProximityInput(cProxiReadings);
       // Collecting processed readings
-      CCI_EPuckProximitySensor::TReadings cProcessedProxiReadings = m_pcRobotState->GetProximityInput();
+      //CCI_EPuckProximitySensor::TReadings cProcessedProxiReadings = m_pcRobotState->GetProximityInput();
       // Injecting processed readings as input of the NN
       for(size_t i=0; i<8; i++) {
-         m_inputs[i] = cProcessedProxiReadings[i].Value;
+         m_inputs[i] = cProxiReadings[i].Value;
       }
    } else {
       for(size_t i=0; i<8; i++) {
@@ -100,12 +100,12 @@ void NeuralNetworkRM3Dot0::ControlStep() {
    if(m_pcGround != NULL) {
       const CCI_EPuckGroundSensor::SReadings& cGroundReadings = m_pcGround->GetReadings();
       m_pcRobotState->SetGroundInput(cGroundReadings);
-      CCI_EPuckGroundSensor::SReadings cProcessedGroundReadings = m_pcRobotState->GetGroundInput();
+      Real fProcessedGroundReadings = m_pcRobotState->GetGroundReading();
       for(size_t i=8; i<11; i++) {
-         m_inputs[i] = cProcessedGroundReadings[i-8];
-         if(cProcessedGroundReadings[i-8] <= 0.1) { //black
+         m_inputs[i] = fProcessedGroundReadings;
+         if(fProcessedGroundReadings <= 0.1) { //black
             m_inputs[i] = 0;
-         } else if(cProcessedGroundReadings[i-8] >= 0.95){ //white
+         } else if(fProcessedGroundReadings >= 0.95){ //white
             m_inputs[i] = 1;
          } else { //gray
             UInt32 index = m_pcRNG->Uniform(CRange<UInt32>(0, 4204));
@@ -162,22 +162,22 @@ void NeuralNetworkRM3Dot0::ControlStep() {
       for (it = sOmniCam.BlobList.begin(); it != sOmniCam.BlobList.end(); it++) {
 
           if ((*it)->Color == CColor::RED && (*it)->Distance >= 6.0) {
-              sSumVectorR += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle);
+              sSumVectorR += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle.SignedNormalize());
           }
           if ((*it)->Color == CColor::GREEN && (*it)->Distance >= 6.0) {
-              sSumVectorG += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle);
+              sSumVectorG += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle.SignedNormalize());
           }
           if ((*it)->Color == CColor::BLUE && (*it)->Distance >= 6.0) {
-              sSumVectorB += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle);
+              sSumVectorB += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle.SignedNormalize());
           }
           if ((*it)->Color == CColor::YELLOW && (*it)->Distance >= 6.0) {
-              sSumVectorY += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle);
+              sSumVectorY += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle.SignedNormalize());
           }
           if ((*it)->Color == CColor::MAGENTA && (*it)->Distance >= 6.0) {
-              sSumVectorM += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle);
+              sSumVectorM += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle.SignedNormalize());
           }
           if ((*it)->Color == CColor::CYAN && (*it)->Distance >= 6.0) {
-              sSumVectorC += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle);
+              sSumVectorC += CVector2(1 / (((*it)->Distance)+1),(*it)->Angle.SignedNormalize());
           }
       }
 
