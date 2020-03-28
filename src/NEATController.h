@@ -96,7 +96,7 @@ protected:
 
    Real m_fLeftSpeed, m_fRightSpeed;
    Real m_fLeftSpeedO1, m_fLeftSpeedO2, m_fRightSpeedO1, m_fRightSpeedO2;
-   Real m_fMaxColorOutput;
+   double m_fMaxColorOutput;
 
    argos::CRandom::CRNG* m_pcRNG;
 

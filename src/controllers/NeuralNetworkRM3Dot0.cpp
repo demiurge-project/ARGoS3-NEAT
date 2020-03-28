@@ -222,21 +222,21 @@ void NeuralNetworkRM3Dot0::ControlStep() {
       // Set the OmniCam input of the NN
 
       for(int i = 16; i < 20; i++) {
-         CRadians cDirectionR = CRadians::PI*(2*(i-16) + 1)/4;
-         Real valueR = sSumVectorR.DotProduct(CVector2(1.0, cDirectionR));
-         m_inputs[i] = (valueR > 0 ? valueR : 0); // only 2 inputs (rarely 3) will be different from 0.
-      }
-
-      for(int i = 20; i < 24; i++) {
-         CRadians cDirectionG = CRadians::PI*(2*(i-20) + 1)/4;
+         CRadians cDirectionG = CRadians::PI*(2*(i-16) + 1)/4;
          Real valueG = sSumVectorG.DotProduct(CVector2(1.0, cDirectionG));
          m_inputs[i] = (valueG > 0 ? valueG : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
-      for(int i = 24; i < 28; i++) {
-         CRadians cDirectionB = CRadians::PI*(2*(i-24) + 1)/4;
+      for(int i = 20; i < 24; i++) {
+         CRadians cDirectionB = CRadians::PI*(2*(i-20) + 1)/4;
          Real valueB = sSumVectorB.DotProduct(CVector2(1.0, cDirectionB));
          m_inputs[i] = (valueB > 0 ? valueB : 0); // only 2 inputs (rarely 3) will be different from 0.
+      }
+
+      for(int i = 24; i < 28; i++) {
+         CRadians cDirectionR = CRadians::PI*(2*(i-24) + 1)/4;
+         Real valueR = sSumVectorR.DotProduct(CVector2(1.0, cDirectionR));
+         m_inputs[i] = (valueR > 0 ? valueR : 0); // only 2 inputs (rarely 3) will be different from 0.
       }
 
       for(int i = 28; i < 32; i++) {
@@ -295,20 +295,20 @@ void NeuralNetworkRM3Dot0::ControlStep() {
 
        else if (m_fMaxColorOutput == (m_net->outputs[5])->activation){
            //m_pcLEDsActuator->SetColors(CColor::YELLOW);
-           m_pcLEDsActuator->SetColor(2,CColor::YELLOW);
-           //m_pcLEDsActuator->SetColors(CColor(255,255,0)); // For Real Robots
+           //m_pcLEDsActuator->SetColor(2,CColor::YELLOW);
+           m_pcLEDsActuator->SetColors(CColor(250,80,0)); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[6])->activation){
            //m_pcLEDsActuator->SetColors(CColor::MAGENTA);
-           m_pcLEDsActuator->SetColor(2,CColor::MAGENTA);
-           //m_pcLEDsActuator->SetColors(CColor(255,0,255)); // For Real Robots
+           //m_pcLEDsActuator->SetColor(2,CColor::MAGENTA);
+           m_pcLEDsActuator->SetColors(CColor(150,0,60)); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[7])->activation){
            //m_pcLEDsActuator->SetColors(CColor::CYAN);
-           m_pcLEDsActuator->SetColor(2,CColor::CYAN);
-           //m_pcLEDsActuator->SetColors(CColor(0,255,255)); // For Real Robots
+           //m_pcLEDsActuator->SetColor(2,CColor::CYAN);
+           m_pcLEDsActuator->SetColors(CColor(0,200,50)); // For Real Robots
        }
    }
 

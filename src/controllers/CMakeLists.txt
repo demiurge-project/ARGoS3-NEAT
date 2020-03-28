@@ -112,6 +112,21 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 
 
 else()
+
+    add_executable(epuck_nn
+        #/home/arena/dgarzon/iridia-tracking-system/src/plugins/robots/e-puck/real_robot/real_epuck_its.h
+        #/home/arena/dgarzon/iridia-tracking-system/src/plugins/robots/e-puck/real_robot/real_epuck_its_main.cpp
+        NeuralNetworkRM3Dot0.cpp
+        NeuralNetworkRM3Dot0.h
+    )
+
+    # Link with the necessary libraries
+    target_link_libraries(epuck_nn
+      neat_controller
+      argos3plugin_${ARGOS_BUILD_FOR}_epuck
+      argos3_demiurge_epuck_dao
+      argos3plugin_${ARGOS_BUILD_FOR}_genericvirtualsensorsandactuators)
+      
     # Add exec for running on epuck
     #add_executable(nn_rm_1dot3
     #  NeuralNetworkRM1Dot3.cpp

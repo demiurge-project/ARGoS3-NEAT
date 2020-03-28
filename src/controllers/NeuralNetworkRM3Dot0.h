@@ -39,7 +39,7 @@ public:
 
 private:
 
-   Real m_inputs[41];
+   double m_inputs[41];
 
 };
 
