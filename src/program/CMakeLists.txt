@@ -55,9 +55,7 @@ else(MPI_FOUND)
 	message(STATUS "MPI package NOT found!")
 
 	# Add the executable evolution
-	add_executable(NEAT-evolution-seq evolution-sequential.cpp
-						argos3_demiurge_loop_functions
-						argos3_demiurge_epuck_dao)
+	add_executable(NEAT-evolution-seq evolution-sequential.cpp)
 
 	# Link the executable evolution with the necessary libraries
 	target_link_libraries(NEAT-evolution-seq neat neat_controller
