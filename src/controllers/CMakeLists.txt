@@ -18,6 +18,20 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       argos3plugin_${ARGOS_BUILD_FOR}_epuck
       argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
 
+
+      add_library(nn_rm_1dot1_bin SHARED
+        NeuralNetworkRM1Dot1Binary.cpp
+        NeuralNetworkRM1Dot1Binary.h
+      )
+
+      # Link the library epuck_nn with the necessary libraries
+      target_link_libraries(nn_rm_1dot1_bin
+        neat_controller
+        argos3core_${ARGOS_BUILD_FOR}
+        argos3plugin_${ARGOS_BUILD_FOR}_epuck
+        argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+
+
     # Add shared library epuck_nn
     # shared libraries are linked dynamically and loaded at runtime
     add_library(nn_rm_1dot2 SHARED
@@ -31,6 +45,20 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       argos3core_${ARGOS_BUILD_FOR}
       argos3plugin_${ARGOS_BUILD_FOR}_epuck
       argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
+
+      # Add shared library epuck_nn
+      # shared libraries are linked dynamically and loaded at runtime
+      add_library(nn_rm_1dot2_bin SHARED
+        NeuralNetworkRM1Dot2Binary.cpp
+        NeuralNetworkRM1Dot2Binary.h
+      )
+
+      # Link the library epuck_nn with the necessary libraries
+      target_link_libraries(nn_rm_1dot2_bin
+        neat_controller
+        argos3core_${ARGOS_BUILD_FOR}
+        argos3plugin_${ARGOS_BUILD_FOR}_epuck
+        argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
 
 
     #########
