@@ -4,30 +4,45 @@
 
 
 void CEPuckNEATController::Init(TConfigurationNode& t_node) {
-  /* Get sensor/actuator handles */
-  try {
-    m_pcWheels = GetActuator<CCI_EPuckWheelsActuator>("epuck_wheels");
-  } catch(CARGoSException& ex) {}
+    /* Get sensor/actuator handles */
+    try {
+      m_pcWheels = GetActuator<CCI_EPuckWheelsActuator>("epuck_wheels");
+    } catch(CARGoSException& ex) {}
 
-  try {
-    m_pcRABAct = GetActuator<CCI_EPuckRangeAndBearingActuator>("epuck_range_and_bearing");
-  } catch(CARGoSException& ex) {}
+    try {
+      m_pcRABAct = GetActuator<CCI_EPuckRangeAndBearingActuator>("epuck_range_and_bearing");
+    } catch(CARGoSException& ex) {}
 
-  try {
-    m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
-  } catch(CARGoSException& ex) {}
+    try {
+      m_pcLEDsActuator = GetActuator<CCI_EPuckRGBLEDsActuator>("epuck_rgb_leds");
+    } catch(CARGoSException& ex) {}
 
-  try {
-    m_pcLight = GetSensor<CCI_EPuckLightSensor>("epuck_light");
-  } catch(CARGoSException& ex) {}
+    try {
+      m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
+    } catch(CARGoSException& ex) {}
 
-  try {
-    m_pcGround = GetSensor<CCI_EPuckGroundSensor>("epuck_ground");
-  } catch(CARGoSException& ex) {}
+    try {
+      m_pcLight = GetSensor<CCI_EPuckLightSensor>("epuck_light");
+    } catch(CARGoSException& ex) {}
 
-  try {
-    m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
-  } catch(CARGoSException& ex) {}
+    try {
+      m_pcGround = GetSensor<CCI_EPuckGroundSensor>("epuck_ground");
+    } catch(CARGoSException& ex) {}
+
+    try {
+      m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
+    } catch(CARGoSException& ex) {}
+
+    try {
+      m_pcCameraSensor = GetSensor<CCI_EPuckOmnidirectionalCameraSensor>("epuck_omnidirectional_camera");
+    } catch(CARGoSException& ex) {}
+
+    /* Enable camera filtering */
+    if (m_pcCameraSensor != NULL) {
+       m_pcCameraSensor->Enable();
+    }
+
+
 
   // Load the parameters for the neural network.
   GetNodeAttributeOrDefault(t_node, "genome_file", m_strFile, m_strFile);

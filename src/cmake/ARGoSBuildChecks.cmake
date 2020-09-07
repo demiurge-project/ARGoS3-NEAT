@@ -18,12 +18,12 @@ endif()
 #
 # Check for Lua 5.2
 #
-IF(NOT ARGOS_BUILD_FOR_EPUCK)
-  find_package(Lua52)
-  if(LUA52_FOUND)
-    include_directories(${LUA_INCLUDE_DIR})
-  endif(LUA52_FOUND)
-endif (NOT ARGOS_BUILD_FOR_EPUCK)
+#IF(NOT ARGOS_BUILD_FOR_EPUCK)
+#  find_package(Lua52)
+#  if(LUA52_FOUND)
+#    include_directories(${LUA_INCLUDE_DIR})
+#  endif(LUA52_FOUND)
+#endif (NOT ARGOS_BUILD_FOR_EPUCK)
 
 #
 # Check for Qt and OpenGL when compiling for the simulator

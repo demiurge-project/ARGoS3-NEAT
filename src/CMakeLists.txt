@@ -19,7 +19,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   add_subdirectory(controllers)
   add_subdirectory(NEAT)
   add_subdirectory(program)
-  add_subdirectory(genome_parser)
+  #add_subdirectory(genome_parser)
 else()                                  #else build for robots
   add_subdirectory(controllers)
   add_subdirectory(NEAT)

@@ -28,12 +28,12 @@ recur_only_prob 0.0
 pop_size 100
 dropoff_age 1000
 newlink_tries 1
-print_every 50
+print_every 10
 babies_stolen 0
 num_runs 1
-num_gens 250
+num_gens 150
 num_runs_per_gen 10
-num_runs_post_eval 0
+num_runs_post_eval 500
 weight_lower_bound -5.0
 weight_upper_bound 5.0
 elitism_percentage 0.20

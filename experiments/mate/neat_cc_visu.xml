@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+  <!-- ************* -->
+  <!-- * Framework * -->
+  <!-- ************* -->
+  <framework>
+    <experiment length="120"
+                ticks_per_second="10" random_seed="0"/>
+  </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="../experiments-loop-functions/build/loop-functions/mate/CC/libmate_cc_loopfunc.so"
+   label="mate_cc_loop_functions">
+   <params dist_radius="1.2" 
+	   number_robots="20"
+	   is_random="true"
+	   is_robots_black="true"
+	   is_random_and_black_activated="true"/>
+  </loop_functions>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+	<!-- TRANSMITTER -->
+    <nn_rm_1dot3_controller id="nn_rm_1dot3_controller"
+                        library="build/src/controllers/libnn_rm_1dot3.so">
+      <actuators>
+                    <epuck_wheels implementation="default" noise_std_dev="0.05"/>
+                    <epuck_rgb_leds implementation="default" medium="leds"/>
+                    <epuck_range_and_bearing implementation="medium" medium="rab" data_size="2" range="0.4"/>
+      </actuators>
+      <sensors>
+                    <epuck_proximity implementation="default" show_rays="false" noise_level="0.05" calibrated="false"/>
+                    <epuck_light implementation="default" show_rays="false" noise_level="0.05" calibrated="false"/>
+                    <epuck_ground implementation="rot_z_only" noise_level="0.0" calibrated="false"/>
+                    <epuck_range_and_bearing implementation="medium" medium="rab" show_rays="false" data_size="2" noise_std_dev="0.1" real_range_noise="false" loss_probability="0.85" calibrated="false"/>
+                    <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false" noise_std_dev="0.04" calibrated="false"/>
+      </sensors>
+    <params rab_time="10"/>
+    </nn_rm_1dot3_controller>
+  </controllers>
+
+  <!-- ********* -->
+  <!-- * Arena * -->
+  <!-- ********* -->
+  <arena size="10, 10, 1" center="0,0,0">
+
+  <!-- Change the floor here -->
+  <floor id="floor" source="loop_functions" pixels_per_meter="300"/>
+
+ <!-- Change the light here -->
+ <light id="light" position="0, 1.5, 0.4" orientation="0,0,0" color="yellow" intensity="0.0" medium="leds"/>
+
+  <!--Dodecagonal arena with side of length .66-->
+  <box id="wall_1" size="0.01,.66,0.08" movable="false">
+    <body position="-1.231,0,0" orientation="0,0,0"/>
+  </box>
+  <box id="wall_2" size="0.01,.66,0.08" movable="false">
+    <body position="1.231,0,0" orientation="0,0,0"/>
+  </box>
+  <box id="wall_3" size="0.01,.66,0.08" movable="false">
+    <body position="0,1.231,0" orientation="90,0,0"/>
+  </box>
+  <box id="wall_4" size="0.01,.66,0.08" movable="false">
+    <body position="0,-1.231,0" orientation="90,0,0"/>
+  </box>
+  <box id="wall_5" size="0.01,.66,0.08" movable="false">
+    <body position="-.615,-1.066,0" orientation="60,0,0"/>
+  </box>
+  <box id="wall_6" size="0.01,.66,0.08" movable="false">
+    <body position="-1.066,-.615,0" orientation="30,0,0"/>
+  </box>
+  <box id="wall_7" size="0.01,.66,0.08" movable="false">
+    <body position=".615,1.066,0" orientation="60,0,0"/>
+  </box>
+  <box id="wall_8" size="0.01,.66,0.08" movable="false">
+    <body position="1.066,.615,0" orientation="30,0,0"/>
+  </box>
+  <box id="wall_9" size="0.01,.66,0.08" movable="false">
+    <body position="-.615,1.066,0" orientation="-60,0,0"/>
+  </box>
+  <box id="wall_10" size="0.01,.66,0.08" movable="false">
+    <body position="-1.066,.615,0" orientation="-30,0,0"/>
+  </box>
+  <box id="wall_11" size="0.01,.66,0.08" movable="false">
+    <body position=".615,-1.066,0" orientation="-60,0,0"/>
+  </box>
+  <box id="wall_12" size="0.01,.66,0.08" movable="false">
+    <body position="1.066,-.615,0" orientation="-30,0,0"/>
+  </box>
+
+  <!-- ********** -->
+  <!-- * E-Puck * -->
+  <!-- ********** -->
+
+  <distribute>
+    <position method="uniform" min="-1,-1,0" max="1,1,0" />
+    <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
+    <entity quantity="20" max_trials="100">
+      <e-puck id="epuck">
+        <controller config="nn_rm_1dot3_controller" />
+      </e-puck>
+    </entity>
+  </distribute>
+
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <led id="leds" grid_size="1,1,1"/>
+    <range_and_bearing id="ircom"/>
+    <range_and_bearing id="rab"/>
+  </media>
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+  <visualization>
+    <qt-opengl>
+      <camera>
+        <placement idx="0"
+                   position="0,0,4.5"
+                   look_at="0,0,0"
+                   lens_focal_length="30" />
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>
