@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+  <!-- ************* -->
+  <!-- * Framework * -->
+  <!-- ************* -->
+  <framework>
+    <experiment length="120"
+                ticks_per_second="10" random_seed="0"/>
+  </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+
+  <loop_functions library="/home/dgarzon/experiments-loop-functions/build/loop-functions/moca/libtutti_st_loopfunc.so"
+   label="tutti_st_loop_function">
+       <params number_robots="20"
+               build_arena="true"
+               number_edges="8"
+               number_boxes_per_edge="3"
+               lenght_boxes="0.25"
+               maximization="true"/>
+  </loop_functions>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+	<!-- TRANSMITTER -->
+    <nn_rm_3dot0_controller id="evocolor"
+                        library="/home/dgarzon/NEAT-evocolor/build/src/controllers/libnn_rm_3dot0.so">
+      <actuators>
+        <epuck_wheels implementation="default" noise_std_dev="0.05"/>
+        <epuck_rgb_leds implementation="default" medium="leds"/>
+        <epuck_range_and_bearing implementation="medium" medium="rab" data_size="4" range="0.5"/>
+      </actuators>
+      <sensors>
+		    <epuck_proximity implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
+        <epuck_range_and_bearing implementation="medium" medium="rab" data_size="4" noise_std_deviation="1.5" loss_probability="0.85" calibrated="true"/>
+		    <epuck_light implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
+		    <epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
+            <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
+      </sensors>
+    <params readable="false" genome_file="/home/dgarzon/experiments-loop-functions/scenarios/moca/gen_last_1_champ"/>
+
+    </nn_rm_3dot0_controller>
+    
+  </controllers>
+
+  <!-- ********* -->
+  <!-- * Arena * -->
+  <!-- ********* -->
+  <arena size="2, 2, 0.15" center="0,0,0.075">
+
+  <!-- Change the floor here -->
+  <floor id="floor" source="loop_functions" pixels_per_meter="300"/>
+
+  <!-- Change the light here -->
+  <!-- Please note that this light has an intensity equal to 0 -->
+  <!-- and therefore does not affect the experiment. -->
+  <!-- ARGoS requires at least one light when using the light sensor -->
+    <light id="light" position="0.8,0.8,0.10" orientation="0,0,0" color="black" intensity="0.0" medium="leds"/>
+
+  <!-- ********** -->
+  <!-- * E-Puck * -->
+  <!-- ********** -->
+
+  <distribute>
+    <position method="uniform" min="-1,-1,0" max="1,1,0" />
+    <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
+    <entity quantity="20" max_trials="100">
+      <e-puck id="epuck">
+       <controller config="evocolor" />
+      </e-puck>
+    </entity>
+  </distribute>
+
+  <!-- The epucks are distributed by the AutoMoDeLoopFunctions. -->
+
+  <!-- ********** -->
+  <!-- * Walls * -->
+  <!-- ********** -->
+
+  <!-- The walls are distributed by the AutoMoDeLoopFunctions. -->
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <led id="leds" grid_size="20,20,1"/>
+    <range_and_bearing id="rab" grid_size="20,20,1"/>
+  </media>
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+  
+  <visualization>
+    <!--qt-opengl>
+      <camera>
+        <placement idx="0"
+                   position="0,0,2.7"
+                   look_at="0,0,0"
+                   lens_focal_length="30" />
+      </camera>
+    </qt-opengl-->
+  </visualization>
+
+</argos-configuration>

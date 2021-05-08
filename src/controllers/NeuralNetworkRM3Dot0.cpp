@@ -295,20 +295,20 @@ void NeuralNetworkRM3Dot0::ControlStep() {
 
        else if (m_fMaxColorOutput == (m_net->outputs[5])->activation){
            //m_pcLEDsActuator->SetColors(CColor::YELLOW);
-           //m_pcLEDsActuator->SetColor(2,CColor::YELLOW);
-           m_pcLEDsActuator->SetColors(CColor(250,80,0)); // For Real Robots
+           m_pcLEDsActuator->SetColor(2,CColor::YELLOW);
+           //m_pcLEDsActuator->SetColors(CColor(250,80,0)); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[6])->activation){
            //m_pcLEDsActuator->SetColors(CColor::MAGENTA);
-           //m_pcLEDsActuator->SetColor(2,CColor::MAGENTA);
-           m_pcLEDsActuator->SetColors(CColor(150,0,60)); // For Real Robots
+           m_pcLEDsActuator->SetColor(2,CColor::MAGENTA);
+           //m_pcLEDsActuator->SetColors(CColor(150,0,60)); // For Real Robots
        }
 
        else if (m_fMaxColorOutput == (m_net->outputs[7])->activation){
            //m_pcLEDsActuator->SetColors(CColor::CYAN);
-           //m_pcLEDsActuator->SetColor(2,CColor::CYAN);
-           m_pcLEDsActuator->SetColors(CColor(0,200,50)); // For Real Robots
+           m_pcLEDsActuator->SetColor(2,CColor::CYAN);
+           //m_pcLEDsActuator->SetColors(CColor(0,200,50)); // For Real Robots
        }
    }
 
