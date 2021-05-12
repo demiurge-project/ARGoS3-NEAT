@@ -18,6 +18,10 @@ void CEPuckNEATController::Init(TConfigurationNode& t_node) {
   } catch(CARGoSException& ex) {}
 
   try {
+     m_pcGroundLEDsActuator = GetActuator<CCI_EPuckGroundLEDsActuator>("epuck_ground_leds");
+  } catch(CARGoSException& ex) {}
+
+  try {
     m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
   } catch(CARGoSException& ex) {}
 

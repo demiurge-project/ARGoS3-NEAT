@@ -10,6 +10,7 @@
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_wheels_actuator.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_actuator.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_rgb_leds_actuator.h>
+#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_leds_actuator.h>
 
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_proximity_sensor.h>
 #include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_light_sensor.h>
@@ -56,6 +57,7 @@ protected:
    CCI_EPuckWheelsActuator* m_pcWheels;
    CCI_EPuckRangeAndBearingActuator* m_pcRABAct;
    CCI_EPuckRGBLEDsActuator* m_pcLEDsActuator;
+   CCI_EPuckGroundLEDsActuator* m_pcGroundLEDsActuator;
 
    CRange<Real> m_cWheelActuationRange;
 

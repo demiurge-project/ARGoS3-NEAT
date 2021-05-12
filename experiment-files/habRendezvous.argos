@@ -1,0 +1,2496 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+  <!-- ************* -->
+  <!-- * Framework * -->
+  <!-- ************* -->
+  <framework>
+    <experiment length="180"
+                ticks_per_second="10" random_seed="0"/>
+  </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <!-- <loop_functions library="/home/dgarzon/habanero/experiments-loop-functions/build/loop-functions/habanero/libhab_st_loopfunc.so" -->
+	  <loop_functions library="/home/dgarzon/develop/habanero/experiments-loop-functions/build/loop-functions/habanero/libhab_ren_loopfunc.so"
+   label="hab_ren_loop_function">
+       <params number_robots="8"
+		       dist_radius="1.0"
+               maximization="false"/>
+  </loop_functions>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+	<!-- TRANSMITTER -->
+    <nn_rm_4dot0_controller id="habanero"
+                        library="/home/dgarzon/develop/habanero/ARGoS3-NEAT/build/src/controllers/libnn_rm_4dot0.so">
+      <actuators>
+        <epuck_wheels implementation="default" noise_std_dev="0.05"/>
+        <epuck_rgb_leds implementation="default" medium="leds"/>
+        <epuck_range_and_bearing implementation="medium" medium="rab" data_size="4" range="0.5"/>
+        <epuck_base_leds implementation="default" medium="leds"/>
+        <epuck_ground_leds ground_led_pwm="200" implementation="default" medium="leds" />
+      </actuators>
+      <sensors>
+		    <epuck_proximity implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
+        <epuck_range_and_bearing implementation="medium" medium="rab" data_size="4" noise_std_deviation="1.5" loss_probability="0.85" calibrated="true"/>
+		    <epuck_light implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
+		    <epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
+        <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
+      </sensors>
+  <params readable="false" genome_file="/home/dgarzon/develop/habanero/ARGoS3-NEAT/startgen/evocolorstartgenesRM41"/>
+  </nn_rm_4dot0_controller>    
+
+  </controllers>
+
+  <!-- ********* -->
+  <!-- * Arena * -->
+  <!-- ********* -->
+  <arena size="2, 2, 0.30" center="0,0,0">
+
+  <!-- Change the floor here -->
+  <floor id="floor" source="loop_functions" pixels_per_meter="300"/>
+
+  <!-- Change the light here -->
+  <!-- Please note that this light has an intensity equal to 0 -->
+  <!-- and therefore does not affect the experiment. -->
+  <!-- ARGoS requires at least one light when using the light sensor -->
+    <light id="light" position="0.8,0.8,0.10" orientation="0,0,0" color="black" intensity="0.0" medium="leds"/>
+
+  <!-- ********** -->
+  <!-- * Obstacle * -->
+  <!-- ********** -->
+
+  <box id="obstacle_1" size="0.063,0.4,0.15" movable="false">
+    <body position="-0.36,-0.1,0" orientation="90,0,0"/>
+  </box>
+  <box id="obstacle_2" size="0.063,0.4,0.15" movable="false">
+    <body position="0.36,-0.1,0" orientation="90,0,0"/>
+  </box>
+ 
+ <!--box id="obstacle_2" size="0.07,0.07,0.15" movable="false">
+    <body position="0.4,0.8,0" orientation="90,0,0"/>
+  </box-->
+  <!-- ********** -->
+  <!-- * E-Puck * -->
+  <!-- ********** -->
+
+  <distribute>
+    <position method="uniform" min="-1,-1,0" max="1,1,0" />
+    <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
+    <entity quantity="8" max_trials="100">
+      <e-puck id="epuck">
+       <controller config="habanero" />
+      </e-puck>
+    </entity>
+  </distribute>
+
+  <!--e-puck id="epuck_01_30">
+    <body orientation="0,0,0" position="0,2,0" />
+    <controller config="habanero" />
+  </e-puck>
+  <e-puck id="epuck_02_40">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_03_50">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_04_51">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_05_55">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_06_46">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_07_34">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_08_35">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_09_36">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_10_57">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_11_44">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_12_48">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_13_61">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_14_28">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_15_32">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_16_33">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_17_39">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_18_42">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_19_47">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="tuttifrutti" />
+  </e-puck>
+  <e-puck id="epuck_20_53">
+    <body orientation="0,0,0" position="0,0,0" />
+    <controller config="tuttifrutti"/>
+  </e-puck-->
+
+  <!-- The epucks are distributed by the AutoMoDeLoopFunctions. -->
+
+  <!-- ********** -->
+  <!-- * Walls * -->
+  <!-- ********** -->
+
+  <block id="block_0" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.47,0.7175,0" orientation="-45,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_1" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.25,0.81,0" orientation="-90,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_2" size="0.01,0.25,0.1" movable="false">
+    <body position="0,0.81,0" orientation="-90,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_3" size="0.01,0.25,0.1" movable="false">
+    <body position="0.25,0.81,0" orientation="-90,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_4" size="0.01,0.25,0.1" movable="false">
+    <body position="0.47,0.7175,0" orientation="-135,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_5" size="0.01,0.25,0.1" movable="false">
+    <body position="0.5650,0.50,0" orientation="180,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_6" size="0.01,0.25,0.1" movable="false">
+    <body position="0.5650,0.25,0" orientation="180,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_7" size="0.01,0.25,0.1" movable="false">
+    <body position="0.5650,0,0" orientation="180,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_8" size="0.01,0.25,0.1" movable="false">
+    <body position="0.5650,-0.25,0" orientation="180,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_9" size="0.01,0.25,0.1" movable="false">
+    <body position="0.5650,-0.50,0" orientation="180,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_10" size="0.01,0.25,0.1" movable="false">
+    <body position="0.47,-0.7175,0" orientation="135,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_11" size="0.01,0.25,0.1" movable="false">
+    <body position="0.25,-0.81,0" orientation="90,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_12" size="0.01,0.25,0.1" movable="false">
+    <body position="0,-0.81,0" orientation="90,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_13" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.25,-0.81,0" orientation="90,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_14" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.47,-0.7175,0" orientation="45,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+  <block id="block_15" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.5650,-0.50,0" orientation="0,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_16" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.5650,-0.25,0" orientation="0,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_17" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.5650,0,0" orientation="0,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_18" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.5650,0.25,0" orientation="0,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+  <block id="block_19" size="0.01,0.25,0.1" movable="false">
+    <body position="-0.5650,0.50,0" orientation="0,0,0"/>
+    <leds medium="leds">
+        <led id="led_0" offset=" 0.0075, 0.0625, 0.067" anchor="origin" color="red" />
+        <led id="led_1" offset=" 0.0075, -0.0625, 0.067" anchor="origin" color="green" />
+     </leds>
+  </block>
+
+
+
+  <!-- ********** -->
+  <!-- * Phormica * -->
+  <!-- ********** -->
+
+  <phormica id="phormica" size="0,0,0" movable="false">
+    <body position="0,0,0" orientation="0,0,0"/>
+    <leds medium="leds">
+		<led id="led_1000" offset=" -0.555,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1001" offset=" -0.555,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1002" offset=" -0.555,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1003" offset=" -0.555,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1004" offset=" -0.555,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1005" offset=" -0.555,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1006" offset=" -0.555,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1007" offset=" -0.555,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1008" offset=" -0.555,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1009" offset=" -0.555,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1010" offset=" -0.555,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1011" offset=" -0.555,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1012" offset=" -0.555,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1013" offset=" -0.555,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1014" offset=" -0.555,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1015" offset=" -0.555,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1016" offset=" -0.555,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1017" offset=" -0.555,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1018" offset=" -0.555,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1019" offset=" -0.555,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1020" offset=" -0.555,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1021" offset=" -0.555,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1022" offset=" -0.555,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1023" offset=" -0.555,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1024" offset=" -0.555,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1025" offset=" -0.555,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1026" offset=" -0.555,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1027" offset=" -0.555,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1028" offset=" -0.555,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1029" offset=" -0.555,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1030" offset=" -0.555,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1031" offset=" -0.555,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1032" offset=" -0.555,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1033" offset=" -0.555,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1034" offset=" -0.555,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1035" offset=" -0.555,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1036" offset=" -0.555,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1037" offset=" -0.555,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1038" offset=" -0.555,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1039" offset=" -0.555,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1040" offset=" -0.555,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1041" offset=" -0.555,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1042" offset=" -0.555,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1043" offset=" -0.555,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1044" offset=" -0.555,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1045" offset=" -0.555,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1046" offset=" -0.555,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1047" offset=" -0.555,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1048" offset=" -0.555,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1049" offset=" -0.555,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1050" offset=" -0.555,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1051" offset=" -0.555,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1052" offset=" -0.555,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1053" offset=" -0.555,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1100" offset=" -0.525,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1101" offset=" -0.525,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1102" offset=" -0.525,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1103" offset=" -0.525,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1104" offset=" -0.525,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1105" offset=" -0.525,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1106" offset=" -0.525,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1107" offset=" -0.525,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1108" offset=" -0.525,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1109" offset=" -0.525,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1110" offset=" -0.525,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1111" offset=" -0.525,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1112" offset=" -0.525,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1113" offset=" -0.525,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1114" offset=" -0.525,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1115" offset=" -0.525,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1116" offset=" -0.525,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1117" offset=" -0.525,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1118" offset=" -0.525,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1119" offset=" -0.525,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1120" offset=" -0.525,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1121" offset=" -0.525,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1122" offset=" -0.525,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1123" offset=" -0.525,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1124" offset=" -0.525,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1125" offset=" -0.525,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1126" offset=" -0.525,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1127" offset=" -0.525,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1128" offset=" -0.525,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1129" offset=" -0.525,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1130" offset=" -0.525,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1131" offset=" -0.525,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1132" offset=" -0.525,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1133" offset=" -0.525,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1134" offset=" -0.525,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1135" offset=" -0.525,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1136" offset=" -0.525,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1137" offset=" -0.525,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1138" offset=" -0.525,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1139" offset=" -0.525,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1140" offset=" -0.525,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1141" offset=" -0.525,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1142" offset=" -0.525,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1143" offset=" -0.525,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1144" offset=" -0.525,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1145" offset=" -0.525,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1146" offset=" -0.525,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1147" offset=" -0.525,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1148" offset=" -0.525,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1149" offset=" -0.525,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1150" offset=" -0.525,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1151" offset=" -0.525,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1152" offset=" -0.525,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1153" offset=" -0.525,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1200" offset=" -0.495,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1201" offset=" -0.495,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1202" offset=" -0.495,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1203" offset=" -0.495,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1204" offset=" -0.495,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1205" offset=" -0.495,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1206" offset=" -0.495,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1207" offset=" -0.495,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1208" offset=" -0.495,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1209" offset=" -0.495,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1210" offset=" -0.495,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1211" offset=" -0.495,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1212" offset=" -0.495,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1213" offset=" -0.495,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1214" offset=" -0.495,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1215" offset=" -0.495,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1216" offset=" -0.495,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1217" offset=" -0.495,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1218" offset=" -0.495,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1219" offset=" -0.495,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1220" offset=" -0.495,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1221" offset=" -0.495,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1222" offset=" -0.495,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1223" offset=" -0.495,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1224" offset=" -0.495,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1225" offset=" -0.495,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1226" offset=" -0.495,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1227" offset=" -0.495,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1228" offset=" -0.495,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1229" offset=" -0.495,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1230" offset=" -0.495,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1231" offset=" -0.495,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1232" offset=" -0.495,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1233" offset=" -0.495,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1234" offset=" -0.495,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1235" offset=" -0.495,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1236" offset=" -0.495,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1237" offset=" -0.495,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1238" offset=" -0.495,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1239" offset=" -0.495,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1240" offset=" -0.495,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1241" offset=" -0.495,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1242" offset=" -0.495,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1243" offset=" -0.495,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1244" offset=" -0.495,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1245" offset=" -0.495,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1246" offset=" -0.495,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1247" offset=" -0.495,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1248" offset=" -0.495,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1249" offset=" -0.495,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1250" offset=" -0.495,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1251" offset=" -0.495,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1252" offset=" -0.495,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1253" offset=" -0.495,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1300" offset=" -0.465,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1301" offset=" -0.465,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1302" offset=" -0.465,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1303" offset=" -0.465,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1304" offset=" -0.465,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1305" offset=" -0.465,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1306" offset=" -0.465,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1307" offset=" -0.465,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1308" offset=" -0.465,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1309" offset=" -0.465,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1310" offset=" -0.465,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1311" offset=" -0.465,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1312" offset=" -0.465,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1313" offset=" -0.465,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1314" offset=" -0.465,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1315" offset=" -0.465,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1316" offset=" -0.465,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1317" offset=" -0.465,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1318" offset=" -0.465,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1319" offset=" -0.465,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1320" offset=" -0.465,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1321" offset=" -0.465,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1322" offset=" -0.465,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1323" offset=" -0.465,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1324" offset=" -0.465,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1325" offset=" -0.465,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1326" offset=" -0.465,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1327" offset=" -0.465,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1328" offset=" -0.465,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1329" offset=" -0.465,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1330" offset=" -0.465,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1331" offset=" -0.465,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1332" offset=" -0.465,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1333" offset=" -0.465,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1334" offset=" -0.465,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1335" offset=" -0.465,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1336" offset=" -0.465,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1337" offset=" -0.465,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1338" offset=" -0.465,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1339" offset=" -0.465,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1340" offset=" -0.465,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1341" offset=" -0.465,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1342" offset=" -0.465,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1343" offset=" -0.465,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1344" offset=" -0.465,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1345" offset=" -0.465,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1346" offset=" -0.465,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1347" offset=" -0.465,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1348" offset=" -0.465,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1349" offset=" -0.465,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1350" offset=" -0.465,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1351" offset=" -0.465,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1352" offset=" -0.465,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1353" offset=" -0.465,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1400" offset=" -0.435,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1401" offset=" -0.435,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1402" offset=" -0.435,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1403" offset=" -0.435,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1404" offset=" -0.435,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1405" offset=" -0.435,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1406" offset=" -0.435,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1407" offset=" -0.435,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1408" offset=" -0.435,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1409" offset=" -0.435,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1410" offset=" -0.435,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1411" offset=" -0.435,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1412" offset=" -0.435,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1413" offset=" -0.435,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1414" offset=" -0.435,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1415" offset=" -0.435,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1416" offset=" -0.435,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1417" offset=" -0.435,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1418" offset=" -0.435,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1419" offset=" -0.435,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1420" offset=" -0.435,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1421" offset=" -0.435,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1422" offset=" -0.435,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1423" offset=" -0.435,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1424" offset=" -0.435,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1425" offset=" -0.435,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1426" offset=" -0.435,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1427" offset=" -0.435,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1428" offset=" -0.435,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1429" offset=" -0.435,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1430" offset=" -0.435,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1431" offset=" -0.435,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1432" offset=" -0.435,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1433" offset=" -0.435,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1434" offset=" -0.435,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1435" offset=" -0.435,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1436" offset=" -0.435,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1437" offset=" -0.435,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1438" offset=" -0.435,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1439" offset=" -0.435,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1440" offset=" -0.435,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1441" offset=" -0.435,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1442" offset=" -0.435,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1443" offset=" -0.435,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1444" offset=" -0.435,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1445" offset=" -0.435,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1446" offset=" -0.435,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1447" offset=" -0.435,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1448" offset=" -0.435,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1449" offset=" -0.435,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1450" offset=" -0.435,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1451" offset=" -0.435,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1452" offset=" -0.435,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1453" offset=" -0.435,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1500" offset=" -0.405,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1501" offset=" -0.405,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1502" offset=" -0.405,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1503" offset=" -0.405,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1504" offset=" -0.405,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1505" offset=" -0.405,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1506" offset=" -0.405,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1507" offset=" -0.405,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1508" offset=" -0.405,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1509" offset=" -0.405,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1510" offset=" -0.405,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1511" offset=" -0.405,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1512" offset=" -0.405,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1513" offset=" -0.405,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1514" offset=" -0.405,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1515" offset=" -0.405,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1516" offset=" -0.405,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1517" offset=" -0.405,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1518" offset=" -0.405,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1519" offset=" -0.405,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1520" offset=" -0.405,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1521" offset=" -0.405,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1522" offset=" -0.405,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1523" offset=" -0.405,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1524" offset=" -0.405,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1525" offset=" -0.405,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1526" offset=" -0.405,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1527" offset=" -0.405,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1528" offset=" -0.405,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1529" offset=" -0.405,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1530" offset=" -0.405,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1531" offset=" -0.405,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1532" offset=" -0.405,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1533" offset=" -0.405,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1534" offset=" -0.405,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1535" offset=" -0.405,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1536" offset=" -0.405,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1537" offset=" -0.405,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1538" offset=" -0.405,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1539" offset=" -0.405,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1540" offset=" -0.405,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1541" offset=" -0.405,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1542" offset=" -0.405,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1543" offset=" -0.405,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1544" offset=" -0.405,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1545" offset=" -0.405,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1546" offset=" -0.405,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1547" offset=" -0.405,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1548" offset=" -0.405,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1549" offset=" -0.405,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1550" offset=" -0.405,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1551" offset=" -0.405,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1552" offset=" -0.405,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1553" offset=" -0.405,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1600" offset=" -0.375,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1601" offset=" -0.375,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1602" offset=" -0.375,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1603" offset=" -0.375,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1604" offset=" -0.375,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1605" offset=" -0.375,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1606" offset=" -0.375,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1607" offset=" -0.375,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1608" offset=" -0.375,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1609" offset=" -0.375,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1610" offset=" -0.375,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1611" offset=" -0.375,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1612" offset=" -0.375,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1613" offset=" -0.375,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1614" offset=" -0.375,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1615" offset=" -0.375,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1616" offset=" -0.375,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1617" offset=" -0.375,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1618" offset=" -0.375,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1619" offset=" -0.375,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1620" offset=" -0.375,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1621" offset=" -0.375,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1622" offset=" -0.375,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1623" offset=" -0.375,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1624" offset=" -0.375,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1625" offset=" -0.375,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1626" offset=" -0.375,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1627" offset=" -0.375,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1628" offset=" -0.375,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1629" offset=" -0.375,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1630" offset=" -0.375,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1631" offset=" -0.375,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1632" offset=" -0.375,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1633" offset=" -0.375,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1634" offset=" -0.375,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1635" offset=" -0.375,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1636" offset=" -0.375,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1637" offset=" -0.375,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1638" offset=" -0.375,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1639" offset=" -0.375,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1640" offset=" -0.375,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1641" offset=" -0.375,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1642" offset=" -0.375,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1643" offset=" -0.375,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1644" offset=" -0.375,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1645" offset=" -0.375,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1646" offset=" -0.375,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1647" offset=" -0.375,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1648" offset=" -0.375,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1649" offset=" -0.375,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1650" offset=" -0.375,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1651" offset=" -0.375,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1652" offset=" -0.375,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1653" offset=" -0.375,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+		<led id="led_1700" offset=" -0.345,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1701" offset=" -0.345,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1702" offset=" -0.345,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1703" offset=" -0.345,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1704" offset=" -0.345,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1705" offset=" -0.345,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1706" offset=" -0.345,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1707" offset=" -0.345,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1708" offset=" -0.345,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1709" offset=" -0.345,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1710" offset=" -0.345,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1711" offset=" -0.345,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1712" offset=" -0.345,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1713" offset=" -0.345,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1714" offset=" -0.345,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1715" offset=" -0.345,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1716" offset=" -0.345,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1717" offset=" -0.345,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1718" offset=" -0.345,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1719" offset=" -0.345,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1720" offset=" -0.345,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1721" offset=" -0.345,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1722" offset=" -0.345,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1723" offset=" -0.345,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1724" offset=" -0.345,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1725" offset=" -0.345,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1726" offset=" -0.345,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1727" offset=" -0.345,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1728" offset=" -0.345,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1729" offset=" -0.345,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1730" offset=" -0.345,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1731" offset=" -0.345,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1732" offset=" -0.345,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1733" offset=" -0.345,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1734" offset=" -0.345,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1735" offset=" -0.345,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1736" offset=" -0.345,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1737" offset=" -0.345,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1738" offset=" -0.345,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1739" offset=" -0.345,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1740" offset=" -0.345,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1741" offset=" -0.345,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1742" offset=" -0.345,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1743" offset=" -0.345,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1744" offset=" -0.345,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1745" offset=" -0.345,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1746" offset=" -0.345,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1747" offset=" -0.345,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1748" offset=" -0.345,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1749" offset=" -0.345,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1750" offset=" -0.345,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1751" offset=" -0.345,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1752" offset=" -0.345,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1753" offset=" -0.345,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_1800" offset=" -0.315,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1801" offset=" -0.315,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1802" offset=" -0.315,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1803" offset=" -0.315,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1804" offset=" -0.315,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1805" offset=" -0.315,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1806" offset=" -0.315,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1807" offset=" -0.315,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1808" offset=" -0.315,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1809" offset=" -0.315,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1810" offset=" -0.315,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1811" offset=" -0.315,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1812" offset=" -0.315,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1813" offset=" -0.315,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1814" offset=" -0.315,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1815" offset=" -0.315,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1816" offset=" -0.315,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1817" offset=" -0.315,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1818" offset=" -0.315,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1819" offset=" -0.315,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1820" offset=" -0.315,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1821" offset=" -0.315,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1822" offset=" -0.315,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1823" offset=" -0.315,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1824" offset=" -0.315,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1825" offset=" -0.315,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1826" offset=" -0.315,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1827" offset=" -0.315,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1828" offset=" -0.315,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1829" offset=" -0.315,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1830" offset=" -0.315,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1831" offset=" -0.315,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1832" offset=" -0.315,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1833" offset=" -0.315,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1834" offset=" -0.315,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1835" offset=" -0.315,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1836" offset=" -0.315,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1837" offset=" -0.315,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1838" offset=" -0.315,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1839" offset=" -0.315,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1840" offset=" -0.315,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1841" offset=" -0.315,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1842" offset=" -0.315,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1843" offset=" -0.315,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1844" offset=" -0.315,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1845" offset=" -0.315,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1846" offset=" -0.315,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1847" offset=" -0.315,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1848" offset=" -0.315,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1849" offset=" -0.315,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1850" offset=" -0.315,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1851" offset=" -0.315,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1852" offset=" -0.315,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1853" offset=" -0.315,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+		<led id="led_1900" offset=" -0.285,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1901" offset=" -0.285,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1902" offset=" -0.285,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1903" offset=" -0.285,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1904" offset=" -0.285,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1905" offset=" -0.285,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1906" offset=" -0.285,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1907" offset=" -0.285,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1908" offset=" -0.285,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1909" offset=" -0.285,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1910" offset=" -0.285,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1911" offset=" -0.285,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1912" offset=" -0.285,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1913" offset=" -0.285,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1914" offset=" -0.285,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1915" offset=" -0.285,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1916" offset=" -0.285,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1917" offset=" -0.285,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1918" offset=" -0.285,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1919" offset=" -0.285,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1920" offset=" -0.285,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1921" offset=" -0.285,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1922" offset=" -0.285,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1923" offset=" -0.285,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1924" offset=" -0.285,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1925" offset=" -0.285,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1926" offset=" -0.285,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1927" offset=" -0.285,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1928" offset=" -0.285,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1929" offset=" -0.285,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1930" offset=" -0.285,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1931" offset=" -0.285,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1932" offset=" -0.285,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1933" offset=" -0.285,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1934" offset=" -0.285,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1935" offset=" -0.285,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1936" offset=" -0.285,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1937" offset=" -0.285,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1938" offset=" -0.285,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1939" offset=" -0.285,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1940" offset=" -0.285,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1941" offset=" -0.285,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1942" offset=" -0.285,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1943" offset=" -0.285,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1944" offset=" -0.285,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1945" offset=" -0.285,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1946" offset=" -0.285,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1947" offset=" -0.285,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1948" offset=" -0.285,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1949" offset=" -0.285,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1950" offset=" -0.285,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1951" offset=" -0.285,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1952" offset=" -0.285,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_1953" offset=" -0.285,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2000" offset=" -0.255,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2001" offset=" -0.255,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2002" offset=" -0.255,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2003" offset=" -0.255,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2004" offset=" -0.255,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2005" offset=" -0.255,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2006" offset=" -0.255,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2007" offset=" -0.255,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2008" offset=" -0.255,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2009" offset=" -0.255,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2010" offset=" -0.255,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2011" offset=" -0.255,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2012" offset=" -0.255,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2013" offset=" -0.255,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2014" offset=" -0.255,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2015" offset=" -0.255,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2016" offset=" -0.255,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2017" offset=" -0.255,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2018" offset=" -0.255,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2019" offset=" -0.255,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2020" offset=" -0.255,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2021" offset=" -0.255,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2022" offset=" -0.255,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2023" offset=" -0.255,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2024" offset=" -0.255,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2025" offset=" -0.255,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2026" offset=" -0.255,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2027" offset=" -0.255,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2028" offset=" -0.255,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2029" offset=" -0.255,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2030" offset=" -0.255,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2031" offset=" -0.255,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2032" offset=" -0.255,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2033" offset=" -0.255,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2034" offset=" -0.255,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2035" offset=" -0.255,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2036" offset=" -0.255,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2037" offset=" -0.255,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2038" offset=" -0.255,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2039" offset=" -0.255,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2040" offset=" -0.255,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2041" offset=" -0.255,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2042" offset=" -0.255,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2043" offset=" -0.255,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2044" offset=" -0.255,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2045" offset=" -0.255,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2046" offset=" -0.255,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2047" offset=" -0.255,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2048" offset=" -0.255,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2049" offset=" -0.255,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2050" offset=" -0.255,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2051" offset=" -0.255,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2052" offset=" -0.255,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2053" offset=" -0.255,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+		<led id="led_2100" offset=" -0.225,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2101" offset=" -0.225,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2102" offset=" -0.225,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2103" offset=" -0.225,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2104" offset=" -0.225,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2105" offset=" -0.225,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2106" offset=" -0.225,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2107" offset=" -0.225,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2108" offset=" -0.225,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2109" offset=" -0.225,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2110" offset=" -0.225,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2111" offset=" -0.225,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2112" offset=" -0.225,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2113" offset=" -0.225,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2114" offset=" -0.225,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2115" offset=" -0.225,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2116" offset=" -0.225,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2117" offset=" -0.225,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2118" offset=" -0.225,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2119" offset=" -0.225,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2120" offset=" -0.225,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2121" offset=" -0.225,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2122" offset=" -0.225,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2123" offset=" -0.225,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2124" offset=" -0.225,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2125" offset=" -0.225,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2126" offset=" -0.225,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2127" offset=" -0.225,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2128" offset=" -0.225,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2129" offset=" -0.225,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2130" offset=" -0.225,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2131" offset=" -0.225,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2132" offset=" -0.225,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2133" offset=" -0.225,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2134" offset=" -0.225,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2135" offset=" -0.225,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2136" offset=" -0.225,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2137" offset=" -0.225,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2138" offset=" -0.225,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2139" offset=" -0.225,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2140" offset=" -0.225,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2141" offset=" -0.225,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2142" offset=" -0.225,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2143" offset=" -0.225,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2144" offset=" -0.225,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2145" offset=" -0.225,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2146" offset=" -0.225,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2147" offset=" -0.225,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2148" offset=" -0.225,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2149" offset=" -0.225,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2150" offset=" -0.225,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2151" offset=" -0.225,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2152" offset=" -0.225,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2153" offset=" -0.225,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2300" offset=" -0.195,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2301" offset=" -0.195,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2302" offset=" -0.195,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2303" offset=" -0.195,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2304" offset=" -0.195,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2305" offset=" -0.195,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2306" offset=" -0.195,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2307" offset=" -0.195,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2308" offset=" -0.195,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2309" offset=" -0.195,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2310" offset=" -0.195,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2311" offset=" -0.195,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2312" offset=" -0.195,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2313" offset=" -0.195,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2314" offset=" -0.195,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2315" offset=" -0.195,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2316" offset=" -0.195,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2317" offset=" -0.195,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2318" offset=" -0.195,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2319" offset=" -0.195,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2320" offset=" -0.195,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2321" offset=" -0.195,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2322" offset=" -0.195,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2323" offset=" -0.195,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2324" offset=" -0.195,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2325" offset=" -0.195,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2326" offset=" -0.195,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2327" offset=" -0.195,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2328" offset=" -0.195,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2329" offset=" -0.195,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2330" offset=" -0.195,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2331" offset=" -0.195,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2332" offset=" -0.195,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2333" offset=" -0.195,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2334" offset=" -0.195,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2335" offset=" -0.195,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2336" offset=" -0.195,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2337" offset=" -0.195,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2338" offset=" -0.195,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2339" offset=" -0.195,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2340" offset=" -0.195,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2341" offset=" -0.195,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2342" offset=" -0.195,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2343" offset=" -0.195,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2344" offset=" -0.195,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2345" offset=" -0.195,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2346" offset=" -0.195,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2347" offset=" -0.195,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2348" offset=" -0.195,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2349" offset=" -0.195,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2350" offset=" -0.195,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2351" offset=" -0.195,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2352" offset=" -0.195,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2353" offset=" -0.195,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2400" offset=" -0.165,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2401" offset=" -0.165,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2402" offset=" -0.165,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2403" offset=" -0.165,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2404" offset=" -0.165,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2405" offset=" -0.165,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2406" offset=" -0.165,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2407" offset=" -0.165,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2408" offset=" -0.165,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2409" offset=" -0.165,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2410" offset=" -0.165,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2411" offset=" -0.165,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2412" offset=" -0.165,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2413" offset=" -0.165,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2414" offset=" -0.165,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2415" offset=" -0.165,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2416" offset=" -0.165,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2417" offset=" -0.165,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2418" offset=" -0.165,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2419" offset=" -0.165,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2420" offset=" -0.165,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2421" offset=" -0.165,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2422" offset=" -0.165,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2423" offset=" -0.165,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2424" offset=" -0.165,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2425" offset=" -0.165,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2426" offset=" -0.165,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2427" offset=" -0.165,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2428" offset=" -0.165,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2429" offset=" -0.165,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2430" offset=" -0.165,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2431" offset=" -0.165,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2432" offset=" -0.165,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2433" offset=" -0.165,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2434" offset=" -0.165,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2435" offset=" -0.165,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2436" offset=" -0.165,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2437" offset=" -0.165,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2438" offset=" -0.165,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2439" offset=" -0.165,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2440" offset=" -0.165,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2441" offset=" -0.165,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2442" offset=" -0.165,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2443" offset=" -0.165,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2444" offset=" -0.165,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2445" offset=" -0.165,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2446" offset=" -0.165,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2447" offset=" -0.165,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2448" offset=" -0.165,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2449" offset=" -0.165,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2450" offset=" -0.165,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2451" offset=" -0.165,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2452" offset=" -0.165,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2453" offset=" -0.165,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2500" offset=" -0.135,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2501" offset=" -0.135,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2502" offset=" -0.135,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2503" offset=" -0.135,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2504" offset=" -0.135,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2505" offset=" -0.135,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2506" offset=" -0.135,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2507" offset=" -0.135,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2508" offset=" -0.135,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2509" offset=" -0.135,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2510" offset=" -0.135,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2511" offset=" -0.135,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2512" offset=" -0.135,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2513" offset=" -0.135,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2514" offset=" -0.135,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2515" offset=" -0.135,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2516" offset=" -0.135,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2517" offset=" -0.135,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2518" offset=" -0.135,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2519" offset=" -0.135,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2520" offset=" -0.135,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2521" offset=" -0.135,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2522" offset=" -0.135,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2523" offset=" -0.135,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2524" offset=" -0.135,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2525" offset=" -0.135,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2526" offset=" -0.135,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2527" offset=" -0.135,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2528" offset=" -0.135,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2529" offset=" -0.135,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2530" offset=" -0.135,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2531" offset=" -0.135,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2532" offset=" -0.135,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2533" offset=" -0.135,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2534" offset=" -0.135,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2535" offset=" -0.135,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2536" offset=" -0.135,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2537" offset=" -0.135,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2538" offset=" -0.135,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2539" offset=" -0.135,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2540" offset=" -0.135,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2541" offset=" -0.135,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2542" offset=" -0.135,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2543" offset=" -0.135,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2544" offset=" -0.135,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2545" offset=" -0.135,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2546" offset=" -0.135,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2547" offset=" -0.135,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2548" offset=" -0.135,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2549" offset=" -0.135,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2550" offset=" -0.135,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2551" offset=" -0.135,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2552" offset=" -0.135,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2553" offset=" -0.135,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2600" offset=" -0.105,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2601" offset=" -0.105,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2602" offset=" -0.105,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2603" offset=" -0.105,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2604" offset=" -0.105,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2605" offset=" -0.105,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2606" offset=" -0.105,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2607" offset=" -0.105,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2608" offset=" -0.105,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2609" offset=" -0.105,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2610" offset=" -0.105,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2611" offset=" -0.105,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2612" offset=" -0.105,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2613" offset=" -0.105,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2614" offset=" -0.105,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2615" offset=" -0.105,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2616" offset=" -0.105,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2617" offset=" -0.105,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2618" offset=" -0.105,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2619" offset=" -0.105,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2620" offset=" -0.105,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2621" offset=" -0.105,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2622" offset=" -0.105,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2623" offset=" -0.105,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2624" offset=" -0.105,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2625" offset=" -0.105,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2626" offset=" -0.105,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2627" offset=" -0.105,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2628" offset=" -0.105,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2629" offset=" -0.105,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2630" offset=" -0.105,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2631" offset=" -0.105,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2632" offset=" -0.105,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2633" offset=" -0.105,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2634" offset=" -0.105,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2635" offset=" -0.105,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2636" offset=" -0.105,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2637" offset=" -0.105,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2638" offset=" -0.105,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2639" offset=" -0.105,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2640" offset=" -0.105,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2641" offset=" -0.105,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2642" offset=" -0.105,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2643" offset=" -0.105,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2644" offset=" -0.105,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2645" offset=" -0.105,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2646" offset=" -0.105,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2647" offset=" -0.105,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2648" offset=" -0.105,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2649" offset=" -0.105,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2650" offset=" -0.105,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2651" offset=" -0.105,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2652" offset=" -0.105,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2653" offset=" -0.105,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2700" offset=" -0.075,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2701" offset=" -0.075,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2702" offset=" -0.075,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2703" offset=" -0.075,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2704" offset=" -0.075,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2705" offset=" -0.075,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2706" offset=" -0.075,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2707" offset=" -0.075,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2708" offset=" -0.075,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2709" offset=" -0.075,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2710" offset=" -0.075,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2711" offset=" -0.075,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2712" offset=" -0.075,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2713" offset=" -0.075,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2714" offset=" -0.075,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2715" offset=" -0.075,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2716" offset=" -0.075,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2717" offset=" -0.075,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2718" offset=" -0.075,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2719" offset=" -0.075,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2720" offset=" -0.075,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2721" offset=" -0.075,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2722" offset=" -0.075,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2723" offset=" -0.075,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2724" offset=" -0.075,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2725" offset=" -0.075,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2726" offset=" -0.075,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2727" offset=" -0.075,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2728" offset=" -0.075,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2729" offset=" -0.075,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2730" offset=" -0.075,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2731" offset=" -0.075,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2732" offset=" -0.075,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2733" offset=" -0.075,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2734" offset=" -0.075,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2735" offset=" -0.075,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2736" offset=" -0.075,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2737" offset=" -0.075,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2738" offset=" -0.075,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2739" offset=" -0.075,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2740" offset=" -0.075,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2741" offset=" -0.075,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2742" offset=" -0.075,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2743" offset=" -0.075,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2744" offset=" -0.075,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2745" offset=" -0.075,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2746" offset=" -0.075,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2747" offset=" -0.075,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2748" offset=" -0.075,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2749" offset=" -0.075,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2750" offset=" -0.075,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2751" offset=" -0.075,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2752" offset=" -0.075,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2753" offset=" -0.075,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2800" offset=" -0.045,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2801" offset=" -0.045,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2802" offset=" -0.045,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2803" offset=" -0.045,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2804" offset=" -0.045,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2805" offset=" -0.045,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2806" offset=" -0.045,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2807" offset=" -0.045,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2808" offset=" -0.045,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2809" offset=" -0.045,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2810" offset=" -0.045,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2811" offset=" -0.045,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2812" offset=" -0.045,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2813" offset=" -0.045,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2814" offset=" -0.045,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2815" offset=" -0.045,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2816" offset=" -0.045,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2817" offset=" -0.045,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2818" offset=" -0.045,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2819" offset=" -0.045,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2820" offset=" -0.045,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2821" offset=" -0.045,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2822" offset=" -0.045,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2823" offset=" -0.045,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2824" offset=" -0.045,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2825" offset=" -0.045,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2826" offset=" -0.045,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2827" offset=" -0.045,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2828" offset=" -0.045,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2829" offset=" -0.045,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2830" offset=" -0.045,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2831" offset=" -0.045,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2832" offset=" -0.045,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2833" offset=" -0.045,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2834" offset=" -0.045,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2835" offset=" -0.045,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2836" offset=" -0.045,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2837" offset=" -0.045,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2838" offset=" -0.045,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2839" offset=" -0.045,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2840" offset=" -0.045,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2841" offset=" -0.045,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2842" offset=" -0.045,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2843" offset=" -0.045,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2844" offset=" -0.045,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2845" offset=" -0.045,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2846" offset=" -0.045,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2847" offset=" -0.045,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2848" offset=" -0.045,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2849" offset=" -0.045,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2850" offset=" -0.045,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2851" offset=" -0.045,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2852" offset=" -0.045,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2853" offset=" -0.045,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_2900" offset=" -0.015,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2901" offset=" -0.015,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2902" offset=" -0.015,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2903" offset=" -0.015,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2904" offset=" -0.015,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2905" offset=" -0.015,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2906" offset=" -0.015,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2907" offset=" -0.015,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2908" offset=" -0.015,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2909" offset=" -0.015,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2910" offset=" -0.015,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2911" offset=" -0.015,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2912" offset=" -0.015,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2913" offset=" -0.015,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2914" offset=" -0.015,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2915" offset=" -0.015,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2916" offset=" -0.015,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2917" offset=" -0.015,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2918" offset=" -0.015,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2919" offset=" -0.015,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2920" offset=" -0.015,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2921" offset=" -0.015,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2922" offset=" -0.015,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2923" offset=" -0.015,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2924" offset=" -0.015,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2925" offset=" -0.015,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2926" offset=" -0.015,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2927" offset=" -0.015,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2928" offset=" -0.015,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2929" offset=" -0.015,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2930" offset=" -0.015,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2931" offset=" -0.015,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2932" offset=" -0.015,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2933" offset=" -0.015,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2934" offset=" -0.015,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2935" offset=" -0.015,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2936" offset=" -0.015,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2937" offset=" -0.015,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2938" offset=" -0.015,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2939" offset=" -0.015,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2940" offset=" -0.015,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2941" offset=" -0.015,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2942" offset=" -0.015,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2943" offset=" -0.015,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2944" offset=" -0.015,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2945" offset=" -0.015,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2946" offset=" -0.015,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2947" offset=" -0.015,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2948" offset=" -0.015,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2949" offset=" -0.015,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2950" offset=" -0.015,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2951" offset=" -0.015,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2952" offset=" -0.015,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_2953" offset=" -0.015,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3000" offset=" 0.015,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3001" offset=" 0.015,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3002" offset=" 0.015,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3003" offset=" 0.015,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3004" offset=" 0.015,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3005" offset=" 0.015,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3006" offset=" 0.015,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3007" offset=" 0.015,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3008" offset=" 0.015,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3009" offset=" 0.015,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3010" offset=" 0.015,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3011" offset=" 0.015,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3012" offset=" 0.015,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3013" offset=" 0.015,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3014" offset=" 0.015,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3015" offset=" 0.015,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3016" offset=" 0.015,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3017" offset=" 0.015,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3018" offset=" 0.015,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3019" offset=" 0.015,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3020" offset=" 0.015,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3021" offset=" 0.015,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3022" offset=" 0.015,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3023" offset=" 0.015,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3024" offset=" 0.015,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3025" offset=" 0.015,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3026" offset=" 0.015,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3027" offset=" 0.015,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3028" offset=" 0.015,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3029" offset=" 0.015,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3030" offset=" 0.015,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3031" offset=" 0.015,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3032" offset=" 0.015,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3033" offset=" 0.015,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3034" offset=" 0.015,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3035" offset=" 0.015,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3036" offset=" 0.015,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3037" offset=" 0.015,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3038" offset=" 0.015,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3039" offset=" 0.015,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3040" offset=" 0.015,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3041" offset=" 0.015,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3042" offset=" 0.015,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3043" offset=" 0.015,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3044" offset=" 0.015,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3045" offset=" 0.015,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3046" offset=" 0.015,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3047" offset=" 0.015,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3048" offset=" 0.015,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3049" offset=" 0.015,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3050" offset=" 0.015,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3051" offset=" 0.015,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3052" offset=" 0.015,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3053" offset=" 0.015,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3100" offset=" 0.045,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3101" offset=" 0.045,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3102" offset=" 0.045,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3103" offset=" 0.045,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3104" offset=" 0.045,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3105" offset=" 0.045,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3106" offset=" 0.045,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3107" offset=" 0.045,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3108" offset=" 0.045,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3109" offset=" 0.045,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3110" offset=" 0.045,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3111" offset=" 0.045,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3112" offset=" 0.045,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3113" offset=" 0.045,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3114" offset=" 0.045,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3115" offset=" 0.045,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3116" offset=" 0.045,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3117" offset=" 0.045,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3118" offset=" 0.045,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3119" offset=" 0.045,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3120" offset=" 0.045,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3121" offset=" 0.045,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3122" offset=" 0.045,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3123" offset=" 0.045,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3124" offset=" 0.045,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3125" offset=" 0.045,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3126" offset=" 0.045,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3127" offset=" 0.045,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3128" offset=" 0.045,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3129" offset=" 0.045,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3130" offset=" 0.045,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3131" offset=" 0.045,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3132" offset=" 0.045,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3133" offset=" 0.045,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3134" offset=" 0.045,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3135" offset=" 0.045,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3136" offset=" 0.045,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3137" offset=" 0.045,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3138" offset=" 0.045,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3139" offset=" 0.045,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3140" offset=" 0.045,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3141" offset=" 0.045,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3142" offset=" 0.045,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3143" offset=" 0.045,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3144" offset=" 0.045,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3145" offset=" 0.045,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3146" offset=" 0.045,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3147" offset=" 0.045,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3148" offset=" 0.045,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3149" offset=" 0.045,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3150" offset=" 0.045,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3151" offset=" 0.045,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3152" offset=" 0.045,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3153" offset=" 0.045,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3200" offset=" 0.075,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3201" offset=" 0.075,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3202" offset=" 0.075,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3203" offset=" 0.075,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3204" offset=" 0.075,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3205" offset=" 0.075,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3206" offset=" 0.075,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3207" offset=" 0.075,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3208" offset=" 0.075,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3209" offset=" 0.075,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3210" offset=" 0.075,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3211" offset=" 0.075,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3212" offset=" 0.075,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3213" offset=" 0.075,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3214" offset=" 0.075,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3215" offset=" 0.075,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3216" offset=" 0.075,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3217" offset=" 0.075,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3218" offset=" 0.075,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3219" offset=" 0.075,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3220" offset=" 0.075,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3221" offset=" 0.075,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3222" offset=" 0.075,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3223" offset=" 0.075,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3224" offset=" 0.075,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3225" offset=" 0.075,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3226" offset=" 0.075,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3227" offset=" 0.075,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3228" offset=" 0.075,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3229" offset=" 0.075,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3230" offset=" 0.075,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3231" offset=" 0.075,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3232" offset=" 0.075,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3233" offset=" 0.075,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3234" offset=" 0.075,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3235" offset=" 0.075,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3236" offset=" 0.075,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3237" offset=" 0.075,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3238" offset=" 0.075,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3239" offset=" 0.075,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3240" offset=" 0.075,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3241" offset=" 0.075,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3242" offset=" 0.075,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3243" offset=" 0.075,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3244" offset=" 0.075,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3245" offset=" 0.075,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3246" offset=" 0.075,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3247" offset=" 0.075,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3248" offset=" 0.075,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3249" offset=" 0.075,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3250" offset=" 0.075,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3251" offset=" 0.075,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3252" offset=" 0.075,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3253" offset=" 0.075,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3300" offset=" 0.105,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3301" offset=" 0.105,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3302" offset=" 0.105,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3303" offset=" 0.105,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3304" offset=" 0.105,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3305" offset=" 0.105,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3306" offset=" 0.105,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3307" offset=" 0.105,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3308" offset=" 0.105,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3309" offset=" 0.105,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3310" offset=" 0.105,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3311" offset=" 0.105,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3312" offset=" 0.105,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3313" offset=" 0.105,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3314" offset=" 0.105,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3315" offset=" 0.105,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3316" offset=" 0.105,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3317" offset=" 0.105,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3318" offset=" 0.105,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3319" offset=" 0.105,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3320" offset=" 0.105,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3321" offset=" 0.105,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3322" offset=" 0.105,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3323" offset=" 0.105,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3324" offset=" 0.105,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3325" offset=" 0.105,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3326" offset=" 0.105,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3327" offset=" 0.105,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3328" offset=" 0.105,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3329" offset=" 0.105,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3330" offset=" 0.105,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3331" offset=" 0.105,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3332" offset=" 0.105,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3333" offset=" 0.105,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3334" offset=" 0.105,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3335" offset=" 0.105,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3336" offset=" 0.105,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3337" offset=" 0.105,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3338" offset=" 0.105,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3339" offset=" 0.105,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3340" offset=" 0.105,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3341" offset=" 0.105,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3342" offset=" 0.105,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3343" offset=" 0.105,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3344" offset=" 0.105,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3345" offset=" 0.105,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3346" offset=" 0.105,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3347" offset=" 0.105,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3348" offset=" 0.105,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3349" offset=" 0.105,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3350" offset=" 0.105,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3351" offset=" 0.105,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3352" offset=" 0.105,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3353" offset=" 0.105,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3400" offset=" 0.135,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3401" offset=" 0.135,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3402" offset=" 0.135,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3403" offset=" 0.135,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3404" offset=" 0.135,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3405" offset=" 0.135,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3406" offset=" 0.135,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3407" offset=" 0.135,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3408" offset=" 0.135,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3409" offset=" 0.135,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3410" offset=" 0.135,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3411" offset=" 0.135,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3412" offset=" 0.135,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3413" offset=" 0.135,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3414" offset=" 0.135,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3415" offset=" 0.135,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3416" offset=" 0.135,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3417" offset=" 0.135,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3418" offset=" 0.135,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3419" offset=" 0.135,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3420" offset=" 0.135,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3421" offset=" 0.135,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3422" offset=" 0.135,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3423" offset=" 0.135,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3424" offset=" 0.135,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3425" offset=" 0.135,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3426" offset=" 0.135,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3427" offset=" 0.135,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3428" offset=" 0.135,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3429" offset=" 0.135,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3430" offset=" 0.135,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3431" offset=" 0.135,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3432" offset=" 0.135,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3433" offset=" 0.135,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3434" offset=" 0.135,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3435" offset=" 0.135,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3436" offset=" 0.135,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3437" offset=" 0.135,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3438" offset=" 0.135,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3439" offset=" 0.135,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3440" offset=" 0.135,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3441" offset=" 0.135,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3442" offset=" 0.135,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3443" offset=" 0.135,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3444" offset=" 0.135,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3445" offset=" 0.135,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3446" offset=" 0.135,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3447" offset=" 0.135,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3448" offset=" 0.135,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3449" offset=" 0.135,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3450" offset=" 0.135,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3451" offset=" 0.135,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3452" offset=" 0.135,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3453" offset=" 0.135,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3500" offset=" 0.165,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3501" offset=" 0.165,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3502" offset=" 0.165,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3503" offset=" 0.165,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3504" offset=" 0.165,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3505" offset=" 0.165,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3506" offset=" 0.165,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3507" offset=" 0.165,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3508" offset=" 0.165,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3509" offset=" 0.165,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3510" offset=" 0.165,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3511" offset=" 0.165,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3512" offset=" 0.165,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3513" offset=" 0.165,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3514" offset=" 0.165,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3515" offset=" 0.165,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3516" offset=" 0.165,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3517" offset=" 0.165,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3518" offset=" 0.165,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3519" offset=" 0.165,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3520" offset=" 0.165,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3521" offset=" 0.165,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3522" offset=" 0.165,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3523" offset=" 0.165,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3524" offset=" 0.165,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3525" offset=" 0.165,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3526" offset=" 0.165,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3527" offset=" 0.165,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3528" offset=" 0.165,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3529" offset=" 0.165,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3530" offset=" 0.165,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3531" offset=" 0.165,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3532" offset=" 0.165,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3533" offset=" 0.165,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3534" offset=" 0.165,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3535" offset=" 0.165,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3536" offset=" 0.165,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3537" offset=" 0.165,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3538" offset=" 0.165,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3539" offset=" 0.165,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3540" offset=" 0.165,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3541" offset=" 0.165,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3542" offset=" 0.165,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3543" offset=" 0.165,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3544" offset=" 0.165,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3545" offset=" 0.165,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3546" offset=" 0.165,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3547" offset=" 0.165,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3548" offset=" 0.165,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3549" offset=" 0.165,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3550" offset=" 0.165,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3551" offset=" 0.165,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3552" offset=" 0.165,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3553" offset=" 0.165,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3600" offset=" 0.195,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3601" offset=" 0.195,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3602" offset=" 0.195,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3603" offset=" 0.195,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3604" offset=" 0.195,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3605" offset=" 0.195,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3606" offset=" 0.195,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3607" offset=" 0.195,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3608" offset=" 0.195,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3609" offset=" 0.195,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3610" offset=" 0.195,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3611" offset=" 0.195,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3612" offset=" 0.195,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3613" offset=" 0.195,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3614" offset=" 0.195,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3615" offset=" 0.195,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3616" offset=" 0.195,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3617" offset=" 0.195,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3618" offset=" 0.195,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3619" offset=" 0.195,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3620" offset=" 0.195,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3621" offset=" 0.195,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3622" offset=" 0.195,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3623" offset=" 0.195,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3624" offset=" 0.195,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3625" offset=" 0.195,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3626" offset=" 0.195,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3627" offset=" 0.195,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3628" offset=" 0.195,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3629" offset=" 0.195,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3630" offset=" 0.195,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3631" offset=" 0.195,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3632" offset=" 0.195,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3633" offset=" 0.195,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3634" offset=" 0.195,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3635" offset=" 0.195,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3636" offset=" 0.195,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3637" offset=" 0.195,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3638" offset=" 0.195,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3639" offset=" 0.195,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3640" offset=" 0.195,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3641" offset=" 0.195,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3642" offset=" 0.195,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3643" offset=" 0.195,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3644" offset=" 0.195,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3645" offset=" 0.195,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3646" offset=" 0.195,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3647" offset=" 0.195,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3648" offset=" 0.195,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3649" offset=" 0.195,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3650" offset=" 0.195,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3651" offset=" 0.195,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3652" offset=" 0.195,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3653" offset=" 0.195,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3700" offset=" 0.225,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3701" offset=" 0.225,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3702" offset=" 0.225,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3703" offset=" 0.225,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3704" offset=" 0.225,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3705" offset=" 0.225,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3706" offset=" 0.225,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3707" offset=" 0.225,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3708" offset=" 0.225,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3709" offset=" 0.225,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3710" offset=" 0.225,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3711" offset=" 0.225,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3712" offset=" 0.225,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3713" offset=" 0.225,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3714" offset=" 0.225,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3715" offset=" 0.225,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3716" offset=" 0.225,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3717" offset=" 0.225,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3718" offset=" 0.225,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3719" offset=" 0.225,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3720" offset=" 0.225,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3721" offset=" 0.225,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3722" offset=" 0.225,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3723" offset=" 0.225,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3724" offset=" 0.225,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3725" offset=" 0.225,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3726" offset=" 0.225,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3727" offset=" 0.225,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3728" offset=" 0.225,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3729" offset=" 0.225,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3730" offset=" 0.225,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3731" offset=" 0.225,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3732" offset=" 0.225,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3733" offset=" 0.225,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3734" offset=" 0.225,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3735" offset=" 0.225,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3736" offset=" 0.225,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3737" offset=" 0.225,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3738" offset=" 0.225,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3739" offset=" 0.225,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3740" offset=" 0.225,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3741" offset=" 0.225,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3742" offset=" 0.225,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3743" offset=" 0.225,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3744" offset=" 0.225,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3745" offset=" 0.225,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3746" offset=" 0.225,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3747" offset=" 0.225,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3748" offset=" 0.225,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3749" offset=" 0.225,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3750" offset=" 0.225,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3751" offset=" 0.225,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3752" offset=" 0.225,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3753" offset=" 0.225,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3800" offset=" 0.255,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3801" offset=" 0.255,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3802" offset=" 0.255,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3803" offset=" 0.255,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3804" offset=" 0.255,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3805" offset=" 0.255,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3806" offset=" 0.255,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3807" offset=" 0.255,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3808" offset=" 0.255,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3809" offset=" 0.255,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3810" offset=" 0.255,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3811" offset=" 0.255,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3812" offset=" 0.255,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3813" offset=" 0.255,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3814" offset=" 0.255,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3815" offset=" 0.255,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3816" offset=" 0.255,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3817" offset=" 0.255,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3818" offset=" 0.255,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3819" offset=" 0.255,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3820" offset=" 0.255,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3821" offset=" 0.255,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3822" offset=" 0.255,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3823" offset=" 0.255,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3824" offset=" 0.255,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3825" offset=" 0.255,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3826" offset=" 0.255,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3827" offset=" 0.255,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3828" offset=" 0.255,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3829" offset=" 0.255,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3830" offset=" 0.255,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3831" offset=" 0.255,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3832" offset=" 0.255,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3833" offset=" 0.255,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3834" offset=" 0.255,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3835" offset=" 0.255,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3836" offset=" 0.255,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3837" offset=" 0.255,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3838" offset=" 0.255,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3839" offset=" 0.255,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3840" offset=" 0.255,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3841" offset=" 0.255,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3842" offset=" 0.255,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3843" offset=" 0.255,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3844" offset=" 0.255,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3845" offset=" 0.255,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3846" offset=" 0.255,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3847" offset=" 0.255,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3848" offset=" 0.255,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3849" offset=" 0.255,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3850" offset=" 0.255,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3851" offset=" 0.255,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3852" offset=" 0.255,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3853" offset=" 0.255,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_3900" offset=" 0.285,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3901" offset=" 0.285,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3902" offset=" 0.285,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3903" offset=" 0.285,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3904" offset=" 0.285,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3905" offset=" 0.285,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3906" offset=" 0.285,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3907" offset=" 0.285,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3908" offset=" 0.285,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3909" offset=" 0.285,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3910" offset=" 0.285,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3911" offset=" 0.285,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3912" offset=" 0.285,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3913" offset=" 0.285,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3914" offset=" 0.285,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3915" offset=" 0.285,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3916" offset=" 0.285,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3917" offset=" 0.285,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3918" offset=" 0.285,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3919" offset=" 0.285,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3920" offset=" 0.285,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3921" offset=" 0.285,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3922" offset=" 0.285,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3923" offset=" 0.285,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3924" offset=" 0.285,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3925" offset=" 0.285,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3926" offset=" 0.285,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3927" offset=" 0.285,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3928" offset=" 0.285,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3929" offset=" 0.285,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3930" offset=" 0.285,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3931" offset=" 0.285,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3932" offset=" 0.285,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3933" offset=" 0.285,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3934" offset=" 0.285,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3935" offset=" 0.285,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3936" offset=" 0.285,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3937" offset=" 0.285,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3938" offset=" 0.285,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3939" offset=" 0.285,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3940" offset=" 0.285,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3941" offset=" 0.285,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3942" offset=" 0.285,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3943" offset=" 0.285,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3944" offset=" 0.285,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3945" offset=" 0.285,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3946" offset=" 0.285,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3947" offset=" 0.285,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3948" offset=" 0.285,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3949" offset=" 0.285,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3950" offset=" 0.285,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3951" offset=" 0.285,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3952" offset=" 0.285,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_3953" offset=" 0.285,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4000" offset=" 0.315,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4001" offset=" 0.315,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4002" offset=" 0.315,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4003" offset=" 0.315,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4004" offset=" 0.315,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4005" offset=" 0.315,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4006" offset=" 0.315,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4007" offset=" 0.315,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4008" offset=" 0.315,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4009" offset=" 0.315,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4010" offset=" 0.315,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4011" offset=" 0.315,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4012" offset=" 0.315,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4013" offset=" 0.315,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4014" offset=" 0.315,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4015" offset=" 0.315,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4016" offset=" 0.315,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4017" offset=" 0.315,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4018" offset=" 0.315,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4019" offset=" 0.315,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4020" offset=" 0.315,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4021" offset=" 0.315,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4022" offset=" 0.315,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4023" offset=" 0.315,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4024" offset=" 0.315,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4025" offset=" 0.315,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4026" offset=" 0.315,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4027" offset=" 0.315,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4028" offset=" 0.315,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4029" offset=" 0.315,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4030" offset=" 0.315,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4031" offset=" 0.315,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4032" offset=" 0.315,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4033" offset=" 0.315,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4034" offset=" 0.315,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4035" offset=" 0.315,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4036" offset=" 0.315,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4037" offset=" 0.315,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4038" offset=" 0.315,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4039" offset=" 0.315,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4040" offset=" 0.315,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4041" offset=" 0.315,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4042" offset=" 0.315,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4043" offset=" 0.315,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4044" offset=" 0.315,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4045" offset=" 0.315,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4046" offset=" 0.315,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4047" offset=" 0.315,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4048" offset=" 0.315,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4049" offset=" 0.315,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4050" offset=" 0.315,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4051" offset=" 0.315,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4052" offset=" 0.315,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4053" offset=" 0.315,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4100" offset=" 0.345,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4101" offset=" 0.345,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4102" offset=" 0.345,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4103" offset=" 0.345,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4104" offset=" 0.345,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4105" offset=" 0.345,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4106" offset=" 0.345,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4107" offset=" 0.345,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4108" offset=" 0.345,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4109" offset=" 0.345,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4110" offset=" 0.345,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4111" offset=" 0.345,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4112" offset=" 0.345,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4113" offset=" 0.345,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4114" offset=" 0.345,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4115" offset=" 0.345,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4116" offset=" 0.345,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4117" offset=" 0.345,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4118" offset=" 0.345,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4119" offset=" 0.345,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4120" offset=" 0.345,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4121" offset=" 0.345,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4122" offset=" 0.345,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4123" offset=" 0.345,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4124" offset=" 0.345,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4125" offset=" 0.345,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4126" offset=" 0.345,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4127" offset=" 0.345,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4128" offset=" 0.345,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4129" offset=" 0.345,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4130" offset=" 0.345,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4131" offset=" 0.345,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4132" offset=" 0.345,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4133" offset=" 0.345,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4134" offset=" 0.345,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4135" offset=" 0.345,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4136" offset=" 0.345,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4137" offset=" 0.345,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4138" offset=" 0.345,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4139" offset=" 0.345,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4140" offset=" 0.345,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4141" offset=" 0.345,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4142" offset=" 0.345,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4143" offset=" 0.345,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4144" offset=" 0.345,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4145" offset=" 0.345,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4146" offset=" 0.345,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4147" offset=" 0.345,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4148" offset=" 0.345,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4149" offset=" 0.345,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4150" offset=" 0.345,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4151" offset=" 0.345,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4152" offset=" 0.345,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4153" offset=" 0.345,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4200" offset=" 0.375,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4201" offset=" 0.375,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4202" offset=" 0.375,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4203" offset=" 0.375,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4204" offset=" 0.375,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4205" offset=" 0.375,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4206" offset=" 0.375,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4207" offset=" 0.375,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4208" offset=" 0.375,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4209" offset=" 0.375,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4210" offset=" 0.375,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4211" offset=" 0.375,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4212" offset=" 0.375,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4213" offset=" 0.375,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4214" offset=" 0.375,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4215" offset=" 0.375,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4216" offset=" 0.375,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4217" offset=" 0.375,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4218" offset=" 0.375,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4219" offset=" 0.375,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4220" offset=" 0.375,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4221" offset=" 0.375,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4222" offset=" 0.375,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4223" offset=" 0.375,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4224" offset=" 0.375,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4225" offset=" 0.375,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4226" offset=" 0.375,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4227" offset=" 0.375,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4228" offset=" 0.375,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4229" offset=" 0.375,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4230" offset=" 0.375,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4231" offset=" 0.375,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4232" offset=" 0.375,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4233" offset=" 0.375,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4234" offset=" 0.375,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4235" offset=" 0.375,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4236" offset=" 0.375,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4237" offset=" 0.375,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4238" offset=" 0.375,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4239" offset=" 0.375,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4240" offset=" 0.375,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4241" offset=" 0.375,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4242" offset=" 0.375,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4243" offset=" 0.375,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4244" offset=" 0.375,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4245" offset=" 0.375,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4246" offset=" 0.375,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4247" offset=" 0.375,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4248" offset=" 0.375,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4249" offset=" 0.375,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4250" offset=" 0.375,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4251" offset=" 0.375,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4252" offset=" 0.375,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4253" offset=" 0.375,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4300" offset=" 0.405,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4301" offset=" 0.405,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4302" offset=" 0.405,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4303" offset=" 0.405,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4304" offset=" 0.405,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4305" offset=" 0.405,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4306" offset=" 0.405,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4307" offset=" 0.405,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4308" offset=" 0.405,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4309" offset=" 0.405,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4310" offset=" 0.405,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4311" offset=" 0.405,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4312" offset=" 0.405,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4313" offset=" 0.405,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4314" offset=" 0.405,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4315" offset=" 0.405,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4316" offset=" 0.405,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4317" offset=" 0.405,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4318" offset=" 0.405,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4319" offset=" 0.405,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4320" offset=" 0.405,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4321" offset=" 0.405,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4322" offset=" 0.405,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4323" offset=" 0.405,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4324" offset=" 0.405,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4325" offset=" 0.405,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4326" offset=" 0.405,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4327" offset=" 0.405,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4328" offset=" 0.405,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4329" offset=" 0.405,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4330" offset=" 0.405,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4331" offset=" 0.405,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4332" offset=" 0.405,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4333" offset=" 0.405,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4334" offset=" 0.405,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4335" offset=" 0.405,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4336" offset=" 0.405,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4337" offset=" 0.405,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4338" offset=" 0.405,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4339" offset=" 0.405,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4340" offset=" 0.405,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4341" offset=" 0.405,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4342" offset=" 0.405,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4343" offset=" 0.405,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4344" offset=" 0.405,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4345" offset=" 0.405,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4346" offset=" 0.405,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4347" offset=" 0.405,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4348" offset=" 0.405,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4349" offset=" 0.405,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4350" offset=" 0.405,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4351" offset=" 0.405,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4352" offset=" 0.405,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4353" offset=" 0.405,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4400" offset=" 0.435,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4401" offset=" 0.435,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4402" offset=" 0.435,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4403" offset=" 0.435,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4404" offset=" 0.435,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4405" offset=" 0.435,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4406" offset=" 0.435,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4407" offset=" 0.435,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4408" offset=" 0.435,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4409" offset=" 0.435,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4410" offset=" 0.435,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4411" offset=" 0.435,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4412" offset=" 0.435,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4413" offset=" 0.435,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4414" offset=" 0.435,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4415" offset=" 0.435,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4416" offset=" 0.435,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4417" offset=" 0.435,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4418" offset=" 0.435,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4419" offset=" 0.435,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4420" offset=" 0.435,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4421" offset=" 0.435,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4422" offset=" 0.435,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4423" offset=" 0.435,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4424" offset=" 0.435,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4425" offset=" 0.435,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4426" offset=" 0.435,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4427" offset=" 0.435,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4428" offset=" 0.435,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4429" offset=" 0.435,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4430" offset=" 0.435,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4431" offset=" 0.435,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4432" offset=" 0.435,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4433" offset=" 0.435,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4434" offset=" 0.435,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4435" offset=" 0.435,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4436" offset=" 0.435,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4437" offset=" 0.435,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4438" offset=" 0.435,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4439" offset=" 0.435,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4440" offset=" 0.435,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4441" offset=" 0.435,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4442" offset=" 0.435,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4443" offset=" 0.435,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4444" offset=" 0.435,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4445" offset=" 0.435,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4446" offset=" 0.435,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4447" offset=" 0.435,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4448" offset=" 0.435,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4449" offset=" 0.435,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4450" offset=" 0.435,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4451" offset=" 0.435,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4452" offset=" 0.435,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4453" offset=" 0.435,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4500" offset=" 0.465,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4501" offset=" 0.465,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4502" offset=" 0.465,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4503" offset=" 0.465,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4504" offset=" 0.465,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4505" offset=" 0.465,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4506" offset=" 0.465,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4507" offset=" 0.465,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4508" offset=" 0.465,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4509" offset=" 0.465,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4510" offset=" 0.465,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4511" offset=" 0.465,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4512" offset=" 0.465,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4513" offset=" 0.465,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4514" offset=" 0.465,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4515" offset=" 0.465,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4516" offset=" 0.465,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4517" offset=" 0.465,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4518" offset=" 0.465,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4519" offset=" 0.465,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4520" offset=" 0.465,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4521" offset=" 0.465,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4522" offset=" 0.465,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4523" offset=" 0.465,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4524" offset=" 0.465,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4525" offset=" 0.465,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4526" offset=" 0.465,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4527" offset=" 0.465,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4528" offset=" 0.465,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4529" offset=" 0.465,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4530" offset=" 0.465,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4531" offset=" 0.465,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4532" offset=" 0.465,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4533" offset=" 0.465,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4534" offset=" 0.465,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4535" offset=" 0.465,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4536" offset=" 0.465,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4537" offset=" 0.465,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4538" offset=" 0.465,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4539" offset=" 0.465,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4540" offset=" 0.465,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4541" offset=" 0.465,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4542" offset=" 0.465,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4543" offset=" 0.465,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4544" offset=" 0.465,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4545" offset=" 0.465,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4546" offset=" 0.465,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4547" offset=" 0.465,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4548" offset=" 0.465,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4549" offset=" 0.465,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4550" offset=" 0.465,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4551" offset=" 0.465,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4552" offset=" 0.465,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4553" offset=" 0.465,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4600" offset=" 0.495,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4601" offset=" 0.495,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4602" offset=" 0.495,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4603" offset=" 0.495,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4604" offset=" 0.495,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4605" offset=" 0.495,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4606" offset=" 0.495,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4607" offset=" 0.495,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4608" offset=" 0.495,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4609" offset=" 0.495,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4610" offset=" 0.495,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4611" offset=" 0.495,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4612" offset=" 0.495,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4613" offset=" 0.495,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4614" offset=" 0.495,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4615" offset=" 0.495,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4616" offset=" 0.495,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4617" offset=" 0.495,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4618" offset=" 0.495,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4619" offset=" 0.495,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4620" offset=" 0.495,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4621" offset=" 0.495,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4622" offset=" 0.495,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4623" offset=" 0.495,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4624" offset=" 0.495,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4625" offset=" 0.495,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4626" offset=" 0.495,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4627" offset=" 0.495,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4628" offset=" 0.495,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4629" offset=" 0.495,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4630" offset=" 0.495,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4631" offset=" 0.495,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4632" offset=" 0.495,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4633" offset=" 0.495,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4634" offset=" 0.495,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4635" offset=" 0.495,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4636" offset=" 0.495,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4637" offset=" 0.495,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4638" offset=" 0.495,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4639" offset=" 0.495,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4640" offset=" 0.495,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4641" offset=" 0.495,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4642" offset=" 0.495,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4643" offset=" 0.495,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4644" offset=" 0.495,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4645" offset=" 0.495,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4646" offset=" 0.495,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4647" offset=" 0.495,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4648" offset=" 0.495,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4649" offset=" 0.495,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4650" offset=" 0.495,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4651" offset=" 0.495,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4652" offset=" 0.495,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4653" offset=" 0.495,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4700" offset=" 0.525,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4701" offset=" 0.525,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4702" offset=" 0.525,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4703" offset=" 0.525,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4704" offset=" 0.525,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4705" offset=" 0.525,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4706" offset=" 0.525,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4707" offset=" 0.525,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4708" offset=" 0.525,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4709" offset=" 0.525,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4710" offset=" 0.525,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4711" offset=" 0.525,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4712" offset=" 0.525,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4713" offset=" 0.525,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4714" offset=" 0.525,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4715" offset=" 0.525,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4716" offset=" 0.525,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4717" offset=" 0.525,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4718" offset=" 0.525,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4719" offset=" 0.525,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4720" offset=" 0.525,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4721" offset=" 0.525,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4722" offset=" 0.525,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4723" offset=" 0.525,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4724" offset=" 0.525,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4725" offset=" 0.525,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4726" offset=" 0.525,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4727" offset=" 0.525,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4728" offset=" 0.525,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4729" offset=" 0.525,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4730" offset=" 0.525,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4731" offset=" 0.525,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4732" offset=" 0.525,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4733" offset=" 0.525,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4734" offset=" 0.525,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4735" offset=" 0.525,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4736" offset=" 0.525,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4737" offset=" 0.525,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4738" offset=" 0.525,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4739" offset=" 0.525,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4740" offset=" 0.525,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4741" offset=" 0.525,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4742" offset=" 0.525,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4743" offset=" 0.525,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4744" offset=" 0.525,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4745" offset=" 0.525,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4746" offset=" 0.525,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4747" offset=" 0.525,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4748" offset=" 0.525,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4749" offset=" 0.525,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4750" offset=" 0.525,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4751" offset=" 0.525,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4752" offset=" 0.525,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4753" offset=" 0.525,	-0.795	,0.0001	"  anchor="origin" color="white" />
+
+
+		<led id="led_4800" offset=" 0.555,	0.795	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4801" offset=" 0.555,	0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4802" offset=" 0.555,	0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4803" offset=" 0.555,	0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4804" offset=" 0.555,	0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4805" offset=" 0.555,	0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4806" offset=" 0.555,	0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4807" offset=" 0.555,	0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4808" offset=" 0.555,	0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4809" offset=" 0.555,	0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4810" offset=" 0.555,	0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4811" offset=" 0.555,	0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4812" offset=" 0.555,	0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4813" offset=" 0.555,	0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4814" offset=" 0.555,	0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4815" offset=" 0.555,	0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4816" offset=" 0.555,	0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4817" offset=" 0.555,	0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4818" offset=" 0.555,	0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4819" offset=" 0.555,	0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4820" offset=" 0.555,	0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4821" offset=" 0.555,	0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4822" offset=" 0.555,	0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4823" offset=" 0.555,	0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4824" offset=" 0.555,	0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4825" offset=" 0.555,	0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4826" offset=" 0.555,	0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4827" offset=" 0.555,	-0.015	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4828" offset=" 0.555,	-0.045	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4829" offset=" 0.555,	-0.075	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4830" offset=" 0.555,	-0.105	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4831" offset=" 0.555,	-0.135	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4832" offset=" 0.555,	-0.165	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4833" offset=" 0.555,	-0.195	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4834" offset=" 0.555,	-0.225	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4835" offset=" 0.555,	-0.255	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4836" offset=" 0.555,	-0.285	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4837" offset=" 0.555,	-0.315	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4838" offset=" 0.555,	-0.345	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4839" offset=" 0.555,	-0.375	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4840" offset=" 0.555,	-0.405	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4841" offset=" 0.555,	-0.435	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4842" offset=" 0.555,	-0.465	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4843" offset=" 0.555,	-0.495	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4844" offset=" 0.555,	-0.525	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4845" offset=" 0.555,	-0.555	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4846" offset=" 0.555,	-0.585	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4847" offset=" 0.555,	-0.615	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4848" offset=" 0.555,	-0.645	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4849" offset=" 0.555,	-0.675	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4850" offset=" 0.555,	-0.705	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4851" offset=" 0.555,	-0.735	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4852" offset=" 0.555,	-0.765	,0.0001	"  anchor="origin" color="white" />
+		<led id="led_4853" offset=" 0.555,	-0.795	,0.0001	"  anchor="origin" color="white" />
+     </leds>
+  </phormica>
+
+		
+		
+		
+		
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <led id="leds" grid_size="20,20,1"/>
+    <range_and_bearing id="rab" grid_size="20,20,1"/>
+  </media>
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+
+  <visualization>
+    <qt-opengl>
+      <camera>
+        <placement idx="0"
+                   position="0,0,2.7"
+                   look_at="0,0,0"
+                   lens_focal_length="30" />
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>
