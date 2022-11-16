@@ -244,7 +244,8 @@ int main(int argc, char *argv[]) {
 
       // Launches NEAT with the specified experiment
       launchNEAT(argv[2], argv[3], launchARGoSAndEvaluate, seed);
-
+      std::cout << "/*   End of evolution...   */" << std::endl;
+      std::cout << "/*   Output files writen in gen/ folder   */" << std::endl;
       // Disposes of ARGoS stuff
       cSimulator.Destroy();
    }

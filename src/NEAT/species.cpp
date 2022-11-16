@@ -159,7 +159,7 @@ bool Species::print_to_file(std::ofstream &outFile) {
   outFile<<std::endl<<"/* Species #"<<id<<" : (Size "<<organisms.size()<<") (AF "<<ave_fitness<<") (Age "<<age<<")  */"<<std::endl<<std::endl;
 
   //Show user what's going on
-  std::cout<<std::endl<<"/* Species #"<<id<<" : (Size "<<organisms.size()<<") (AF "<<ave_fitness<<") (Age "<<age<<")  */"<<std::endl;
+  // std::cout<<std::endl<<"/* Species #"<<id<<" : (Size "<<organisms.size()<<") (AF "<<ave_fitness<<") (Age "<<age<<")  */"<<std::endl;
 
   //Print all the Organisms' Genomes to the outFile
   for(curorg=organisms.begin();curorg!=organisms.end();++curorg) {
