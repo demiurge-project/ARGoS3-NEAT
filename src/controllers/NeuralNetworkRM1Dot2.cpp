@@ -39,14 +39,6 @@ void NeuralNetworkRM1Dot2::Init(TConfigurationNode& t_node) {
   m_cWheelActuationRange.Set(-m_pcRobotState->GetMaxVelocity(), m_pcRobotState->GetMaxVelocity());
 
   m_cNeuralNetworkOutputRange.Set(0.0f, 1.0f);
-
-  // Activate the RAB actuator (send the robot's id)
-  if(m_pcRABAct != NULL) {
-    UInt8 data[2];
-    data[0] = getRobotId();
-    data[1] = 0;
-    m_pcRABAct->SetData(data);
-  }
 }
 
 /****************************************/
@@ -74,11 +66,11 @@ void NeuralNetworkRM1Dot2::ControlStep() {
       }
    }
 
-   // Get Light sensory data.
-   if(m_pcLight != NULL) {
-      const CCI_RVRLightSensor::TReadings& cLightReadings = m_pcLight->GetReadings();
-      m_pcRobotState->SetLightInput(cLightReadings);
-      CCI_RVRLightSensor::SReading cProcessedLightReading = m_pcRobotState->GetLightReading();
+   // Get "Light" sensory data (simulated by camera).
+   if(m_pcOmnidirectionalCamera != NULL) {
+      const CCI_RVRColoredBlobOmnidirectionalCameraSensor::SReadings& cLightReadings = m_pcOmnidirectionalCameraSensor->GetReadings();
+		m_pcRobotState->SetOmnidirectionalCameraInput(cLightReadings);
+      CCI_RVRLidarSensor::SReading cProcessedLightReading = m_pcRobotState->GetAttractionVectorToBeacons();
       CVector2 cLightReading = CVector2(cProcessedLightReading.Value, cProcessedLightReading.Angle);
       for(size_t i=4; i<8; i++) {
         CRadians cDirection = CRadians::PI*(2*(i-4) + 1)/4;
@@ -92,10 +84,10 @@ void NeuralNetworkRM1Dot2::ControlStep() {
    }
 
    // Get Ground sensory data.
-   if(m_pcGround != NULL) {
-      const CCI_RVRGroundSensor::SReadings& cGroundReadings = m_pcGround->GetReadings();
-      m_pcRobotState->SetGroundInput(cGroundReadings);
-      Real cProcessedGroundReading = m_pcRobotState->GetGroundReading();
+   if(m_pcGroundColor != NULL) {
+      const CCI_RVRGroundColorSensor::SReading& cGroundReading = m_pcGround->GetReading();
+      m_pcRobotState->SetGroundInput(cGroundReading);
+      Real cProcessedGroundReading = m_pcRobotState->GetGroundReading().ToGrayScale();
       if(cProcessedGroundReading <= 0.1) { //black
         m_inputs[8] = 0;
       } else if(cProcessedGroundReading >= 0.95){ //white
@@ -108,13 +100,13 @@ void NeuralNetworkRM1Dot2::ControlStep() {
       m_inputs[8] = 0;
    }
 
-  // Get RAB sensory data.
-   if(m_pcRAB != NULL) {
-      const CCI_RVRRangeAndBearingSensor::TPackets& cRABReadings = m_pcRAB->GetPackets();
-      m_pcRobotState->SetRangeAndBearingMessages(cRABReadings);
+  // Get Lidar sensory data (RAB).
+   if(m_pcLidar != NULL) {
+      const CCI_RVRLidarSensor::TReadings& cRABReadings = m_pcLidarSensor->GetReadings();
+		m_pcRobotState->SetLidarInput(cRABReadings);
 
-      CCI_RVRRangeAndBearingSensor::SReceivedPacket cProcessedRabReading = m_pcRobotState->GetAttractionVectorToNeighbors(1.0);   // alpha = 1 (artbitrary value)
-      CVector2 cRabReading = CVector2(cProcessedRabReading.Range, cProcessedRabReading.Bearing);
+      CCI_RVRLidarSensor::SReading cProcessedRabReading = m_pcRobotState->GetAttractionVectorToNeighbors(1.0);   // alpha = 1 (artbitrary value)
+      CVector2 cRabReading = CVector2(cProcessedRabReading.Value, cProcessedRabReading.Angle);
       UInt8 unNumberNeighbors = m_pcRobotState->GetNumberNeighbors();
 
       // Set the RAB input of the NN
@@ -160,13 +152,6 @@ void NeuralNetworkRM1Dot2::Reset() {
   }
   m_unTimeStep = 0;
   m_pcRobotState->Reset();
-  // Activate the RAB actuator (send the robot's id)
-  if(m_pcRABAct != NULL) {
-    UInt8 data[2];
-    data[0] = getRobotId();
-    data[1] = 0;
-    m_pcRABAct->SetData(data);
-  }
 }
 
 /****************************************/
