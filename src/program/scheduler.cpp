@@ -13,7 +13,7 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/utility/plugins/dynamic_loading.h>
-#include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
+#include <argos3/plugins/robots/rvr/simulator/rvr_entity.h>
 
 // Controller
 #include "../NEATController.h"
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
       for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
           CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
           try {
-              CEPuckNEATController& cController = dynamic_cast<CEPuckNEATController&>(pcEntity->GetController());
+              CRVRNEATController& cController = dynamic_cast<CRVRNEATController&>(pcEntity->GetController());
               cController.SetNetwork(*net);
           } catch (std::exception& ex) {
               LOGERR << "Error while setting network: " << ex.what() << std::endl;

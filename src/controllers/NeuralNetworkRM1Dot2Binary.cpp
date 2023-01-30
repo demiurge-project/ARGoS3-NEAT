@@ -7,15 +7,14 @@
 
 NeuralNetworkRM1Dot2Binary::NeuralNetworkRM1Dot2Binary() {
     m_pcWheels = NULL;
-    m_pcRABAct = NULL;
     m_pcProximity = NULL;
     m_pcLight = NULL;
-    m_pcGround = NULL;
-    m_pcRAB = NULL;
+    m_pcGroundColor = NULL;
+    m_pcLidar = NULL;
+    m_pcOmnidirectionalCamera = NULL;
     m_net = NULL;
     m_nId = -1;
     m_unTimeStep = 0;
-    m_mapMessages.clear();
     m_bRecordFlag = false;
     m_pcRNG = argos::CRandom::CreateRNG("argos");
 }
@@ -33,7 +32,7 @@ NeuralNetworkRM1Dot2Binary::~NeuralNetworkRM1Dot2Binary() {
 /****************************************/
 
 void NeuralNetworkRM1Dot2Binary::Init(TConfigurationNode& t_node) {
-  CEPuckNEATController::Init(t_node);
+  CRVRNEATController::Init(t_node);
 
   /* Trace recording */
   GetNodeAttributeOrDefault(t_node, "record", m_bRecordFlag, m_bRecordFlag);
@@ -64,11 +63,11 @@ void NeuralNetworkRM1Dot2Binary::Init(TConfigurationNode& t_node) {
 void NeuralNetworkRM1Dot2Binary::ControlStep() {
    // Get Proximity sensory data.
    if(m_pcProximity != NULL) {
-      const CCI_EPuckProximitySensor::TReadings& cProxiReadings = m_pcProximity->GetReadings();
-      // Feed readings to EpuckDAO which will process them as needed
+      const CCI_RVRProximitySensor::TReadings& cProxiReadings = m_pcProximity->GetReadings();
+      // Feed readings to RVRDAO which will process them as needed
       m_pcRobotState->SetProximityInput(cProxiReadings);
       // Collecting processed readings
-      CCI_EPuckProximitySensor::SReading cProcessedProxiReading = m_pcRobotState->GetProximityReading();
+      CCI_RVRProximitySensor::SReading cProcessedProxiReading = m_pcRobotState->GetProximityReading();
       CVector2 cProxiReading = CVector2(cProcessedProxiReading.Value, cProcessedProxiReading.Angle);
       // Injecting processed readings as input of the NN
       for(int i = 0; i < 4; i++) {
@@ -84,9 +83,9 @@ void NeuralNetworkRM1Dot2Binary::ControlStep() {
 
    // Get Light sensory data.
    if(m_pcLight != NULL) {
-      const CCI_EPuckLightSensor::TReadings& cLightReadings = m_pcLight->GetReadings();
+      const CCI_RVRLightSensor::TReadings& cLightReadings = m_pcLight->GetReadings();
       m_pcRobotState->SetLightInput(cLightReadings);
-      CCI_EPuckLightSensor::SReading cProcessedLightReading = m_pcRobotState->GetLightReading();
+      CCI_RVRLightSensor::SReading cProcessedLightReading = m_pcRobotState->GetLightReading();
       CVector2 cLightReading = CVector2(cProcessedLightReading.Value, cProcessedLightReading.Angle);
       for(size_t i=4; i<8; i++) {
         CRadians cDirection = CRadians::PI*(2*(i-4) + 1)/4;
@@ -101,7 +100,7 @@ void NeuralNetworkRM1Dot2Binary::ControlStep() {
 
    // Get Ground sensory data.
    if(m_pcGround != NULL) {
-      const CCI_EPuckGroundSensor::SReadings& cGroundReadings = m_pcGround->GetReadings();
+      const CCI_RVRGroundSensor::SReadings& cGroundReadings = m_pcGround->GetReadings();
       m_pcRobotState->SetGroundInput(cGroundReadings);
       Real cProcessedGroundReading = m_pcRobotState->GetGroundReading();
       if(cProcessedGroundReading <= 0.1) { //black
@@ -118,10 +117,10 @@ void NeuralNetworkRM1Dot2Binary::ControlStep() {
 
   // Get RAB sensory data.
    if(m_pcRAB != NULL) {
-      const CCI_EPuckRangeAndBearingSensor::TPackets& cRABReadings = m_pcRAB->GetPackets();
+      const CCI_RVRRangeAndBearingSensor::TPackets& cRABReadings = m_pcRAB->GetPackets();
       m_pcRobotState->SetRangeAndBearingMessages(cRABReadings);
 
-      CCI_EPuckRangeAndBearingSensor::SReceivedPacket cProcessedRabReading = m_pcRobotState->GetAttractionVectorToNeighbors(1.0);   // alpha = 1 (artbitrary value)
+      CCI_RVRRangeAndBearingSensor::SReceivedPacket cProcessedRabReading = m_pcRobotState->GetAttractionVectorToNeighbors(1.0);   // alpha = 1 (artbitrary value)
       CVector2 cRabReading = CVector2(cProcessedRabReading.Range, cProcessedRabReading.Bearing);
       UInt8 unNumberNeighbors = m_pcRobotState->GetNumberNeighbors();
 
@@ -192,7 +191,7 @@ void NeuralNetworkRM1Dot2Binary::Reset() {
 
 void NeuralNetworkRM1Dot2Binary::OpenTraceFile() {
   std::stringstream stringStream;
-  stringStream << "trace_epuck_" << getRobotId() << ".txt";
+  stringStream << "trace_rvr_" << getRobotId() << ".txt";
   m_strOutput = stringStream.str();
   LOGERR << m_strOutput << std::endl;
   m_cOutput.open(m_strOutput.c_str(), std::ios_base::trunc | std::ios_base::out);

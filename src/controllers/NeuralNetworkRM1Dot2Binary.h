@@ -5,16 +5,15 @@
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/rng.h>
 
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_wheels_actuator.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_actuator.h>
-
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_proximity_sensor.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_light_sensor.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_sensor.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_wheels_actuator.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_proximity_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_light_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_ground_color_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_lidar_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_colored_blob_omnidirectional_camera_sensor.h>
 
 // Reference Model RM1.1
-#include <argos3/demiurge/epuck-dao/ReferenceModel1Dot2.h>
+#include <argos3/demiurge/rvr-dao/ReferenceModel1Dot2.h>
 
 #include "../NEATController.h"
 
@@ -22,7 +21,7 @@
 
 using namespace argos;
 
-class NeuralNetworkRM1Dot2Binary : public CEPuckNEATController {
+class NeuralNetworkRM1Dot2Binary : public CRVRNEATController {
 
 public:
 

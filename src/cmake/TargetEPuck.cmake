@@ -32,7 +32,7 @@ set(CMAKE_INSTALL_PREFIX /usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr 
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build")
 
 # Configure ARGoS flags
-set(ARGOS_BUILD_FOR epuck)
+set(ARGOS_BUILD_FOR rvr)
 set(ARGOS_DOCUMENTATION OFF)
 set(ARGOS_DYNAMIC_LIBRARY_LOADING OFF)
 set(ARGOS_THREADSAFE_LOG OFF)

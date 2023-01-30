@@ -7,15 +7,14 @@
 
 NeuralNetworkRM1Dot1Binary::NeuralNetworkRM1Dot1Binary() {
     m_pcWheels = NULL;
-    m_pcRABAct = NULL;
     m_pcProximity = NULL;
     m_pcLight = NULL;
-    m_pcGround = NULL;
-    m_pcRAB = NULL;
+    m_pcGroundColor = NULL;
+    m_pcLidar = NULL;
+    m_pcOmnidirectionalCamera = NULL;
     m_net = NULL;
     m_nId = -1;
     m_unTimeStep = 0;
-    m_mapMessages.clear();
     m_pcRNG = argos::CRandom::CreateRNG("argos");
 }
 
@@ -32,7 +31,7 @@ NeuralNetworkRM1Dot1Binary::~NeuralNetworkRM1Dot1Binary() {
 /****************************************/
 
 void NeuralNetworkRM1Dot1Binary::Init(TConfigurationNode& t_node) {
-  CEPuckNEATController::Init(t_node);
+  CRVRNEATController::Init(t_node);
 
   /* Reference model */
   m_pcRobotState = new ReferenceModel1Dot1();
@@ -57,11 +56,11 @@ void NeuralNetworkRM1Dot1Binary::Init(TConfigurationNode& t_node) {
 void NeuralNetworkRM1Dot1Binary::ControlStep() {
    // Get Proximity sensory data.
    if(m_pcProximity != NULL) {
-      const CCI_EPuckProximitySensor::TReadings& cProxiReadings = m_pcProximity->GetReadings();
-      // Feed readings to EpuckDAO which will process them as needed
+      const CCI_RVRProximitySensor::TReadings& cProxiReadings = m_pcProximity->GetReadings();
+      // Feed readings to RVRDAO which will process them as needed
       m_pcRobotState->SetProximityInput(cProxiReadings);
       // Collecting processed readings
-      CCI_EPuckProximitySensor::TReadings cProcessedProxiReadings = m_pcRobotState->GetProximityInput();
+      CCI_RVRProximitySensor::TReadings cProcessedProxiReadings = m_pcRobotState->GetProximityInput();
       // Injecting processed readings as input of the NN
       for(size_t i=0; i<8; i++) {
          m_inputs[i] = cProcessedProxiReadings[i].Value;
@@ -74,9 +73,9 @@ void NeuralNetworkRM1Dot1Binary::ControlStep() {
 
    // Get Light sensory data.
    if(m_pcLight != NULL) {
-      const CCI_EPuckLightSensor::TReadings& cLightReadings = m_pcLight->GetReadings();
+      const CCI_RVRLightSensor::TReadings& cLightReadings = m_pcLight->GetReadings();
       m_pcRobotState->SetLightInput(cLightReadings);
-      CCI_EPuckLightSensor::TReadings cProcessedLightReadings = m_pcRobotState->GetLightInput();
+      CCI_RVRLightSensor::TReadings cProcessedLightReadings = m_pcRobotState->GetLightInput();
       for(size_t i=8; i<16; i++) {
          m_inputs[i] = cProcessedLightReadings[i-8].Value;
       }
@@ -88,9 +87,9 @@ void NeuralNetworkRM1Dot1Binary::ControlStep() {
 
    // Get Ground sensory data.
    if(m_pcGround != NULL) {
-      const CCI_EPuckGroundSensor::SReadings& cGroundReadings = m_pcGround->GetReadings();
+      const CCI_RVRGroundSensor::SReadings& cGroundReadings = m_pcGround->GetReadings();
       m_pcRobotState->SetGroundInput(cGroundReadings);
-      CCI_EPuckGroundSensor::SReadings cProcessedGroundReadings = m_pcRobotState->GetGroundInput();
+      CCI_RVRGroundSensor::SReadings cProcessedGroundReadings = m_pcRobotState->GetGroundInput();
       for(size_t i=16; i<19; i++) {
          m_inputs[i] = cProcessedGroundReadings[i-16];
          if(cProcessedGroundReadings[i-16] <= 0.1) { //black
@@ -115,11 +114,11 @@ void NeuralNetworkRM1Dot1Binary::ControlStep() {
 
    // Get RAB sensory data.
    if(m_pcRAB != NULL) {
-      const CCI_EPuckRangeAndBearingSensor::TPackets& cRABReadings = m_pcRAB->GetPackets();
+      const CCI_RVRRangeAndBearingSensor::TPackets& cRABReadings = m_pcRAB->GetPackets();
       m_pcRobotState->SetRangeAndBearingMessages(cRABReadings);
 
-      CCI_EPuckRangeAndBearingSensor::TPackets sLastPackets = m_pcRobotState->GetRangeAndBearingMessages();
-      CCI_EPuckRangeAndBearingSensor::TPackets::iterator it;
+      CCI_RVRRangeAndBearingSensor::TPackets sLastPackets = m_pcRobotState->GetRangeAndBearingMessages();
+      CCI_RVRRangeAndBearingSensor::TPackets::iterator it;
       CVector2 cAttractionVector(0,CRadians::ZERO);
 
       for (it = sLastPackets.begin(); it != sLastPackets.end(); it++) {

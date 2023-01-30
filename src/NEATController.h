@@ -1,5 +1,5 @@
-#ifndef EPUCK_NN_CONTROLLER
-#define EPUCK_NN_CONTROLLER
+#ifndef RVR_NN_CONTROLLER
+#define RVR_NN_CONTROLLER
 
 
 #include <argos3/core/control_interface/ci_controller.h>
@@ -7,15 +7,16 @@
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/rng.h>
 
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_wheels_actuator.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_actuator.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_wheels_actuator.h>
 
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_proximity_sensor.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_light_sensor.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_ground_sensor.h>
-#include <argos3/plugins/robots/e-puck/control_interface/ci_epuck_range_and_bearing_sensor.h>
 
-#include <argos3/demiurge/epuck-dao/EpuckDAO.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_proximity_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_light_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_ground_color_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_lidar_sensor.h>
+#include <argos3/plugins/robots/rvr/control_interface/ci_rvr_colored_blob_omnidirectional_camera_sensor.h>
+
+#include <argos3/demiurge/rvr-dao/RVRDAO.h>
 
 #include "NEAT/network.h"
 #include "NEAT/genome.h"
@@ -24,11 +25,11 @@
 
 using namespace argos;
 
-class CEPuckNEATController : public CCI_Controller {
+class CRVRNEATController : public CCI_Controller {
 
 public:
 
-   virtual ~CEPuckNEATController();
+   virtual ~CRVRNEATController();
 
    virtual void Init(TConfigurationNode& t_node) = 0;
    virtual void ControlStep() = 0;
@@ -48,20 +49,19 @@ public:
 
 protected:
 
-   EpuckDAO* m_pcRobotState;
+   RVRDAO* m_pcRobotState;
 
    // Actuators
-   CCI_EPuckWheelsActuator* m_pcWheels;
-   CCI_EPuckRangeAndBearingActuator* m_pcRABAct;
+   CCI_RVRWheelsActuator* m_pcWheels;
 
    CRange<Real> m_cWheelActuationRange;
 
    // Sensors
-   CCI_EPuckProximitySensor* m_pcProximity;
-   CCI_EPuckLightSensor* m_pcLight;
-   CCI_EPuckGroundSensor* m_pcGround;
-   CCI_EPuckRangeAndBearingSensor* m_pcRAB;
-
+   CCI_RVRProximitySensor* m_pcProximity;
+   CCI_RVRLightSensor* m_pcLight;
+   CCI_RVRGroundColorSensor* m_pcGroundColor;
+   CCI_RVRLidarSensor* m_pcLidar;
+   CCI_RVRColoredBlobOmnidirectionalCameraSensor* m_pcOmnidirectionalCamera;
    // Network
    NEAT::Network* m_net;
    CRange<Real> m_cNeuralNetworkOutputRange;
@@ -70,24 +70,8 @@ protected:
    // Path to the genome
    std::string m_strFile;
 
-   // Range And Bearing Packet (which contains the id, timestamp, and the real packet which contains the range, bearing and the data)
-   struct RBPacket {
-         UInt32 unId;
-         UInt32 unTimestamp;
-         CCI_EPuckRangeAndBearingSensor::SReceivedPacket cMessage;
-
-         RBPacket() {
-         };
-
-         RBPacket(UInt32 id, UInt32 timestamp, CCI_EPuckRangeAndBearingSensor::SReceivedPacket message) :
-            unId(id),
-            unTimestamp(timestamp),
-            cMessage(message) {
-         }
-   };
 
    SInt32 m_nId;
-   std::map<UInt32, RBPacket> m_mapMessages;
    UInt32 m_unTimeStep;
 
    Real m_fLeftSpeed, m_fRightSpeed;
@@ -101,7 +85,7 @@ protected:
 };
 
 // Ground sensor samples obtained without using a light spot
-const float CEPuckNEATController::m_GraySamplesLeft[4205] = {
+const float CRVRNEATController::m_GraySamplesLeft[4205] = {
 0.339228,
 0.339228,
 0.339228,
@@ -4308,7 +4292,7 @@ const float CEPuckNEATController::m_GraySamplesLeft[4205] = {
 0.535508,
 0.500488};
 
-const float CEPuckNEATController::m_GraySamplesCenter[4205] = {
+const float CRVRNEATController::m_GraySamplesCenter[4205] = {
 0.23196,
 0.23196,
 0.23196,
@@ -8515,7 +8499,7 @@ const float CEPuckNEATController::m_GraySamplesCenter[4205] = {
 0.307963,
 0.284651};
 
-const float CEPuckNEATController::m_GraySamplesRight[4205] = {
+const float CRVRNEATController::m_GraySamplesRight[4205] = {
 0.872714,
 0.899225,
 0.872714,

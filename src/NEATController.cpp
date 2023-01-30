@@ -1,32 +1,31 @@
 #include "NEATController.h"
 #include <argos3/core/utility/logging/argos_log.h>
 
-
-
-void CEPuckNEATController::Init(TConfigurationNode& t_node) {
+void CRVRNEATController::Init(TConfigurationNode& t_node) {
   /* Get sensor/actuator handles */
   try {
-    m_pcWheels = GetActuator<CCI_EPuckWheelsActuator>("epuck_wheels");
+    m_pcWheels = GetActuator<CCI_RVRWheelsActuator>("rvr_wheels");
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcRABAct = GetActuator<CCI_EPuckRangeAndBearingActuator>("epuck_range_and_bearing");
+    m_pcProximity = GetSensor<CCI_RVRProximitySensor>("rvr_proximity");
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcProximity = GetSensor<CCI_EPuckProximitySensor>("epuck_proximity");
+    m_pcLight = GetSensor<CCI_RVRLightSensor>("rvr_light");
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcLight = GetSensor<CCI_EPuckLightSensor>("epuck_light");
+    m_pcGroundColor = GetSensor<CCI_RVRGroundColorSensor>("rvr_ground");
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcGround = GetSensor<CCI_EPuckGroundSensor>("epuck_ground");
+    m_pcLidar = GetSensor<CCI_RVRLidarSensor>("rvr_lidar");
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcRAB = GetSensor<CCI_EPuckRangeAndBearingSensor>("epuck_range_and_bearing");
+    m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("colored_blob_omnidirectional_camera");
+	 m_pcOmnidirectionalCamera->Enable();
   } catch(CARGoSException& ex) {}
 
   // Load the parameters for the neural network.
@@ -46,7 +45,7 @@ void CEPuckNEATController::Init(TConfigurationNode& t_node) {
 /****************************************/
 /****************************************/
 
-CEPuckNEATController::~CEPuckNEATController() {
+CRVRNEATController::~CRVRNEATController() {
   for (UInt8 i = 0; i < m_cNetworkVector.size(); i++) {
     delete m_cNetworkVector.at(i);
   }
@@ -55,7 +54,7 @@ CEPuckNEATController::~CEPuckNEATController() {
 /****************************************/
 /****************************************/
 
-void CEPuckNEATController::LoadNetwork(const std::string& filename) {
+void CRVRNEATController::LoadNetwork(const std::string& filename) {
    std::ifstream iFile(filename.c_str(),std::ios::in);
 
    if(iFile) {
@@ -89,7 +88,7 @@ void CEPuckNEATController::LoadNetwork(const std::string& filename) {
 /****************************************/
 /****************************************/
 
-void CEPuckNEATController::Display(int i) {
+void CRVRNEATController::Display(int i) {
    LOG << "SEQ: " << i << std::endl;
    /*LOG << "INPUTS" << std::endl;
    LOG << "Proximity: " << std::endl;
@@ -119,7 +118,7 @@ void CEPuckNEATController::Display(int i) {
 /****************************************/
 /****************************************/
 
-void CEPuckNEATController::DisplayNetwork() {
+void CRVRNEATController::DisplayNetwork() {
    // Some variables
    int count1=1, count2=1;
    std::vector<NEAT::NNode*>::iterator curnode;
@@ -147,7 +146,7 @@ void CEPuckNEATController::DisplayNetwork() {
 /****************************************/
 /****************************************/
 
-UInt32 CEPuckNEATController::getRobotId() {
+UInt32 CRVRNEATController::getRobotId() {
    if (m_nId < 0) {
       std::string strId = GetId();
       std::string::size_type pos = strId.find_first_of("0123456789");

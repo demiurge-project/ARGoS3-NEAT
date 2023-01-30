@@ -13,7 +13,7 @@ set(CONTROLLER_SOURCES
       NEATController.cpp)
 
 add_library(neat_controller SHARED ${CONTROLLER_HEADERS} ${CONTROLLER_SOURCES} )
-target_link_libraries(neat_controller neat argos3plugin_${ARGOS_BUILD_FOR}_epuck)
+target_link_libraries(neat_controller neat argos3plugin_${ARGOS_BUILD_FOR}_rvr)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   add_subdirectory(controllers)
