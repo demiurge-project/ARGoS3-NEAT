@@ -68,7 +68,7 @@ void NeuralNetworkRM1Dot2::ControlStep() {
 
    // Get "Light" sensory data (simulated by camera).
    if(m_pcOmnidirectionalCamera != NULL) {
-      const CCI_RVRColoredBlobOmnidirectionalCameraSensor::SReadings& cLightReadings = m_pcOmnidirectionalCameraSensor->GetReadings();
+      const CCI_RVRColoredBlobOmnidirectionalCameraSensor::SReadings& cLightReadings = m_pcOmnidirectionalCamera->GetReadings();
 		m_pcRobotState->SetOmnidirectionalCameraInput(cLightReadings);
       CCI_RVRLidarSensor::SReading cProcessedLightReading = m_pcRobotState->GetAttractionVectorToBeacons();
       CVector2 cLightReading = CVector2(cProcessedLightReading.Value, cProcessedLightReading.Angle);
@@ -102,7 +102,7 @@ void NeuralNetworkRM1Dot2::ControlStep() {
 
   // Get Lidar sensory data (RAB).
    if(m_pcLidar != NULL) {
-      const CCI_RVRLidarSensor::TReadings& cRABReadings = m_pcLidarSensor->GetReadings();
+      const CCI_RVRLidarSensor::TReadings& cRABReadings = m_pcLidar->GetReadings();
 		m_pcRobotState->SetLidarInput(cRABReadings);
 
       CCI_RVRLidarSensor::SReading cProcessedRabReading = m_pcRobotState->GetAttractionVectorToNeighbors(1.0);   // alpha = 1 (artbitrary value)
