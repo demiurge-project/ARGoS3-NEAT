@@ -85,7 +85,7 @@ void NeuralNetworkRM1Dot2::ControlStep() {
 
    // Get Ground sensory data.
    if(m_pcGroundColor != NULL) {
-      const CCI_RVRGroundColorSensor::SReading& cGroundReading = m_pcGround->GetReading();
+      const CCI_RVRGroundColorSensor::SReading& cGroundReading = m_pcGroundColor->GetReading();
       m_pcRobotState->SetGroundInput(cGroundReading);
       Real cProcessedGroundReading = m_pcRobotState->GetGroundReading().ToGrayScale();
       if(cProcessedGroundReading <= 0.1) { //black
