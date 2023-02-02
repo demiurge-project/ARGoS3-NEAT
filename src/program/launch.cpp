@@ -17,7 +17,7 @@
 //#include <argos3/core/simulator/query_plugins.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
 #include "../NEATController.h"
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
+#include <argos3/demiurge/loop-functions/RVRCoreLoopFunctions.h>
 
 using namespace argos;
 
@@ -61,7 +61,7 @@ int main(int n_argc, char** ppch_argv) {
                 for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
                     CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
                     try {
-                        CEPuckNEATController& cController = dynamic_cast<CEPuckNEATController&> (pcEntity->GetController());
+                        CRVRNEATController& cController = dynamic_cast<CRVRNEATController&> (pcEntity->GetController());
                         cController.LoadNetwork(unGenome);
                     } catch (std::exception& ex) {
                         LOGERR << "Error while casting: " << ex.what() << std::endl;
@@ -70,7 +70,7 @@ int main(int n_argc, char** ppch_argv) {
 
                 cSimulator.Execute();
 
-                CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+                RVRCoreLoopFunctions& cLoopFunctions = dynamic_cast<RVRCoreLoopFunctions&>(cSimulator.GetLoopFunctions());
         				Real fObjectiveFunction = cLoopFunctions.GetObjectiveFunction();
         				std::cout << "Score " << fObjectiveFunction << std::endl;
 
