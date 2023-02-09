@@ -36,6 +36,7 @@ void NeuralNetworkRM1Dot2::Init(TConfigurationNode& t_node) {
   /* Reference model */
   m_pcRobotState = new ReferenceModel1Dot2();
   m_pcRobotState->SetRobotIdentifier(getRobotId());
+  m_pcRobotState->SetMaxVelocity(m_fMaxVelocity);
   m_cWheelActuationRange.Set(-m_pcRobotState->GetMaxVelocity(), m_pcRobotState->GetMaxVelocity());
 
   m_cNeuralNetworkOutputRange.Set(0.0f, 1.0f);
