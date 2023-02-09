@@ -24,7 +24,7 @@ void CRVRNEATController::Init(TConfigurationNode& t_node) {
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("colored_blob_omnidirectional_camera");
+    m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("rvr_colored_blob_omnidirectional_camera");
 	 m_pcOmnidirectionalCamera->Enable();
   } catch(CARGoSException& ex) {}
   // get max speed
