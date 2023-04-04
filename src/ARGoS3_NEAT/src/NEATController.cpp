@@ -34,7 +34,7 @@ void CRVRNEATController::Init(TConfigurationNode& t_node) {
   try {
     m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("rvr_colored_blob_omnidirectional_camera");
 	 m_pcOmnidirectionalCamera->Enable();
-    const CCI_ColoredBlobOmnidirectionalCameraSensor::SReadings &readings = m_pcOmnidirectionalCamera->GetReadings();
+    const CCI_RVRColoredBlobOmnidirectionalCameraSensor::SReadings &readings = m_pcOmnidirectionalCamera->GetReadings();
 	 m_pcRobotState->SetOmnidirectionalCameraInput(readings);
 	 m_pcOmnidirectionalCamera->Disable();
   } catch(CARGoSException& ex) {}
