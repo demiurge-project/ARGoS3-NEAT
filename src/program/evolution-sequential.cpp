@@ -17,7 +17,7 @@
 #include "../NEATController.h"
 
 // Loop function
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
+#include <argos3/demiurge/loop-functions/RVRCoreLoopFunctions.h>
 
 /**
  * Function that launches the experiment and evaluates this last one.
@@ -29,7 +29,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Get a reference to the loop functions (the evaluation is done by the loop fct)
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static RVRCoreLoopFunctions& cLoopFunctions = dynamic_cast<RVRCoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Produce the different random seeds for the experiment
    argos::CRandom::CreateCategory("neat", 1);
@@ -50,7 +50,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
       for (CSpace::TMapPerType::iterator it = cEntities.begin(); it != cEntities.end(); ++it) {
           CControllableEntity* pcEntity = any_cast<CControllableEntity*>(it->second);
           try {
-              CEPuckNEATController& cController = dynamic_cast<CEPuckNEATController&>(pcEntity->GetController());
+              CRVRNEATController& cController = dynamic_cast<CRVRNEATController&>(pcEntity->GetController());
               cController.SetNetwork(*((*itOrg)->net));
           } catch (std::exception& ex) {
               LOGERR << "Error while setting network: " << ex.what() << std::endl;
@@ -90,7 +90,7 @@ void launchARGoSAndEvaluate(NEAT::Population& pop, unsigned int num_runs_per_gen
    static argos::CSimulator& cSimulator = argos::CSimulator::GetInstance();
 
    // Get a reference to the loop functions (the evaluation is done by the loop fct)
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static RVRCoreLoopFunctions& cLoopFunctions = dynamic_cast<RVRCoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Launch the experiment with the correct network
    cSimulator.Reset();

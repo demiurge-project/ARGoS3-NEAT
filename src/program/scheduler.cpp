@@ -19,7 +19,7 @@
 #include "../NEATController.h"
 
 // Loop function
-#include <argos3/demiurge/loop-functions/CoreLoopFunctions.h>
+#include <argos3/demiurge/loop-functions/RVRCoreLoopFunctions.h>
 
 
 /**
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
    argos::CDynamicLoading::LoadAllLibraries();
    cSimulator.SetExperimentFileName(argv[2]);
    cSimulator.LoadExperiment();
-   static CoreLoopFunctions& cLoopFunctions = dynamic_cast<CoreLoopFunctions&>(cSimulator.GetLoopFunctions());
+   static RVRCoreLoopFunctions& cLoopFunctions = dynamic_cast<RVRCoreLoopFunctions&>(cSimulator.GetLoopFunctions());
 
    // Waiting for the parent to give us some work to do.
    while(true) {

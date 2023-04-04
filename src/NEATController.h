@@ -73,7 +73,7 @@ protected:
 
    SInt32 m_nId;
    UInt32 m_unTimeStep;
-
+   Real m_fMaxVelocity;
    Real m_fLeftSpeed, m_fRightSpeed;
 
    argos::CRandom::CRNG* m_pcRNG;

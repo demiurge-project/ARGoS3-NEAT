@@ -32,13 +32,14 @@ void CRVRNEATController::Init(TConfigurationNode& t_node) {
   } catch(CARGoSException& ex) {}
 
   try {
-    m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("colored_blob_omnidirectional_camera");
+    m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("rvr_colored_blob_omnidirectional_camera");
 	 m_pcOmnidirectionalCamera->Enable();
     const CCI_ColoredBlobOmnidirectionalCameraSensor::SReadings &readings = m_pcOmnidirectionalCamera->GetReadings();
 	 m_pcRobotState->SetOmnidirectionalCameraInput(readings);
 	 m_pcOmnidirectionalCamera->Disable();
   } catch(CARGoSException& ex) {}
-  
+  // get max speed
+  GetNodeAttributeOrDefault(t_node, "velocity", m_fMaxVelocity, m_fMaxVelocity);
   // Load the parameters for the neural network.
   GetNodeAttributeOrDefault(t_node, "genome_file", m_strFile, m_strFile);
   if(m_strFile != "") {
