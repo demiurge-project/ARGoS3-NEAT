@@ -6,31 +6,26 @@ void CRVRNEATController::Init(TConfigurationNode& t_node) {
   try {
     m_pcWheels = GetActuator<CCI_RVRWheelsActuator>("rvr_wheels");
   } catch(CARGoSException& ex) {}
-
   try {
     m_pcProximity = GetSensor<CCI_RVRProximitySensor>("rvr_proximity");
     const CCI_RVRProximitySensor::TReadings &readings = m_pcProximity->GetReadings();
 	 m_pcRobotState->SetProximityInput(readings);
   } catch(CARGoSException& ex) {}
-
   try {
     m_pcLight = GetSensor<CCI_RVRLightSensor>("rvr_light");
     const CCI_RVRLightSensor::SReading &reading = m_pcLight->GetReading();
 	 m_pcRobotState->SetLightInput(reading);
   } catch(CARGoSException& ex) {}
-
   try {
     m_pcGroundColor = GetSensor<CCI_RVRGroundColorSensor>("rvr_ground");
     const CCI_RVRGroundColorSensor::SReading &reading = m_pcGroundColor->GetReading();
 	 m_pcRobotState->SetGroundInput(reading);
   } catch(CARGoSException& ex) {}
-
   try {
     m_pcLidar = GetSensor<CCI_RVRLidarSensor>("rvr_lidar");
     const CCI_RVRLidarSensor::TReadings &readings = m_pcLidar->GetReadings();
 	 m_pcRobotState->SetLidarInput(readings);
   } catch(CARGoSException& ex) {}
-
   try {
     m_pcOmnidirectionalCamera = GetSensor<CCI_RVRColoredBlobOmnidirectionalCameraSensor>("rvr_colored_blob_omnidirectional_camera");
 	 m_pcOmnidirectionalCamera->Enable();
@@ -51,7 +46,6 @@ void CRVRNEATController::Init(TConfigurationNode& t_node) {
   } else {
     LOGERR << "Warning: no genome file specified in .argos" << std::endl;
   }
-
 }
 
 /****************************************/

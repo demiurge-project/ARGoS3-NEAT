@@ -28,5 +28,9 @@
 *.out
 *.app
 
-#build folder
+#build folders and files
 build/
+devel/
+src/bin/
+.catkin_workspace
+src/CMakeLists.txt
